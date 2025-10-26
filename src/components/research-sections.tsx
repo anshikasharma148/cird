@@ -17,7 +17,7 @@ import {
   ArrowRight,
   CircuitBoard,
   Database,
-  Cogs
+  Cog
 } from "lucide-react";
 
 export function AboutSection() {
@@ -224,7 +224,7 @@ export function CIRDEntities() {
               <CardHeader>
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:scale-110 transition-transform duration-300">
-                    <Cogs className="w-8 h-8 text-white" />
+                    <Cog className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <CardTitle className="text-2xl text-white group-hover:text-purple-300 transition-colors">

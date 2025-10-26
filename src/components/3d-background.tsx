@@ -58,6 +58,7 @@ function ParticleField() {
           count={particleCount}
           array={positions}
           itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial size={0.02} color="#06b6d4" />
@@ -96,6 +97,7 @@ function DNAHelix() {
             count={points.length}
             array={new Float32Array(points.flatMap(p => [p.x, p.y, p.z]))}
             itemSize={3}
+            args={[new Float32Array(points.flatMap(p => [p.x, p.y, p.z])), 3]}
           />
         </bufferGeometry>
         <lineBasicMaterial color="#10b981" linewidth={2} />

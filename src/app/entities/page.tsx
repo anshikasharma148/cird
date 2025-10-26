@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-  Cogs, 
+  Cog, 
   Microscope, 
   Code, 
   Bot, 
@@ -29,7 +29,7 @@ export default function EntitiesPage() {
       title: "CDC - Control Development Centre",
       subtitle: "Advanced Control Systems Research",
       description: "The Control Development Centre is our premier research facility dedicated to developing sophisticated control systems and automation solutions for industrial applications. Our research spans from basic control theory to advanced AI-driven control mechanisms.",
-      icon: Cogs,
+      icon: Cog,
       color: "from-cyan-500 to-blue-500",
       focusAreas: [
         {

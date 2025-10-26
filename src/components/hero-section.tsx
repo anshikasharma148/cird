@@ -63,7 +63,7 @@ export default function HeroSection() {
         </motion.div>
 
         <motion.h1
-          className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
@@ -72,12 +72,13 @@ export default function HeroSection() {
         </motion.h1>
 
         <motion.h2
-          className="text-xl md:text-2xl font-semibold mb-6 text-cyan-300"
+          className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 text-cyan-300"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
-          Industry–Academia Interface | Jaypee University of Engineering and Technology, Guna
+          <span className="block sm:inline">Industry–Academia Interface</span>
+          <span className="block sm:inline sm:ml-2">| Jaypee University of Engineering and Technology, Guna</span>
         </motion.h2>
 
         <motion.p
@@ -125,7 +126,7 @@ export default function HeroSection() {
 
         {/* Research Stats */}
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16"
+          className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 mt-12 sm:mt-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1 }}

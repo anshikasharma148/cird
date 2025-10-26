@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="bg-slate-900 border-t border-slate-700">
       <div className="container mx-auto px-8 md:px-16 py-12">
-        <div className="grid md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {/* CIRD Info */}
           <div className="space-y-4">
             <motion.div

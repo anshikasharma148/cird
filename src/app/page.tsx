@@ -30,7 +30,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* CDC Card */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-700 border border-slate-600 rounded-lg p-8 hover:border-purple-500/50 transition-all duration-300">
               <div className="flex items-center space-x-3 mb-4">
