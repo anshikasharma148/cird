@@ -28,6 +28,26 @@ export default function Home() {
               Our specialized divisions working on cutting-edge research and development across 
               multiple technological domains.
             </p>
+            
+            {/* Project Statistics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-cyan-400 mb-2">14</div>
+                <div className="text-sm text-gray-400">Total Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400 mb-2">4</div>
+                <div className="text-sm text-gray-400">Completed Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-yellow-400 mb-2">11</div>
+                <div className="text-sm text-gray-400">Ongoing Projects</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-400 mb-2">18</div>
+                <div className="text-sm text-gray-400">Patents Filed</div>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

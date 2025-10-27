@@ -80,6 +80,20 @@ export default function HeroSection() {
           <span className="block sm:inline">Industry–Academia Interface</span>
           <span className="block sm:inline sm:ml-2">| Jaypee University of Engineering and Technology, Guna</span>
         </motion.h2>
+        
+        <motion.div
+          className="mb-6 p-4 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg border border-green-500/30"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+        >
+          <p className="text-lg font-semibold text-white text-center">
+            MoU Signed Between JUET and JPVL
+          </p>
+          <p className="text-sm text-gray-300 text-center mt-1">
+            Technical Professional Consultancy Projects under the MoU
+          </p>
+        </motion.div>
 
         <motion.p
           className="text-lg md:text-xl text-gray-300 mb-6 max-w-5xl mx-auto leading-relaxed"

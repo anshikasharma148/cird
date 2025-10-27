@@ -61,8 +61,14 @@ export default function EntitiesPage() {
         projects: 12,
         patents: 3,
         publications: 25,
-        researchers: 15
-      }
+        researchers: 4
+      },
+      teamMembers: [
+        "Dr. Amit Kumar Srivastava",
+        "Er. Anshika Sharma", 
+        "Er. Nitesh Pandey",
+        "Er. Saswat Shukla"
+      ]
     },
     {
       title: "MTL Lab",
@@ -100,8 +106,14 @@ export default function EntitiesPage() {
         projects: 8,
         patents: 2,
         publications: 18,
-        researchers: 10
-      }
+        researchers: 4
+      },
+      teamMembers: [
+        "Dr. Dharmendra Kumar Shukla",
+        "R.S. Chauhan",
+        "K.K. Purohit", 
+        "Bhanu Pratap Arya"
+      ]
     }
   ];
 
@@ -213,6 +225,24 @@ export default function EntitiesPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Team Members */}
+                  {entity.teamMembers && (
+                    <div className="mt-8 pt-8 border-t border-slate-600">
+                      <h4 className="text-xl font-semibold text-white mb-4 flex items-center">
+                        <Users className="w-6 h-6 mr-2 text-cyan-400" />
+                        Team Members
+                      </h4>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {entity.teamMembers.map((member, memberIndex) => (
+                          <div key={memberIndex} className="flex items-center space-x-3 p-3 bg-slate-700/50 rounded-lg border border-slate-600">
+                            <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                            <span className="text-gray-300 text-sm">{member}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="mt-8 flex justify-center">
                     <Button 
