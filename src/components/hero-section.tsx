@@ -88,7 +88,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
         >
           <p className="text-lg font-semibold text-white text-center">
-            MoU Signed Between JUET and JPVL
+            MoU Signed Between JUs and JPVL
           </p>
           <p className="text-sm text-gray-300 text-center mt-1">
             Technical Professional Consultancy Projects under the MoU

@@ -45,7 +45,7 @@ export default function AboutPage() {
             
             <div className="mt-8 p-6 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg border border-green-500/30">
               <p className="text-lg font-semibold text-white mb-2">
-                MoU Signed Between JUET and JPVL
+                MoU Signed Between JUs and JPVL
               </p>
               <p className="text-gray-300">
                 Technical Professional Consultancy Projects under the MoU
@@ -251,92 +251,55 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 bg-gradient-to-b from-slate-800 to-slate-900">
-              transition={{ duration: 0.8 }}
-            >
-              <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 p-8">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500">
-                      <Target className="w-8 h-8 text-white" />
-                    </div>
-                    <CardTitle className="text-3xl text-white">Our Mission</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                    To pioneer breakthrough technologies that transform industries and create sustainable 
-                    solutions for tomorrow's challenges. We combine cutting-edge research with practical 
-                    implementation to drive technological advancement.
-                  </p>
-                  <ul className="space-y-3">
-                    {[
-                      "Advance industrial research and development",
-                      "Bridge academia and industry",
-                      "Create innovative solutions",
-                      "Foster technological excellence"
-                    ].map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="flex items-center space-x-3"
-                      >
-                        <CheckCircle className="w-5 h-5 text-green-400" />
-                        <span className="text-gray-300">{item}</span>
-                      </motion.div>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
+<section className="py-20 bg-slate-900">
+  <div className="container mx-auto px-4">
+    <div className="grid md:grid-cols-2 gap-10">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-cyan-400">
+              <Target className="mr-2 h-6 w-6" /> Our Mission
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-300 leading-relaxed">
+              To drive excellence in industrial research and development by
+              fostering innovation, collaboration, and the pursuit of
+              cutting-edge solutions that transform industries and empower
+              communities.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 p-8">
-                <CardHeader>
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-                      <Lightbulb className="w-8 h-8 text-white" />
-                    </div>
-                    <CardTitle className="text-3xl text-white">Our Vision</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 text-lg leading-relaxed mb-6">
-                    To be a global leader in industrial research and development, recognized for our 
-                    innovative solutions and contributions to technological advancement. We envision 
-                    a future where research directly translates into real-world impact.
-                  </p>
-                  <ul className="space-y-3">
-                    {[
-                      "Global research leadership",
-                      "Industry transformation",
-                      "Sustainable innovation",
-                      "Technological excellence"
-                    ].map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="flex items-center space-x-3"
-                      >
-                        <CheckCircle className="w-5 h-5 text-purple-400" />
-                        <span className="text-gray-300">{item}</span>
-                      </motion.div>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Card className="bg-slate-800 border-slate-700">
+          <CardHeader>
+            <CardTitle className="flex items-center text-2xl text-purple-400">
+              <Lightbulb className="mr-2 h-6 w-6" /> Our Vision
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-300 leading-relaxed">
+              To be a globally recognized center for pioneering industrial
+              innovation and knowledge creation, bridging the gap between
+              research and real-world implementation.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </div>
+  </div>
+</section>
+
 
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
