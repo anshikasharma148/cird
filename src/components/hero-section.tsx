@@ -78,7 +78,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           <span className="block sm:inline">Industry–Academia Interface</span>
-          <span className="block sm:inline sm:ml-2">| Jaypee University of Engineering and Technology, Guna</span>
+          <span className="block sm:inline sm:ml-2">| Jaypee Universities at Jaypee University of Engineering and Technology (JUET), Guna</span>
         </motion.h2>
         
         <motion.div

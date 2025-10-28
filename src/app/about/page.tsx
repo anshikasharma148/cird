@@ -102,6 +102,18 @@ export default function AboutPage() {
               </p>
             </motion.div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mt-12 bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
+          >
+            <p className="text-gray-300 leading-relaxed text-lg">
+              Through this mission, CIRD facilitates knowledge transfer, nurtures innovation-driven entrepreneurship, 
+              and establishes enduring linkages with industry, government agencies, and the community.
+            </p>
+          </motion.div>
         </div>
       </section>
 

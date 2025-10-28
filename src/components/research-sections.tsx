@@ -43,9 +43,25 @@ export function AboutSection() {
             Centre for Industrial Research and Development
           </h2>
           <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-            An Industry–Academia interface established by Jaypee University of Engineering and Technology (JUET), Guna.
+            An Industry–Academia interface established at Jaypee University of Engineering and Technology (JUET), Guna.
           </p>
         </motion.div>
+
+        <div className="mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
+          >
+            <p className="text-lg text-gray-300 leading-relaxed">
+              The Centre for Industrial Research and Development (CIRD) is an Industry–Academia interface 
+              established by the Jaypee Universities at Jaypee University of Engineering and Technology (JUET), Guna. 
+              The centre aims to facilitate research translation, technology development, intellectual property (IPR) management, 
+              R&D collaboration, technology transfer and commercialization, and mentoring.
+            </p>
+          </motion.div>
+        </div>
 
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -53,24 +69,23 @@ export function AboutSection() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h3 className="text-3xl font-bold text-white mb-6">Our Mission</h3>
+            <h3 className="text-3xl font-bold text-white mb-6">Innovation & Entrepreneurship</h3>
             <p className="text-lg text-gray-300 mb-6 leading-relaxed">
-              To pioneer breakthrough technologies that transform industries and create sustainable 
-              solutions for tomorrow's challenges. We combine cutting-edge research with practical 
-              implementation to drive technological advancement.
+              CIRD has adopted several programs to enrich the entrepreneurial ecosystem and technology 
+              commercialization efforts at the Institute.
             </p>
             <div className="flex flex-wrap gap-3">
               <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
                 Innovation
               </Badge>
               <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
-                Research
+                Entrepreneurship
               </Badge>
               <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/30">
-                Development
+                Commercialization
               </Badge>
               <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
-                Excellence
+                Technology Transfer
               </Badge>
             </div>
           </motion.div>
@@ -79,29 +94,23 @@ export function AboutSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-2xl p-8 shadow-2xl border border-slate-600"
+            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
           >
-            <h3 className="text-2xl font-semibold text-white mb-6">Research Focus Areas</h3>
-            <div className="space-y-4">
-              {[
-                { icon: Code, text: "Software Development & AI", color: "text-cyan-400" },
-                { icon: Bot, text: "Robotics & Automation", color: "text-purple-400" },
-                { icon: Cpu, text: "VLSI & Microelectronics", color: "text-green-400" },
-                { icon: Brain, text: "Machine Learning & Neural Networks", color: "text-yellow-400" },
-                { icon: CircuitBoard, text: "IoT & Embedded Systems", color: "text-pink-400" },
-                { icon: Database, text: "Data Science & Analytics", color: "text-blue-400" }
-              ].map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="flex items-center space-x-3"
-                >
-                  <item.icon className={`w-5 h-5 ${item.color}`} />
-                  <span className="text-gray-300">{item.text}</span>
-                </motion.div>
-              ))}
+            <h3 className="text-3xl font-bold text-white mb-6">R&D Partnership</h3>
+            <p className="text-lg text-gray-300 leading-relaxed">
+              Projects addressing technologies at the core and aims at the development of proprietary knowledge 
+              in a process, product, software, designs, specific/generic algorithm etc.
+            </p>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                Research
+              </Badge>
+              <Badge variant="secondary" className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
+                Development
+              </Badge>
+              <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+                Partnership
+              </Badge>
             </div>
           </motion.div>
         </div>
