@@ -280,7 +280,7 @@ export function CIRDEntities() {
             </Card>
           </motion.div>
 
-          {/* MTL Lab Card */}
+          {/* MTL Lab (Mechanical Testing Lab) Card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -294,7 +294,7 @@ export function CIRDEntities() {
                   </div>
                   <div>
                     <CardTitle className="text-2xl text-white group-hover:text-purple-300 transition-colors">
-                      MTL Lab
+                      MTL Lab (Mechanical Testing Lab)
                     </CardTitle>
                     <CardDescription className="text-purple-300 text-lg">
                       Specialized Research Laboratory
@@ -304,7 +304,7 @@ export function CIRDEntities() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-300 mb-6 leading-relaxed">
-                  The MTL Lab is a specialized research facility dedicated to advanced technological 
+                  The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological 
                   research and development. Our lab focuses on cutting-edge technologies and innovative 
                   solutions for modern industrial challenges.
                 </p>

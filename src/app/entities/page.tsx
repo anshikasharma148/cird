@@ -67,13 +67,13 @@ export default function EntitiesPage() {
         "Dr. Amit Kumar Srivastava",
         "Er. Anshika Sharma", 
         "Er. Nitesh Pandey",
-        "Er. Saswat Shukla"
+        "Er. Shashwat Shukla"
       ]
     },
     {
-      title: "MTL Lab",
+      title: "MTL Lab (Mechanical Testing Lab)",
       subtitle: "Specialized Research Laboratory",
-      description: "The MTL Lab is a specialized research facility dedicated to advanced technological research and development. Our lab focuses on cutting-edge technologies and innovative solutions for modern industrial challenges.",
+      description: "The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological research and development. Our lab focuses on cutting-edge technologies and innovative solutions for modern industrial challenges.",
       icon: Microscope,
       color: "from-purple-500 to-pink-500",
       focusAreas: [

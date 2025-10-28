@@ -89,7 +89,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* MTL Lab Card */}
+            {/* MTL Lab (Mechanical Testing Lab) Card */}
             <div className="bg-gradient-to-br from-slate-800 to-slate-700 border border-slate-600 rounded-lg p-8 hover:border-purple-500/50 transition-all duration-300">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
@@ -98,12 +98,12 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-2xl text-white">MTL Lab</h3>
+                  <h3 className="text-2xl text-white">MTL Lab (Mechanical Testing Lab)</h3>
                   <p className="text-purple-300 text-lg">Specialized Research Laboratory</p>
                 </div>
               </div>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                The MTL Lab is a specialized research facility dedicated to advanced technological 
+                The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological 
                 research and development.
               </p>
               <div className="space-y-3">

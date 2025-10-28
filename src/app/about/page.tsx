@@ -45,7 +45,7 @@ export default function AboutPage() {
             
             <div className="mt-8 p-6 bg-gradient-to-r from-green-500/20 to-blue-500/20 rounded-lg border border-green-500/30">
               <p className="text-lg font-semibold text-white mb-2">
-                MoU Signed Between JUs and JPVL
+                MoU Signed Between JUs   and JPVL
               </p>
               <p className="text-gray-300">
                 Technical Professional Consultancy Projects under the MoU
@@ -191,7 +191,7 @@ export default function AboutPage() {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle className="w-5 h-5 text-green-400 mr-3" />
-                  <span className="text-gray-300">Er. Saswat Shukla</span>
+                  <span className="text-gray-300">Er. Shashwat Shukla</span>
                 </div>
               </div>
             </motion.div>
