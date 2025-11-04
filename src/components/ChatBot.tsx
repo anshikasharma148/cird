@@ -347,12 +347,17 @@ export default function ChatBot() {
             />
 
             <motion.div
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
-              transition={{ type: "spring", damping: 16, stiffness: 120 }}
-              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[380px] max-w-[420px] bg-white text-black rounded-2xl shadow-2xl flex flex-col overflow-hidden"
-            >
+  initial={{ y: 60, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  exit={{ y: 60, opacity: 0 }}
+  transition={{ type: "spring", damping: 16, stiffness: 120 }}
+  className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[380px] max-w-[420px] bg-white text-black rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+  style={{
+    height: "min(75vh, 600px)", // ✅ keeps window fixed to max 75% of viewport
+    maxHeight: "600px",         // ✅ hard limit for larger screens
+  }}
+>
+
               {/* Header */}
               <div className="flex items-center justify-between bg-black text-white px-4 py-3">
                 <div>
