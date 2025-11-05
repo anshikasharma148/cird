@@ -166,7 +166,38 @@ app.post("/api/embed", async (req, res) => {
   }
 });
 
+/**
+ * /health – Simple route for uptime monitoring
+ */
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "CIRD backend is alive ✅" });
+});
+
+/**
+ * Start Server
+ */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
   console.log(`✅ CIRD AI backend running on http://localhost:${PORT}`)
 );
+
+/* ------------------------------------------------------------------
+   🟢 KEEP-ALIVE SELF-PING (only runs on Render)
+------------------------------------------------------------------- */
+if (process.env.RENDER === "true" || process.env.RENDER_EXTERNAL_URL) {
+  const axios = await import("axios");
+  const url =
+    process.env.RENDER_EXTERNAL_URL || "https://cird.onrender.com";
+
+  console.log("🔁 Keep-alive ping enabled for:", url);
+
+  // Ping every 5 minutes
+  setInterval(async () => {
+    try {
+      await axios.default.get(`${url}/health`);
+      console.log("💓 Keep-alive ping sent to", `${url}/health`);
+    } catch (err) {
+      console.log("⚠️ Keep-alive ping failed:", err.message);
+    }
+  }, 5 * 60 * 1000);
+}
