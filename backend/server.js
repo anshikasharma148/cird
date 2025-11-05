@@ -7,35 +7,48 @@ import OpenAI from "openai";
 dotenv.config();
 
 const app = express();
+
+// ✅ Configure CORS for both development and production
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",   // for local dev
-      "https://cird.co.in",      // main domain
+      "http://localhost:3000",   // Local development
+      "https://cird.co.in",      // Main domain
       "https://www.cird.co.in",  // www subdomain
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "OPTIONS"],
     allowedHeaders: ["Content-Type"],
   })
 );
 
 app.use(express.json());
 
+// ✅ Initialize OpenAI with your API key
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+console.log("🔑 OpenAI API Key Loaded:", !!process.env.OPENAI_API_KEY);
+console.log("🌍 Environment PORT:", process.env.PORT);
+
 /**
- * /api/chat – Stream ChatGPT responses
+ * /api/chat — Streams ChatGPT responses
  */
 app.post("/api/chat", async (req, res) => {
   try {
     const { question, context } = req.body;
 
+    if (!question) {
+      return res.status(400).json({ error: "Missing 'question' field in request body." });
+    }
+
+    // 🧠 Configure server-sent events (SSE) headers for live streaming
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
+    res.flushHeaders(); // Ensures streaming starts immediately
 
+    // 🧩 Chat completion with streaming enabled
     const stream = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       stream: true,
@@ -147,6 +160,7 @@ Highlights:
       ],
     });
 
+    // Stream each token as it comes in
     for await (const chunk of stream) {
       const text = chunk.choices[0]?.delta?.content;
       if (text) res.write(`data: ${text}\n\n`);
@@ -155,45 +169,56 @@ Highlights:
     res.write("data: [DONE]\n\n");
     res.end();
   } catch (err) {
-    console.error("Error:", err);
-    res.status(500).json({ error: err.message });
+    console.error("❌ Error in /api/chat:", err);
+    res.status(500).json({
+      error: err.message,
+      details: err.response?.data || "Unknown error in /api/chat",
+    });
   }
 });
 
 /**
- * /api/embed – Generate embeddings for semantic FAQ search
+ * /api/embed — Generate text embeddings for semantic FAQ search
  */
 app.post("/api/embed", async (req, res) => {
   try {
     const { text } = req.body;
+
+    if (!text) return res.status(400).json({ error: "Missing 'text' field in request body." });
+
     const embedding = await openai.embeddings.create({
       model: "text-embedding-3-small",
       input: text,
     });
+
     res.json({ embedding: embedding.data[0].embedding });
   } catch (err) {
-    console.error("Embedding Error:", err);
-    res.status(500).json({ error: err.message });
+    console.error("❌ Embedding Error:", err);
+    res.status(500).json({
+      error: err.message,
+      details: err.response?.data || "Unknown error in /api/embed",
+    });
   }
 });
 
 /**
- * /health – Simple route for uptime monitoring
+ * /health — Simple uptime route for monitoring
  */
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "CIRD backend is alive ✅" });
 });
 
 /**
- * Start Server
+ * 🚀 Start the Server
+ * Render automatically injects its own PORT (usually 10000)
  */
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () =>
-  console.log(`✅ CIRD AI backend running on http://localhost:${PORT}`)
-);
+app.listen(PORT, () => {
+  console.log(`✅ CIRD AI backend running on http://localhost:${PORT}`);
+});
 
 /* ------------------------------------------------------------------
-   🟢 KEEP-ALIVE SELF-PING (only runs on Render)
+   🟢 KEEP-ALIVE SELF-PING (prevents Render from sleeping)
 ------------------------------------------------------------------- */
 if (process.env.RENDER === "true" || process.env.RENDER_EXTERNAL_URL) {
   const axios = await import("axios");
@@ -202,7 +227,7 @@ if (process.env.RENDER === "true" || process.env.RENDER_EXTERNAL_URL) {
 
   console.log("🔁 Keep-alive ping enabled for:", url);
 
-  // Ping every 5 minutes
+  // Ping every 5 minutes to keep backend awake
   setInterval(async () => {
     try {
       await axios.default.get(`${url}/health`);
