@@ -62,6 +62,40 @@ const fuse = new Fuse(faqs, {
   useExtendedSearch: true,
 });
 
+async function streamChatResponse(question: string, onUpdate: (text: string) => void) {
+  const response = await fetch("http://localhost:5000/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question }),
+  });
+
+  const reader = response.body?.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let botText = "";
+
+  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  while (true) {
+    const { value, done } = await reader!.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value, { stream: true });
+    const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+
+    for (const line of lines) {
+      if (line === "data: [DONE]") return;
+      if (line.startsWith("data: ")) {
+        const content = line.replace("data: ", "");
+        botText += content;
+        onUpdate(botText);
+
+        // Slow down typing to make it more natural and soft
+        await delay(120); // Slower typing speed (adjust this for smoother experience)
+      }
+    }
+  }
+}
+
 /* ------------- Enhanced Answer Resolution ------------- */
 async function resolveAnswerWithModel(
   question: string,
@@ -132,6 +166,8 @@ export default function ChatBot() {
   const [isTyping, setIsTyping] = useState(false);
   const [messageReactions, setMessageReactions] = useState<Record<string, "liked" | "disliked">>({});
   const [showFilters, setShowFilters] = useState(false);
+  const [isGeneratingAnswer, setIsGeneratingAnswer] = useState(false);
+  const [suggestionsUpdated, setSuggestionsUpdated] = useState(false); // Track if suggestions have been updated
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -215,70 +251,76 @@ export default function ChatBot() {
     );
   }, [messages]);
 
-  function refreshSuggestions(tag: string | null = "All") {
-    const pool = tag && tag !== "All" 
-      ? faqs.filter((f) => (f.tags || []).includes(tag))
-      : faqs;
-    
-    const available = pool
-      .map((f) => f.question)
-      .filter((q) => !askedSet.has(q.toLowerCase()));
-    
-    const picks = available
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 3);
-    
-    setSuggestions(picks);
-  }
+  const refreshSuggestions = useCallback(
+    (tag: string | null = "All") => {
+      if (suggestionsUpdated) return; // Prevent suggestion refresh if already updated once
+      
+      const pool =
+        tag && tag !== "All"
+          ? faqs.filter((f) => (f.tags || []).includes(tag))
+          : faqs;
+
+      const available = pool
+        .map((f) => f.question)
+        .filter((q) => !askedSet.has(q.toLowerCase()));
+
+      const picks = available.sort(() => 0.5 - Math.random()).slice(0, 4);
+      setSuggestions(picks); // Update suggestions only when response is fully generated
+      setSuggestionsUpdated(true); // Mark suggestions as updated
+    },
+    [askedSet, suggestionsUpdated]
+  );
+
+  const shuffleSuggestions = (selected: string) => {
+    const pool = faqs.map(f => f.question);
+    const filteredSuggestions = pool.filter(s => s !== selected); // Remove the selected question
+    const shuffledSuggestions = filteredSuggestions.sort(() => Math.random() - 0.5); // Shuffle the remaining questions
+    setSuggestions([selected, ...shuffledSuggestions.slice(0, 3)]); // Keep the selected question and shuffle the rest
+  };
 
   /* ---------------- Enhanced Sending & resolving ---------------- */
-  const sendMessage = useCallback(
-    async (raw: string) => {
-      const cleaned = raw.trim();
-      if (!cleaned) return;
-      
-      const userMsg: Message = {
-        id: uid("user_"),
-        sender: "user",
-        text: cleaned,
-        time: Date.now(),
-      };
-      
-      setMessages((p) => {
-        const prev = Array.isArray(p) ? p : DEFAULT_MESSAGES;
-        return [...prev, userMsg];
-      });
-      setInput("");
-      setIsTyping(true);
+  const sendMessage = useCallback(async (raw: string) => {
+    const cleaned = raw.trim();
+    if (!cleaned) return;
 
-      const res = await resolveAnswerWithModel(
-        cleaned,
-        activeTag === "All" ? null : activeTag,
+    // Add the user message to the state
+    const userMsg: Message = {
+      id: uid("user_"),
+      sender: "user",
+      text: cleaned,
+      time: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsTyping(true);
+    setIsGeneratingAnswer(true);
+
+    // Create a placeholder for the bot message with "Thinking..." text
+    const botMsg: Message = {
+      id: uid("bot_"),
+      sender: "bot",
+      text: "Thinking...",
+      time: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, botMsg]);
+
+    // Show thinking indicator before starting the response generation
+    setIsTyping(true);
+
+    // Stream the bot's response
+    await streamChatResponse(cleaned, (newText) => {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === botMsg.id ? { ...m, text: newText } : m))
       );
+    });
 
-      const thinkingTime = Math.min(800 + Math.random() * 700, 1500);
-      await new Promise((r) => setTimeout(r, thinkingTime));
-
-      const botMsg: Message = {
-        id: uid("bot_"),
-        sender: "bot",
-        text: res.answer,
-        time: Date.now(),
-        meta: { 
-          confidence: res.confidence,
-          faqId: res.faqId,
-        },
-      };
-
-      setMessages((p) => {
-        const prev = Array.isArray(p) ? p : DEFAULT_MESSAGES;
-        return [...prev, botMsg];
-      });
-      setIsTyping(false);
-      refreshSuggestions(activeTag);
-    },
-    [activeTag],
-  );
+    // Stop typing and refresh suggestions after the message finishes
+    setIsTyping(false);
+    setIsGeneratingAnswer(false);
+    refreshSuggestions(activeTag); // Refresh suggestions only once after response is generated
+  }, [activeTag, suggestionsUpdated]);
 
   /* --------------- Enhanced Regenerate ---------------- */
   const regenerateAnswer = async (botMessageId: string) => {
@@ -345,6 +387,7 @@ export default function ChatBot() {
     setMessages(DEFAULT_MESSAGES);
     setInput("");
     setMessageReactions({});
+    setSuggestionsUpdated(false); // Reset suggestions update flag
   }
 
   /* ---------------- Enhanced Export ------------------ */
@@ -443,7 +486,6 @@ export default function ChatBot() {
                 maxHeight: "650px",
               }}
             >
-
               {/* Enhanced Header */}
               <div className="flex items-center justify-between bg-gradient-to-r from-gray-900 to-black text-white px-5 py-4">
                 <div className="flex items-center gap-3">
@@ -638,7 +680,7 @@ export default function ChatBot() {
                 ))}
 
                 {/* Enhanced Typing Indicator */}
-                {isTyping && (
+                {isTyping && !isGeneratingAnswer && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -687,7 +729,10 @@ export default function ChatBot() {
                         key={s}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={() => sendMessage(s)}
+                        onClick={() => {
+                          shuffleSuggestions(s); // Shuffle suggestions when user selects one
+                          sendMessage(s); // Send the selected suggestion as message
+                        }}
                         className="px-2 py-1 text-xs bg-white/80 border border-gray-300/70 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all backdrop-blur-sm"
                       >
                         {s}
