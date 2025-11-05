@@ -62,22 +62,48 @@ const fuse = new Fuse(faqs, {
   useExtendedSearch: true,
 });
 
-async function streamChatResponse(question: string, onUpdate: (text: string) => void) {
-  const response = await fetch("https://cird.onrender.com/api/chat", {
+async function streamChatResponse(
+  question: string,
+  onUpdate: (text: string) => void
+): Promise<void> {
+  const baseURL =
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
+      ? "https://cird.onrender.com"
+      : "http://localhost:5000");
 
+  console.log("🌐 Chat API base URL:", baseURL);
+
+  const response = await fetch(`${baseURL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ question }),
   });
 
-  const reader = response.body?.getReader();
+  if (!response.ok) {
+    console.error("❌ Chat API error:", response.status, response.statusText);
+    onUpdate("Sorry, the assistant is temporarily unavailable. Please try again later.");
+    return;
+  }
+
+  // ✅ Type-safe reader
+  const reader: ReadableStreamDefaultReader<Uint8Array> | undefined = response.body?.getReader();
   const decoder = new TextDecoder("utf-8");
   let botText = "";
 
-  const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  // ✅ Add a typed delay helper
+  const delay = (ms: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
+  if (!reader) {
+    console.error("⚠️ Stream reader unavailable");
+    onUpdate("Sorry, something went wrong initializing the chat stream.");
+    return;
+  }
+
+  // ✅ Stream loop (typed)
   while (true) {
-    const { value, done } = await reader!.read();
+    const { value, done } = await reader.read();
     if (done) break;
 
     const chunk = decoder.decode(value, { stream: true });
@@ -89,13 +115,12 @@ async function streamChatResponse(question: string, onUpdate: (text: string) => 
         const content = line.replace("data: ", "");
         botText += content;
         onUpdate(botText);
-
-        // Slow down typing to make it more natural and soft
-        await delay(120); // Slower typing speed (adjust this for smoother experience)
+        await delay(120); // simulate natural typing
       }
     }
   }
 }
+
 
 /* ------------- Enhanced Answer Resolution ------------- */
 async function resolveAnswerWithModel(
