@@ -12,7 +12,7 @@ const app = express();
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",   // Local development
+      "http://localhost:3001",   // Local development
       "https://cird.co.in",      // Main domain
       "https://www.cird.co.in",  // www subdomain
     ],
