@@ -36,9 +36,15 @@ export function AboutSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-500 text-white border-0 px-6 py-2">
-            About CIRD
-          </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-4 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+                About CIRD
+              </Badge>
+            </motion.div>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
             Centre for Industrial Research and Development
           </h2>
@@ -52,7 +58,7 @@ export function AboutSection() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
+            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20"
           >
             <p className="text-lg text-gray-300 leading-relaxed">
               The Centre for Industrial Research and Development (CIRD) is an Industry–Academia interface 
@@ -75,16 +81,16 @@ export function AboutSection() {
               commercialization efforts at the Institute.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Innovation
               </Badge>
-              <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Entrepreneurship
               </Badge>
-              <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Commercialization
               </Badge>
-              <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Technology Transfer
               </Badge>
             </div>
@@ -94,7 +100,7 @@ export function AboutSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
+            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20"
           >
             <h3 className="text-3xl font-bold text-white mb-6">R&D Partnership</h3>
             <p className="text-lg text-gray-300 leading-relaxed">
@@ -102,13 +108,13 @@ export function AboutSection() {
               in a process, product, software, designs, specific/generic algorithm etc.
             </p>
             <div className="flex flex-wrap gap-3 mt-4">
-              <Badge variant="secondary" className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Research
               </Badge>
-              <Badge variant="secondary" className="bg-indigo-500/20 text-indigo-300 border-indigo-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Development
               </Badge>
-              <Badge variant="secondary" className="bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+              <Badge variant="secondary" className="bg-gray-800 text-white border-gray-700">
                 Partnership
               </Badge>
             </div>
@@ -124,8 +130,8 @@ export function XBracketProject() {
     <section className="py-20 bg-gradient-to-b from-slate-800 to-slate-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
       <div className="container mx-auto px-8 md:px-16 relative z-10">
@@ -135,11 +141,17 @@ export function XBracketProject() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <Badge className="mb-4 bg-gradient-to-r from-green-500 to-cyan-500 text-white border-0 px-6 py-2">
-            🏆 Featured Project
-          </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-4 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+                🏆 Featured Project
+              </Badge>
+            </motion.div>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            X-BRACKET <span className="bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent">POST</span>
+            X-BRACKET <span className="text-white">POST</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
             A groundbreaking collaboration between CIRD and Jaiprakash Power Ventures Limited (JPVL) 
@@ -155,21 +167,21 @@ export function XBracketProject() {
               description: "CIRD jPVL Collaboration",
               content: "A successful collaboration between CIRD at JUET and Jaiprakash Power Ventures Limited, demonstrating the power of industry-academia partnerships in driving innovation.",
               icon: Target,
-              color: "from-blue-500 to-cyan-500"
+              color: "bg-white"
             },
             {
               title: "Patent Registration",
               description: "Government of India Certified",
               content: "The X-BRACKET POST design was officially registered and certified by the Patent Office of the Government of India, showcasing engineering excellence.",
               icon: Award,
-              color: "from-green-500 to-emerald-500"
+              color: "bg-white"
             },
             {
               title: "Intellectual Property",
               description: "Engineering Excellence",
               content: "This project exemplifies our commitment to creating valuable intellectual property through innovative engineering solutions and research.",
               icon: Zap,
-              color: "from-purple-500 to-pink-500"
+              color: "bg-white"
             }
           ].map((card, index) => (
             <motion.div
@@ -178,15 +190,15 @@ export function XBracketProject() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
-              <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-cyan-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20">
+              <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-white transition-all duration-300 hover:shadow-2xl">
                 <CardHeader>
                   <div className="flex items-center space-x-3 mb-2">
-                    <div className={`p-2 rounded-lg bg-gradient-to-r ${card.color}`}>
-                      <card.icon className="w-6 h-6 text-white" />
+                    <div className={`p-2 rounded-lg ${card.color}`}>
+                      <card.icon className="w-6 h-6 text-black" />
                     </div>
                     <CardTitle className="text-xl text-white">{card.title}</CardTitle>
                   </div>
-                  <CardDescription className="text-cyan-300">{card.description}</CardDescription>
+                  <CardDescription className="text-gray-400">{card.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <p className="text-gray-300 leading-relaxed">{card.content}</p>
@@ -210,11 +222,17 @@ export function CIRDEntities() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <Badge className="mb-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 px-6 py-2">
-            🏢 Research Entities
-          </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-4 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+                🏢 Research Entities
+              </Badge>
+            </motion.div>
           <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-            CIRD <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Entities</span>
+            CIRD <span className="text-white">Entities</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
             Our specialized divisions working on cutting-edge research and development across 
@@ -229,17 +247,17 @@ export function CIRDEntities() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 group">
+            <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-white transition-all duration-300 hover:shadow-2xl group">
               <CardHeader>
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:scale-110 transition-transform duration-300">
-                    <Cog className="w-8 h-8 text-white" />
+                  <div className="p-3 rounded-xl bg-white group-hover:scale-110 transition-transform duration-300">
+                    <Cog className="w-8 h-8 text-black" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-white group-hover:text-purple-300 transition-colors">
+                    <CardTitle className="text-2xl text-white group-hover:text-white transition-colors">
                       CDC - Control Development Centre
                     </CardTitle>
-                    <CardDescription className="text-purple-300 text-lg">
+                    <CardDescription className="text-gray-400 text-lg">
                       Advanced Control Systems Research
                     </CardDescription>
                   </div>
@@ -254,28 +272,33 @@ export function CIRDEntities() {
                 <div className="space-y-3">
                   <h4 className="text-white font-semibold mb-3">Key Focus Areas:</h4>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Software Development & Programming</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Robotics Development & Automation</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">VLSI Design & Microelectronics</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Artificial Intelligence & Machine Learning</span>
                   </div>
                 </div>
-                <Button 
-                  className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
-                  size="sm"
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
+                  <Button 
+                    className="mt-6 bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 shadow-lg shadow-white/10"
+                    size="sm"
+                  >
+                    Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </motion.div>
               </CardContent>
             </Card>
           </motion.div>
@@ -286,17 +309,17 @@ export function CIRDEntities() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-purple-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20 group">
+            <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-white transition-all duration-300 hover:shadow-2xl group">
               <CardHeader>
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 group-hover:scale-110 transition-transform duration-300">
-                    <Microscope className="w-8 h-8 text-white" />
+                  <div className="p-3 rounded-xl bg-white group-hover:scale-110 transition-transform duration-300">
+                    <Microscope className="w-8 h-8 text-black" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl text-white group-hover:text-purple-300 transition-colors">
+                    <CardTitle className="text-2xl text-white group-hover:text-white transition-colors">
                       MTL Lab (Mechanical Testing Lab)
                     </CardTitle>
-                    <CardDescription className="text-purple-300 text-lg">
+                    <CardDescription className="text-gray-400 text-lg">
                       Specialized Research Laboratory
                     </CardDescription>
                   </div>
@@ -311,28 +334,33 @@ export function CIRDEntities() {
                 <div className="space-y-3">
                   <h4 className="text-white font-semibold mb-3">Key Focus Areas:</h4>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Advanced Materials Research</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Technology Innovation</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Laboratory Testing & Analysis</span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
                     <span className="text-gray-300">Research & Development</span>
                   </div>
                 </div>
-                <Button 
-                  className="mt-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0"
-                  size="sm"
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
+                  <Button 
+                    className="mt-6 bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 shadow-lg shadow-white/10"
+                    size="sm"
+                  >
+                    Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                  </Button>
+                </motion.div>
               </CardContent>
             </Card>
           </motion.div>

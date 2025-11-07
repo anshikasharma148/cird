@@ -21,6 +21,7 @@ import {
   Clock,
   Award
 } from "lucide-react";
+import Link from "next/link";
 
 export default function ResearchPage() {
   const broaderAreas = [
@@ -28,63 +29,63 @@ export default function ResearchPage() {
       code: "BA01",
       title: "Climate control Methodology, Bottom Ash (BA) Utilization in Mortar and Concrete",
       icon: Target,
-      color: "from-cyan-500 to-blue-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "BA02", 
       title: "Reduction in Cycle and non-cycle water consumption",
       icon: Zap,
-      color: "from-green-500 to-emerald-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "BA03",
       title: "(DCS) & (CHP) Cost of power reduction- specific areas and methodologies/technologies",
       icon: Cpu,
-      color: "from-purple-500 to-pink-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "BA04",
       title: "Conditional Monitoring Technologies",
       icon: CircuitBoard,
-      color: "from-yellow-500 to-orange-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "BA05",
       title: "Early Warning System",
       icon: Database,
-      color: "from-red-500 to-pink-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "BA06",
       title: "Studies on possible conversion of JBTPP sub-critical supercritical unit",
       icon: Microscope,
-      color: "from-indigo-500 to-purple-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "Software Development & AI",
       title: "Advanced software engineering, AI-driven development, and intelligent systems",
       icon: Code,
-      color: "from-cyan-500 to-blue-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "Robotics & Industrial Automation",
       title: "Autonomous systems, robotic automation, and intelligent control mechanisms",
       icon: Bot,
-      color: "from-purple-500 to-pink-500",
+      color: "bg-white",
       status: "Active"
     },
     {
       code: "IoT & Embedded Systems",
       title: "Internet of Things, sensor networks, and embedded system design",
       icon: CircuitBoard,
-      color: "from-indigo-500 to-purple-500",
+      color: "bg-white",
       status: "Active"
     }
   ];
@@ -143,29 +144,31 @@ export default function ResearchPage() {
   const ongoingProjects = [
     {
       id: "BA01/PP/B",
-      title: "Utilization of Bottom Ash in Concrete and Mortar as a Replacement for Fine Aggregate Using Portland Pozzolana Cement (PPC) as Binder",
+      title: "Problems and Remedies of Bottom Ash Replacement with Sand",
       team: [
         "Dr. D. K. Shukla, Assistant Professor (SG), Civil, JUET, Guna",
         "Dr. Dhananjay R. Mishra, Associate Professor, MECH, JUET, Guna",
         "Sh. Nadeem Ahmed, Nodal officers, JNSTPP, JPVL",
         "Shri Ishtiaque Ahmed, Nodal officers, JBTPP, JPVL"
       ],
-      status: "Ongoing"
+      status: "Ongoing",
+      link: "/projects/ba01-pp-b"
     },
     {
       id: "BA01/PP/C",
-      title: "Utilization of Bottom Ash in Pavers and Bricks as a Replacement for Fine Aggregate Using Portland Pozzolana Cement (PPC) as Binder",
+      title: "Bottom Ash Replacement in Pavers and Bricks",
       team: [
         "Dr. D. K. Shukla, Assistant Professor (SG), Civil, JUET, Guna",
         "Dr. Dhananjay R. Mishra, Associate Professor, MECH, JUET, Guna",
         "Sh. Nadeem Ahmed, Nodal officers, JNSTPP, JPVL",
         "Shri Ishtiaque Ahmed, Nodal officers, JBTPP, JPVL"
       ],
-      status: "Ongoing"
+      status: "Ongoing",
+      link: "/projects/ba01-pp-c"
     },
     {
       id: "BA03/PP/B",
-      title: "Monitoring and control system for the coal handling plant",
+      title: "Monitoring & Control System for Coal Handling Plant (CHP)",
       team: [
         "Dr. Dhananjay R. Mishra, Associate Professor, MECH, JUET, Guna",
         "Dr. Amit Kumar Srivastava, Assistant Professor (SG), CSE, JUET, Guna",
@@ -173,7 +176,8 @@ export default function ResearchPage() {
         "Shri Navin Tinguria, Nodal officers, JNSTPP, JPVL",
         "Balachandran M., Nodal officers, JPVL"
       ],
-      status: "Ongoing"
+      status: "Ongoing",
+      link: "/projects/ba03-pp-b"
     },
     {
       id: "BA06/PP/A",
@@ -218,7 +222,8 @@ export default function ResearchPage() {
         "Sh. Amit Jauhari (HQ), JPVL",
         "Sh. V. S. Yadav, VPHEP, JPVL"
       ],
-      status: "Ongoing"
+      status: "Ongoing",
+      link: "/projects/ba07-pp-a"
     },
     {
       id: "BA07/PP/B",
@@ -229,7 +234,8 @@ export default function ResearchPage() {
         "Sh. Amit Jauhari (HQ), JPVL",
         "Sh. V. S. Yadav, VPHEP, JPVL"
       ],
-      status: "Ongoing"
+      status: "Ongoing",
+      link: "/projects/ba07-pp-b"
     },
     {
       id: "BA07/PP/C",
@@ -288,7 +294,7 @@ export default function ResearchPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
@@ -301,11 +307,17 @@ export default function ResearchPage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <Badge className="mb-6 bg-gradient-to-r from-cyan-500 to-purple-500 text-white border-0 px-6 py-2">
-              Research & Development
-            </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-6 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+                Research & Development
+              </Badge>
+            </motion.div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Our <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Research</span>
+              Our <span className="text-white">Research</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Cutting-edge research and development across multiple technological domains, 
@@ -315,19 +327,19 @@ export default function ResearchPage() {
             {/* Project Statistics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
               <div className="text-center">
-                <div className="text-3xl font-bold text-cyan-400 mb-2">14</div>
+                <div className="text-3xl font-bold text-white mb-2">14</div>
                 <div className="text-sm text-gray-400">Total Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-400 mb-2">4</div>
+                <div className="text-3xl font-bold text-white mb-2">4</div>
                 <div className="text-sm text-gray-400">Completed Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-400 mb-2">11</div>
+                <div className="text-3xl font-bold text-white mb-2">11</div>
                 <div className="text-sm text-gray-400">Ongoing Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-400 mb-2">18</div>
+                <div className="text-3xl font-bold text-white mb-2">18</div>
                 <div className="text-sm text-gray-400">Patents Filed</div>
               </div>
             </div>
@@ -345,7 +357,7 @@ export default function ResearchPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Broader <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Areas</span>
+              Broader <span className="text-white">Areas</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Our research spans across multiple domains, addressing critical challenges in industry and technology.
@@ -360,30 +372,35 @@ export default function ResearchPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
               >
-                <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-purple-500/50 transition-all duration-300 group h-full">
-                  <CardHeader>
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className={`p-3 rounded-xl bg-gradient-to-r ${area.color} group-hover:scale-110 transition-transform duration-300`}>
-                        <area.icon className="w-8 h-8 text-white" />
+                <motion.div
+                  whileHover={{ y: -5 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/30 transition-all duration-300 group h-full shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-white/10">
+                    <CardHeader>
+                      <div className="flex items-center space-x-3 mb-4">
+                        <div className={`p-3 rounded-xl ${area.color} group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                          <area.icon className="w-8 h-8 text-black" />
+                        </div>
+                        <div>
+                          <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20 mb-2">
+                            {area.code}
+                          </Badge>
+                          <CardTitle className="text-xl text-white group-hover:text-white transition-colors">
+                            {area.title}
+                          </CardTitle>
+                        </div>
                       </div>
-                      <div>
-                        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mb-2">
-                          {area.code}
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex items-center justify-between">
+                        <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20">
+                          {area.status}
                         </Badge>
-                        <CardTitle className="text-xl text-white group-hover:text-purple-300 transition-colors">
-                          {area.title}
-                        </CardTitle>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                        {area.status}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </motion.div>
             ))}
           </div>
@@ -400,7 +417,7 @@ export default function ResearchPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Completed <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">Projects</span>
+              Completed <span className="text-white">Projects</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Successfully completed research projects under the MoU between JUET and JPVL.
@@ -415,17 +432,21 @@ export default function ResearchPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
               >
-                <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-green-500/50 transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                        {project.id}
-                      </Badge>
-                      <Badge className="bg-green-500/20 text-green-400 border-green-500/30 flex items-center">
-                        <CheckCircle className="w-4 h-4 mr-2" />
-                        {project.status}
-                      </Badge>
-                    </div>
+                <motion.div
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/30 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-white/10">
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20">
+                          {project.id}
+                        </Badge>
+                        <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          {project.status}
+                        </Badge>
+                      </div>
                     <CardTitle className="text-xl text-white mb-4">
                       {project.title}
                     </CardTitle>
@@ -435,13 +456,14 @@ export default function ResearchPage() {
                       <h4 className="text-white font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
                         <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-green-400 rounded-full mr-3"></div>
+                          <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                           <span className="text-gray-300 text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </motion.div>
             ))}
           </div>
@@ -458,7 +480,7 @@ export default function ResearchPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Ongoing <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Projects</span>
+              Ongoing <span className="text-white">Projects</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Currently active research projects under the MoU between JUET and JPVL.
@@ -473,17 +495,21 @@ export default function ResearchPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
               >
-                <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-yellow-500/50 transition-all duration-300">
-                  <CardHeader>
-                    <div className="flex items-center justify-between mb-4">
-                      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
-                        {project.id}
-                      </Badge>
-                      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 flex items-center">
-                        <Clock className="w-4 h-4 mr-2" />
-                        {project.status}
-                      </Badge>
-                    </div>
+                <motion.div
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/30 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-white/10">
+                    <CardHeader>
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20">
+                          {project.id}
+                        </Badge>
+                        <Badge className="bg-white/10 backdrop-blur-sm text-white border-white/20 flex items-center">
+                          <Clock className="w-4 h-4 mr-2" />
+                          {project.status}
+                        </Badge>
+                      </div>
                     <CardTitle className="text-xl text-white mb-4">
                       {project.title}
                     </CardTitle>
@@ -493,13 +519,29 @@ export default function ResearchPage() {
                       <h4 className="text-white font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
                         <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></div>
+                          <div className="w-2 h-2 bg-white rounded-full mr-3"></div>
                           <span className="text-gray-300 text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
+                    {project.link && (
+                      <div className="mt-6">
+                        <motion.div
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Link href={project.link}>
+                            <Button className="w-full bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 shadow-lg shadow-white/10">
+                              Know More
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </Button>
+                          </Link>
+                        </motion.div>
+                      </div>
+                    )}
                   </CardContent>
-                </Card>
+                  </Card>
+                </motion.div>
               </motion.div>
             ))}
           </div>
@@ -516,7 +558,7 @@ export default function ResearchPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Patents <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Granted</span>
+              Patents <span className="text-white">Granted</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Intellectual property rights granted by IP India for our innovative research and development work.
@@ -527,14 +569,21 @@ export default function ResearchPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl p-8 border border-slate-600"
+            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20"
           >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {patents.map((patent, index) => (
-                <div key={index} className="flex items-center p-3 bg-slate-800/50 rounded-lg border border-slate-600">
-                  <Award className="w-5 h-5 text-purple-400 mr-3 flex-shrink-0" />
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="flex items-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/30 transition-all shadow-md hover:shadow-lg"
+                >
+                  <Award className="w-5 h-5 text-white mr-3 flex-shrink-0" />
                   <span className="text-gray-300 text-sm">{patent}</span>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>

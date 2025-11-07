@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 /* ----------------------- Types ----------------------- */
 type Message = {
@@ -181,6 +181,7 @@ async function resolveAnswerWithModel(
 /* -------------------- Enhanced Component ----------------------- */
 export default function ChatBot() {
   const pathname = usePathname() ?? "/";
+  const router = useRouter();
   const storageKey = useMemo(() => STORAGE_KEY(pathname), [pathname]);
 
   const [open, setOpen] = useState(false);
@@ -457,10 +458,10 @@ export default function ChatBot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              className="bg-white/95 backdrop-blur-md border border-gray-200/50 shadow-2xl text-gray-700 text-sm px-4 py-3 rounded-2xl"
+              className="bg-black/95 backdrop-blur-md border border-gray-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl"
             >
               <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-blue-500" />
+                <Sparkles size={16} className="text-white" />
                 <span>Ask me anything about CIRD</span>
               </div>
             </motion.div>
@@ -478,7 +479,7 @@ export default function ChatBot() {
             refreshSuggestions(activeTag);
             setTimeout(() => inputRef.current?.focus(), 300);
           }}
-          className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-900 to-black text-white shadow-2xl flex items-center justify-center hover:shadow-3xl transition-all duration-300 backdrop-blur-sm"
+          className="w-14 h-14 rounded-full bg-white text-black shadow-2xl flex items-center justify-center hover:bg-gray-200 transition-all duration-300 backdrop-blur-sm"
         >
           <MessageCircle size={22} />
         </motion.button>
@@ -506,21 +507,21 @@ export default function ChatBot() {
                 stiffness: 300,
                 mass: 0.8
               }}
-              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-white/95 backdrop-blur-xl text-gray-800 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200/50"
+              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-black/95 backdrop-blur-xl text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-800"
               style={{
                 height: "min(80vh, 650px)",
                 maxHeight: "650px",
               }}
             >
               {/* Enhanced Header */}
-              <div className="flex items-center justify-between bg-gradient-to-r from-gray-900 to-black text-white px-5 py-4">
+              <div className="flex items-center justify-between bg-black text-white px-5 py-4 border-b border-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                      <Bot size={20} />
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                      <Bot size={20} className="text-black" />
                     </div>
                     <motion.div 
-                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"
+                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-black"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     />
@@ -599,8 +600,8 @@ export default function ChatBot() {
                             }}
                             className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full border backdrop-blur-sm transition-all ${
                               activeTag === t
-                                ? "bg-gray-900 text-white border-gray-900 shadow-md"
-                                : "bg-white/80 text-gray-700 border-gray-300/70 hover:bg-gray-50 hover:border-gray-400"
+                                ? "bg-white text-black border-white shadow-md"
+                                : "bg-gray-900 text-white border-gray-700 hover:bg-gray-800 hover:border-gray-600"
                             }`}
                           >
                             <Tag size={10} />
@@ -616,7 +617,7 @@ export default function ChatBot() {
               {/* Enhanced Messages Area - More space now */}
               <div 
                 ref={containerRef} 
-                className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-gray-50/80 to-white/50 space-y-4"
+                className="flex-1 overflow-y-auto p-4 bg-black space-y-4"
               >
                 {messages.map((m, index) => (
                   <motion.div
@@ -628,19 +629,38 @@ export default function ChatBot() {
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
                       {m.sender === "bot" && (
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
-                          <Bot size={12} className="text-white" />
+                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
+                          <Bot size={12} className="text-black" />
                         </div>
                       )}
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm shadow-sm backdrop-blur-sm ${
                           m.sender === "user"
-                            ? "bg-gradient-to-br from-gray-900 to-black text-white rounded-br-md"
-                            : "bg-white/90 border border-gray-200/70 text-gray-800 rounded-bl-md"
+                            ? "bg-white text-black rounded-br-md"
+                            : "bg-gray-900 border border-gray-700 text-white rounded-bl-md"
                         }`}
                       >
                         <div className="whitespace-pre-wrap leading-relaxed">
-                          {m.text}
+                          {m.sender === "bot" ? (
+                            <div className="prose prose-sm max-w-none">
+                              {m.text.split(/(\/projects\/[^\s]+)/g).map((part, idx) => {
+                                if (part.startsWith("/projects/")) {
+                                  return (
+                                    <button
+                                      key={idx}
+                                      onClick={() => router.push(part)}
+                                      className="text-white hover:text-gray-300 underline font-medium cursor-pointer"
+                                    >
+                                      Know More
+                                    </button>
+                                  );
+                                }
+                                return <span key={idx}>{part}</span>;
+                              })}
+                            </div>
+                          ) : (
+                            m.text
+                          )}
                         </div>
                         
                         {/* Message Footer */}
@@ -697,8 +717,8 @@ export default function ChatBot() {
                         </div>
                       </div>
                       {m.sender === "user" && (
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center flex-shrink-0 mt-1">
-                          <User size={12} className="text-white" />
+                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
+                          <User size={12} className="text-black" />
                         </div>
                       )}
                     </div>
@@ -713,27 +733,27 @@ export default function ChatBot() {
                     className="flex justify-start"
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
-                      <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0 mt-1">
-                        <Bot size={12} className="text-white" />
+                      <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
+                        <Bot size={12} className="text-black" />
                       </div>
-                      <div className="bg-white/90 border border-gray-200/70 px-4 py-3 rounded-2xl rounded-bl-md">
+                      <div className="bg-gray-900 border border-gray-700 px-4 py-3 rounded-2xl rounded-bl-md">
                         <div className="flex items-center gap-2">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-white rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-white rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-white rounded-full"
                           />
-                          <span className="text-xs text-gray-500 ml-2">Thinking...</span>
+                          <span className="text-xs text-gray-400 ml-2">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -759,7 +779,7 @@ export default function ChatBot() {
                           shuffleSuggestions(s); // Shuffle suggestions when user selects one
                           sendMessage(s); // Send the selected suggestion as message
                         }}
-                        className="px-2 py-1 text-xs bg-white/80 border border-gray-300/70 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all backdrop-blur-sm"
+                        className="px-2 py-1 text-xs bg-gray-900 border border-gray-700 rounded-lg hover:bg-gray-800 hover:border-gray-600 transition-all backdrop-blur-sm text-white"
                       >
                         {s}
                       </motion.button>
@@ -782,14 +802,14 @@ export default function ChatBot() {
                       }
                     }}
                     placeholder="Ask about research, projects, patents..."
-                    className="flex-1 px-4 py-3 rounded-xl border border-gray-300/70 bg-white text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 outline-none transition-all backdrop-blur-sm"
+                          className="flex-1 px-4 py-3 rounded-xl border border-gray-700 bg-gray-900 text-white text-sm focus:ring-2 focus:ring-white/30 focus:border-white/50 outline-none transition-all backdrop-blur-sm"
                   />
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => sendMessage(input)}
                     disabled={!input.trim()}
-                    className="p-3 bg-gradient-to-br from-gray-900 to-black text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+                            className="p-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
                   >
                     <Send size={18} />
                   </motion.button>

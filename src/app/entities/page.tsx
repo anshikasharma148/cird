@@ -30,7 +30,7 @@ export default function EntitiesPage() {
       subtitle: "Advanced Control Systems Research",
       description: "The Control Development Centre is our premier research facility dedicated to developing sophisticated control systems and automation solutions for industrial applications. Our research spans from basic control theory to advanced AI-driven control mechanisms.",
       icon: Cog,
-      color: "from-cyan-500 to-blue-500",
+      color: "bg-white",
       focusAreas: [
         {
           title: "Software Development",
@@ -75,7 +75,7 @@ export default function EntitiesPage() {
       subtitle: "Specialized Research Laboratory",
       description: "The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological research and development. Our lab focuses on cutting-edge technologies and innovative solutions for modern industrial challenges.",
       icon: Microscope,
-      color: "from-purple-500 to-pink-500",
+      color: "bg-white",
       focusAreas: [
         {
           title: "Materials Research",
@@ -120,7 +120,7 @@ export default function EntitiesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
@@ -133,11 +133,17 @@ export default function EntitiesPage() {
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <Badge className="mb-6 bg-gradient-to-r from-cyan-500 to-purple-500 text-white border-0 px-6 py-2">
-              🏢 Research Entities
-            </Badge>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="mb-6 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+                🏢 Research Entities
+              </Badge>
+            </motion.div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              CIRD <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">Entities</span>
+              CIRD <span className="text-white">Entities</span>
             </h1>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
               Discover our specialized research divisions and laboratories working on 
@@ -158,11 +164,11 @@ export default function EntitiesPage() {
               transition={{ duration: 0.8, delay: entityIndex * 0.3 }}
               className="mb-20"
             >
-              <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-600 p-8">
+              <Card className="bg-white/5 backdrop-blur-md border-white/10 overflow-hidden shadow-xl shadow-black/20 hover:shadow-2xl hover:shadow-white/10 transition-all duration-300">
+                <CardHeader className="bg-white/5 backdrop-blur-sm border-b border-white/10 p-8">
                   <div className="flex items-center space-x-4 mb-6">
-                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${entity.color} shadow-lg`}>
-                      {React.createElement(entity.icon, { className: "w-12 h-12 text-white" })}
+                    <div className={`p-4 rounded-2xl ${entity.color} shadow-lg`}>
+                      {React.createElement(entity.icon, { className: "w-12 h-12 text-black" })}
                     </div>
                     <div>
                       <CardTitle className="text-4xl text-white mb-2">{entity.title}</CardTitle>
@@ -176,19 +182,19 @@ export default function EntitiesPage() {
                   {/* Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-cyan-400 mb-2">{entity.stats.projects}</div>
+                      <div className="text-3xl font-bold text-white mb-2">{entity.stats.projects}</div>
                       <div className="text-sm text-gray-400">Active Projects</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-purple-400 mb-2">{entity.stats.patents}</div>
+                      <div className="text-3xl font-bold text-white mb-2">{entity.stats.patents}</div>
                       <div className="text-sm text-gray-400">Patents Filed</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-green-400 mb-2">{entity.stats.publications}</div>
+                      <div className="text-3xl font-bold text-white mb-2">{entity.stats.publications}</div>
                       <div className="text-sm text-gray-400">Publications</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-yellow-400 mb-2">{entity.stats.researchers}</div>
+                      <div className="text-3xl font-bold text-white mb-2">{entity.stats.researchers}</div>
                       <div className="text-sm text-gray-400">Researchers</div>
                     </div>
                   </div>
@@ -203,11 +209,11 @@ export default function EntitiesPage() {
                           initial={{ opacity: 0, x: -20 }}
                           whileInView={{ opacity: 1, x: 0 }}
                           transition={{ duration: 0.5, delay: areaIndex * 0.1 }}
-                          className="bg-gradient-to-br from-slate-700 to-slate-600 rounded-xl p-6 border border-slate-600 hover:border-cyan-500/50 transition-all duration-300"
+                          className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-white/30 transition-all duration-300 shadow-md hover:shadow-lg"
                         >
                           <div className="flex items-center space-x-3 mb-4">
-                            <div className={`p-2 rounded-lg bg-gradient-to-r ${entity.color}`}>
-                              {React.createElement(area.icon, { className: "w-6 h-6 text-white" })}
+                            <div className={`p-2 rounded-lg ${entity.color}`}>
+                              {React.createElement(area.icon, { className: "w-6 h-6 text-black" })}
                             </div>
                             <h4 className="text-xl font-semibold text-white">{area.title}</h4>
                           </div>
@@ -216,7 +222,7 @@ export default function EntitiesPage() {
                             <h5 className="text-sm font-semibold text-gray-400 mb-2">Key Projects:</h5>
                             {area.projects.map((project, projectIndex) => (
                               <div key={projectIndex} className="flex items-center space-x-2">
-                                <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                                 <span className="text-sm text-gray-300">{project}</span>
                               </div>
                             ))}
@@ -230,26 +236,38 @@ export default function EntitiesPage() {
                   {entity.teamMembers && (
                     <div className="mt-8 pt-8 border-t border-slate-600">
                       <h4 className="text-xl font-semibold text-white mb-4 flex items-center">
-                        <Users className="w-6 h-6 mr-2 text-cyan-400" />
+                        <Users className="w-6 h-6 mr-2 text-white" />
                         Team Members
                       </h4>
                       <div className="grid md:grid-cols-2 gap-3">
                         {entity.teamMembers.map((member, memberIndex) => (
-                          <div key={memberIndex} className="flex items-center space-x-3 p-3 bg-slate-700/50 rounded-lg border border-slate-600">
-                            <div className="w-2 h-2 bg-gradient-to-r from-cyan-400 to-purple-400 rounded-full"></div>
+                          <motion.div
+                            key={memberIndex}
+                            initial={{ opacity: 0, x: -10 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: memberIndex * 0.1 }}
+                            whileHover={{ scale: 1.02, x: 5 }}
+                            className="flex items-center space-x-3 p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/30 transition-all"
+                          >
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
                             <span className="text-gray-300 text-sm">{member}</span>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     </div>
                   )}
 
                   <div className="mt-8 flex justify-center">
-                    <Button 
-                      className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white border-0 px-8 py-3 text-lg font-semibold rounded-full"
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
-                      Learn More About {entity.title} <ArrowRight className="ml-2" size={20} />
-                    </Button>
+                      <Button 
+                        className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-3 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                      >
+                        Learn More About {entity.title} <ArrowRight className="ml-2" size={20} />
+                      </Button>
+                    </motion.div>
                   </div>
                 </CardContent>
               </Card>
@@ -268,7 +286,7 @@ export default function EntitiesPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Research <span className="bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent">Collaboration</span>
+              Research <span className="text-white">Collaboration</span>
             </h2>
             <p className="text-xl text-gray-300 max-w-4xl mx-auto">
               Our entities work together to create synergies and drive innovation across 
@@ -282,19 +300,19 @@ export default function EntitiesPage() {
                 title: "Interdisciplinary Research",
                 description: "Collaborative projects spanning multiple research areas",
                 icon: Users,
-                color: "from-blue-500 to-cyan-500"
+                color: "bg-white"
               },
               {
                 title: "Industry Partnerships",
                 description: "Strong collaborations with leading industrial organizations",
                 icon: Award,
-                color: "from-purple-500 to-pink-500"
+                color: "bg-white"
               },
               {
                 title: "Innovation Metrics",
                 description: "Measurable impact through patents, publications, and projects",
                 icon: TrendingUp,
-                color: "from-green-500 to-emerald-500"
+                color: "bg-white"
               }
             ].map((item, index) => (
               <motion.div
@@ -303,10 +321,10 @@ export default function EntitiesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
               >
-                <Card className="bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600 hover:border-green-500/50 transition-all duration-300 hover:shadow-2xl hover:shadow-green-500/20 text-center">
+                <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/30 transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-xl hover:shadow-white/10 text-center">
                   <CardHeader>
-                    <div className={`p-4 rounded-2xl bg-gradient-to-r ${item.color} mx-auto mb-4 w-fit`}>
-                      {React.createElement(item.icon, { className: "w-8 h-8 text-white" })}
+                    <div className={`p-4 rounded-2xl ${item.color} mx-auto mb-4 w-fit`}>
+                      {React.createElement(item.icon, { className: "w-8 h-8 text-black" })}
                     </div>
                     <CardTitle className="text-2xl text-white">{item.title}</CardTitle>
                     <CardDescription className="text-gray-300 text-base">
@@ -321,7 +339,7 @@ export default function EntitiesPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-r from-cyan-600 to-purple-600">
+      <section className="py-20 bg-black border-t border-gray-800">
         <div className="container mx-auto px-4 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -331,24 +349,34 @@ export default function EntitiesPage() {
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Join Our Research Community
             </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
               Become part of our innovative research community and contribute to 
               groundbreaking discoveries that shape the future.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
-                className="bg-white text-cyan-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full"
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Explore Opportunities <ArrowRight className="ml-2" size={20} />
-              </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="border-2 border-white text-white hover:bg-white hover:text-cyan-600 px-8 py-4 text-lg font-semibold rounded-full"
+                <Button 
+                  size="lg" 
+                  className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                >
+                  Explore Opportunities <ArrowRight className="ml-2" size={20} />
+                </Button>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                Contact Research Teams
-              </Button>
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg shadow-white/10"
+                >
+                  Contact Research Teams
+                </Button>
+              </motion.div>
             </div>
           </motion.div>
         </div>

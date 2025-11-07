@@ -22,7 +22,7 @@ export function Navigation() {
           initial={{ y: -100 }}
           animate={{ y: 0 }}
           transition={{ duration: 0.5 }}
-          className="sticky top-0 z-50 w-full border-b border-slate-700/50 bg-slate-900/95 backdrop-blur supports-backdrop-filter:bg-slate-900/60"
+          className="sticky top-0 z-50 w-full border-b border-gray-800/50 bg-black/80 backdrop-blur-xl supports-backdrop-filter:bg-black/70 shadow-lg shadow-black/20"
         >
           <div className="container mx-auto px-4 sm:px-8 md:px-16 flex h-16 items-center justify-between">
             <div className="flex">
@@ -32,7 +32,7 @@ export function Navigation() {
                   transition={{ duration: 0.2 }}
                   className="text-left"
                 >
-                  <div className="font-bold text-sm sm:text-lg md:text-xl bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                  <div className="font-bold text-sm sm:text-lg md:text-xl text-white">
                     <span className="hidden sm:inline">Centre for Industrial Research and Development</span>
                     <span className="sm:hidden">CIRD</span>
                   </div>
@@ -43,27 +43,32 @@ export function Navigation() {
             <NavigationMenu>
               <NavigationMenuList className="hidden sm:flex">
                 <NavigationMenuItem>
-                  <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-cyan-500/20 hover:text-cyan-300 focus:bg-cyan-500/20 focus:text-cyan-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">Home</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-purple-500/20 hover:text-purple-300 focus:bg-purple-500/20 focus:text-purple-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">About</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/research" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-green-500/20 hover:text-green-300 focus:bg-green-500/20 focus:text-green-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/research" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">Research</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/entities" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-yellow-500/20 hover:text-yellow-300 focus:bg-yellow-500/20 focus:text-yellow-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/entities" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">Entities</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-pink-500/20 hover:text-pink-300 focus:bg-pink-500/20 focus:text-pink-300 focus:outline-none disabled:pointer-events-none disabled:opacity-50">
+                  <Link href="/training" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
+                    <span className="group-hover:scale-105 transition-transform duration-200">Training</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
                   </Link>
                 </NavigationMenuItem>
@@ -87,22 +92,25 @@ export function Navigation() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="sm:hidden bg-slate-800 border-t border-slate-700"
+              className="sm:hidden bg-black border-t border-gray-800"
             >
               <div className="px-4 py-4 space-y-2">
-                <Link href="/" className="block px-4 py-2 text-white hover:bg-slate-700 rounded-md">
+                <Link href="/" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Home
                 </Link>
-                <Link href="/about" className="block px-4 py-2 text-white hover:bg-slate-700 rounded-md">
+                <Link href="/about" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   About
                 </Link>
-                <Link href="/research" className="block px-4 py-2 text-white hover:bg-slate-700 rounded-md">
+                <Link href="/research" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Research
                 </Link>
-                <Link href="/entities" className="block px-4 py-2 text-white hover:bg-slate-700 rounded-md">
+                <Link href="/entities" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Entities
                 </Link>
-                <Link href="http://115.242.156.230:3000" target="_blank" className="block px-4 py-2 text-white hover:bg-slate-700 rounded-md">
+                <Link href="/training" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
+                  Training
+                </Link>
+                <Link href="http://115.242.156.230:3000" target="_blank" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Hydrology
                 </Link>
               </div>
