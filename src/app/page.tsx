@@ -89,7 +89,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* MTL Lab (Mechanical Testing Lab) Card */}
+            
             <div className="bg-gradient-to-br from-slate-800 to-slate-700 border border-slate-600 rounded-lg p-8 hover:border-purple-500/50 transition-all duration-300">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
