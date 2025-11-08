@@ -78,22 +78,6 @@ export default function HeroSection() {
       </motion.div>
 
       <div className="relative z-10 text-center px-8 md:px-16 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Badge className="mb-6 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 text-sm font-medium shadow-lg shadow-white/10">
-              Advanced Research & Development
-            </Badge>
-          </motion.div>
-        </motion.div>
-
         <motion.h1
           className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 text-white"
           initial={{ opacity: 0, y: 30 }}

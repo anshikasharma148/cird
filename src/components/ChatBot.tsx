@@ -18,6 +18,7 @@ import {
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 /* ----------------------- Types ----------------------- */
 type Message = {
@@ -195,6 +196,7 @@ export default function ChatBot() {
   const [showFilters, setShowFilters] = useState(false);
   const [isGeneratingAnswer, setIsGeneratingAnswer] = useState(false);
   const [suggestionsUpdated, setSuggestionsUpdated] = useState(false); // Track if suggestions have been updated
+  const [chatbotImageError, setChatbotImageError] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -450,7 +452,7 @@ export default function ChatBot() {
   return (
     <>
       {/* Enhanced Floating Button with Glass Effect */}
-      <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-end gap-3">
+      <div className="fixed bottom-6 right-6 z-[1000] flex flex-col items-end gap-2">
         <AnimatePresence>
           {popupVisible && !open && (
             <motion.div
@@ -468,21 +470,82 @@ export default function ChatBot() {
           )}
         </AnimatePresence>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Open chat"
-          title="Open chat"
-          onClick={() => {
-            setOpen(true);
-            setPopupVisible(false);
-            refreshSuggestions(activeTag);
-            setTimeout(() => inputRef.current?.focus(), 300);
-          }}
-          className="w-14 h-14 rounded-full bg-white text-black shadow-2xl flex items-center justify-center hover:bg-gray-200 transition-all duration-300 backdrop-blur-sm"
-        >
-          <MessageCircle size={22} />
-        </motion.button>
+        <div className="relative flex items-center justify-center">
+          {/* Circular text path for SAARTHI - positioned on top */}
+          <div className="relative w-40 h-40 flex items-center justify-center">
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              viewBox="0 0 180 180"
+              style={{ overflow: 'visible' }}
+            >
+              <defs>
+                {/* Circular path - upper arc only, starting from top (12 o'clock) */}
+                <path
+                  id="circlePath"
+                  d="M 35, 90 A 55, 55 0 0, 1 145, 90"
+                  fill="none"
+                />
+              </defs>
+              <text
+                fill="white"
+                fontSize="16"
+                fontWeight="bold"
+                letterSpacing="5"
+                style={{
+                  textShadow: '0 2px 8px rgba(0,0,0,0.9)',
+                  filter: 'drop-shadow(0 3px 6px rgba(0,0,0,1))'
+                }}
+              >
+                <textPath 
+                  href="#circlePath" 
+                  startOffset="50%"
+                  textAnchor="middle"
+                >
+                  SAARTHI
+                </textPath>
+              </text>
+            </svg>
+            
+            {/* Chatbot Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Open chat"
+              title="Open chat"
+              onClick={() => {
+                setOpen(true);
+                setPopupVisible(false);
+                refreshSuggestions(activeTag);
+                setTimeout(() => inputRef.current?.focus(), 300);
+              }}
+              className="relative w-16 h-16 rounded-full bg-transparent border-none shadow-2xl flex items-center justify-center hover:opacity-90 transition-all duration-300 overflow-visible z-10 p-0"
+            >
+              {!chatbotImageError ? (
+                <div className="relative w-full h-full">
+                  <Image
+                    src="/assets/chatbot.png"
+                    alt="SAARTHI Chatbot"
+                    fill
+                    className="object-contain"
+                    style={{ objectFit: 'contain' }}
+                    unoptimized
+                    priority
+                    sizes="64px"
+                    onError={(e) => {
+                      console.error("Failed to load chatbot.png from /assets/chatbot.png");
+                      console.error("Error details:", e);
+                      setChatbotImageError(true);
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full">
+                  <MessageCircle size={28} className="text-white" />
+                </div>
+              )}
+            </motion.button>
+          </div>
+        </div>
       </div>
 
       {/* Enhanced Chat Window */}

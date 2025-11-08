@@ -14,6 +14,7 @@ import {
   ArrowRight,
   CheckCircle
 } from "lucide-react";
+import Link from "next/link";
 
 export default function AboutPage() {
   return (
@@ -383,13 +384,29 @@ export default function AboutPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg shadow-white/10"
-                >
-                  View Research
-                </Button>
+                <Link href="/research">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg shadow-white/10"
+                  >
+                    View Research
+                  </Button>
+                </Link>
+              </motion.div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link href="/team">
+                  <Button 
+                    size="lg"
+                    className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                  >
+                    Know Our Team
+                    <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>

@@ -22,6 +22,7 @@ import {
   Award,
   TrendingUp
 } from "lucide-react";
+import Link from "next/link";
 
 export default function EntitiesPage() {
   const entities = [
@@ -262,11 +263,13 @@ export default function EntitiesPage() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Button 
-                        className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-3 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
-                      >
-                        Learn More About {entity.title} <ArrowRight className="ml-2" size={20} />
-                      </Button>
+                      <Link href={entity.title === "CDC - Control Development Centre" ? "/entities/cdc" : "/entities/mtl"}>
+                        <Button 
+                          className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-3 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                        >
+                          Learn More About {entity.title} <ArrowRight className="ml-2" size={20} />
+                        </Button>
+                      </Link>
                     </motion.div>
                   </div>
                 </CardContent>

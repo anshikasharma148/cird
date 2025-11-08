@@ -33,8 +33,7 @@ export function Navigation() {
                   className="text-left"
                 >
                   <div className="font-bold text-sm sm:text-lg md:text-xl text-white">
-                    <span className="hidden sm:inline">Centre for Industrial Research and Development</span>
-                    <span className="sm:hidden">CIRD</span>
+                    <span className="font-bold">CIRD</span>
                   </div>
                   <div className="text-xs sm:text-sm text-gray-400">CIRD - JUET, Guna</div>
                 </motion.div>
@@ -65,6 +64,11 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <Link href="/training" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
                     <span className="group-hover:scale-105 transition-transform duration-200">Training</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link href="/team" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black focus:bg-white focus:text-black focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-gray-300">
+                    <span className="group-hover:scale-105 transition-transform duration-200">Team</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
@@ -109,6 +113,9 @@ export function Navigation() {
                 </Link>
                 <Link href="/training" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Training
+                </Link>
+                <Link href="/team" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
+                  Team
                 </Link>
                 <Link href="http://115.242.156.230:3000" target="_blank" className="block px-4 py-2 text-white hover:bg-white hover:text-black rounded-md transition-colors">
                   Hydrology
