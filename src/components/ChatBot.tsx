@@ -14,6 +14,7 @@ import {
   Bot,
   User,
   Filter,
+  Square,
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
@@ -43,7 +44,7 @@ const formatTime = (ts: number) =>
 const STORAGE_KEY = (path: string) => `cird_chat_v2:${path || "root"}`;
 
 const DEFAULT_GREETING =
-  "Hello! I'm CIRD Assistant. I can help you explore research projects, patents, collaborations, and more. What would you like to know?";
+  "Hello! I'm your SAARTHI. I can help you explore research projects, patents, collaborations, and more. What would you like to know?";
 
 const DEFAULT_MESSAGES: Message[] = [
   {
@@ -65,7 +66,8 @@ const fuse = new Fuse(faqs, {
 
 async function streamChatResponse(
   question: string,
-  onUpdate: (text: string) => void
+  onUpdate: (text: string) => void,
+  abortSignal?: AbortSignal
 ): Promise<void> {
   const baseURL =
     process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -75,50 +77,76 @@ async function streamChatResponse(
 
   console.log("🌐 Chat API base URL:", baseURL);
 
-  const response = await fetch(`${baseURL}/api/chat`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question }),
-  });
+  try {
+    const response = await fetch(`${baseURL}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ question }),
+      signal: abortSignal,
+    });
 
-  if (!response.ok) {
-    console.error("❌ Chat API error:", response.status, response.statusText);
-    onUpdate("Sorry, the assistant is temporarily unavailable. Please try again later.");
-    return;
-  }
+    if (!response.ok) {
+      console.error("❌ Chat API error:", response.status, response.statusText);
+      onUpdate("Sorry, the assistant is temporarily unavailable. Please try again later.");
+      return;
+    }
 
-  // ✅ Type-safe reader
-  const reader: ReadableStreamDefaultReader<Uint8Array> | undefined = response.body?.getReader();
-  const decoder = new TextDecoder("utf-8");
-  let botText = "";
+    // ✅ Type-safe reader
+    const reader: ReadableStreamDefaultReader<Uint8Array> | undefined = response.body?.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let botText = "";
 
-  // ✅ Add a typed delay helper
-  const delay = (ms: number): Promise<void> =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+    // ✅ Add a typed delay helper
+    const delay = (ms: number): Promise<void> =>
+      new Promise((resolve) => setTimeout(resolve, ms));
 
-  if (!reader) {
-    console.error("⚠️ Stream reader unavailable");
-    onUpdate("Sorry, something went wrong initializing the chat stream.");
-    return;
-  }
+    if (!reader) {
+      console.error("⚠️ Stream reader unavailable");
+      onUpdate("Sorry, something went wrong initializing the chat stream.");
+      return;
+    }
 
-  // ✅ Stream loop (typed)
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
+    // ✅ Stream loop (typed)
+    while (true) {
+      // Check if aborted
+      if (abortSignal?.aborted) {
+        reader.cancel();
+        break;
+      }
 
-    const chunk = decoder.decode(value, { stream: true });
-    const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+      const { value, done } = await reader.read();
+      if (done) break;
 
-    for (const line of lines) {
-      if (line === "data: [DONE]") return;
-      if (line.startsWith("data: ")) {
-        const content = line.replace("data: ", "");
-        botText += content;
-        onUpdate(botText);
-        await delay(120); // simulate natural typing
+      // Check again after read
+      if (abortSignal?.aborted) {
+        reader.cancel();
+        break;
+      }
+
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n").filter((line) => line.trim() !== "");
+
+      for (const line of lines) {
+        if (abortSignal?.aborted) {
+          reader.cancel();
+          return;
+        }
+        if (line === "data: [DONE]") return;
+        if (line.startsWith("data: ")) {
+          const content = line.replace("data: ", "");
+          botText += content;
+          onUpdate(botText);
+          await delay(120); // simulate natural typing
+        }
       }
     }
+  } catch (error: any) {
+    if (error.name === 'AbortError') {
+      console.log("Stream cancelled by user");
+      return;
+    }
+    console.error("Error in streamChatResponse:", error);
+    onUpdate("Sorry, an error occurred. Please try again.");
   }
 }
 
@@ -197,10 +225,12 @@ export default function ChatBot() {
   const [isGeneratingAnswer, setIsGeneratingAnswer] = useState(false);
   const [suggestionsUpdated, setSuggestionsUpdated] = useState(false); // Track if suggestions have been updated
   const [chatbotImageError, setChatbotImageError] = useState(false);
+  const [isStreaming, setIsStreaming] = useState(false);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
@@ -307,10 +337,30 @@ export default function ChatBot() {
     setSuggestions([selected, ...shuffledSuggestions.slice(0, 3)]); // Keep the selected question and shuffle the rest
   };
 
+  /* ---------------- Stop streaming function ---------------- */
+  const stopStreaming = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsStreaming(false);
+    setIsTyping(false);
+    setIsGeneratingAnswer(false);
+  }, []);
+
   /* ---------------- Enhanced Sending & resolving ---------------- */
   const sendMessage = useCallback(async (raw: string) => {
     const cleaned = raw.trim();
     if (!cleaned) return;
+
+    // Cancel any existing stream
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     // Add the user message to the state
     const userMsg: Message = {
@@ -324,6 +374,7 @@ export default function ChatBot() {
     setInput("");
     setIsTyping(true);
     setIsGeneratingAnswer(true);
+    setIsStreaming(true);
 
     // Create a placeholder for the bot message with "Thinking..." text
     const botMsg: Message = {
@@ -343,16 +394,27 @@ export default function ChatBot() {
       setMessages((prev) =>
         prev.map((m) => (m.id === botMsg.id ? { ...m, text: newText } : m))
       );
-    });
+    }, abortController.signal);
 
     // Stop typing and refresh suggestions after the message finishes
+    setIsStreaming(false);
     setIsTyping(false);
     setIsGeneratingAnswer(false);
+    abortControllerRef.current = null;
     refreshSuggestions(activeTag); // Refresh suggestions only once after response is generated
-  }, [activeTag, suggestionsUpdated]);
+  }, [activeTag, refreshSuggestions]);
 
   /* --------------- Enhanced Regenerate ---------------- */
   const regenerateAnswer = async (botMessageId: string) => {
+    // Cancel any existing stream
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     const safeMessages = Array.isArray(messages) ? messages : DEFAULT_MESSAGES;
     const idx = safeMessages.findIndex((m) => m.id === botMessageId);
     if (idx === -1) return;
@@ -460,7 +522,7 @@ export default function ChatBot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              className="bg-black/95 backdrop-blur-md border border-gray-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl"
+              className="bg-blue-950/95 backdrop-blur-md border border-blue-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl"
             >
               <div className="flex items-center gap-2">
                 <Sparkles size={16} className="text-white" />
@@ -521,13 +583,12 @@ export default function ChatBot() {
               className="relative w-16 h-16 rounded-full bg-transparent border-none shadow-2xl flex items-center justify-center hover:opacity-90 transition-all duration-300 overflow-visible z-10 p-0"
             >
               {!chatbotImageError ? (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full rounded-full overflow-hidden">
                   <Image
                     src="/assets/chatbot.png"
                     alt="SAARTHI Chatbot"
                     fill
-                    className="object-contain"
-                    style={{ objectFit: 'contain' }}
+                    className="object-cover"
                     unoptimized
                     priority
                     sizes="64px"
@@ -539,7 +600,7 @@ export default function ChatBot() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-white/10 backdrop-blur-sm rounded-full">
+                <div className="w-full h-full flex items-center justify-center bg-blue-600/20 backdrop-blur-sm rounded-full">
                   <MessageCircle size={28} className="text-white" />
                 </div>
               )}
@@ -553,7 +614,7 @@ export default function ChatBot() {
         {open && (
           <>
             <motion.div
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[999]"
+              className="fixed inset-0 bg-blue-950/20 backdrop-blur-sm z-[999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -570,14 +631,14 @@ export default function ChatBot() {
                 stiffness: 300,
                 mass: 0.8
               }}
-              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-black/95 backdrop-blur-xl text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-800"
+              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-blue-950/95 backdrop-blur-xl text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-blue-800"
               style={{
                 height: "min(80vh, 650px)",
                 maxHeight: "650px",
               }}
             >
               {/* Enhanced Header */}
-              <div className="flex items-center justify-between bg-black text-white px-5 py-4 border-b border-gray-800">
+              <div className="flex items-center justify-between bg-blue-950 text-white px-5 py-4 border-b border-blue-800">
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
@@ -590,7 +651,7 @@ export default function ChatBot() {
                     />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold">CIRD Assistant</h2>
+                    <h2 className="text-lg font-semibold">SAARTHI</h2>
                     <p className="text-xs text-gray-300 opacity-90">
                       Research • Projects • Patents
                     </p>
@@ -602,7 +663,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowFilters(!showFilters)}
                     title="Toggle filters"
-                    className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
                   >
                     <Filter size={16} />
                   </motion.button>
@@ -611,7 +672,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={exportChat} 
                     title="Export conversation" 
-                    className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
                   >
                     <Download size={16} />
                   </motion.button>
@@ -620,7 +681,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={clearChat} 
                     title="Clear conversation" 
-                    className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
                   >
                     <Trash2 size={16} />
                   </motion.button>
@@ -629,7 +690,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setOpen(false)} 
                     title="Close chat" 
-                    className="p-2 hover:bg-white/10 rounded-xl transition-colors"
+                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
                   >
                     <X size={18} />
                   </motion.button>
@@ -643,12 +704,12 @@ export default function ChatBot() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-b border-gray-200/50 bg-white/80 backdrop-blur-sm overflow-hidden"
+                    className="border-b border-blue-200/50 bg-blue-50/80 backdrop-blur-sm overflow-hidden"
                   >
                     <div className="px-4 py-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <Tag size={14} className="text-gray-500" />
-                        <span className="text-xs font-medium text-gray-600">FILTER BY TOPIC</span>
+                        <Tag size={14} className="text-blue-600" />
+                        <span className="text-xs font-medium text-blue-900">FILTER BY TOPIC</span>
                       </div>
                       
                       <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
@@ -663,8 +724,8 @@ export default function ChatBot() {
                             }}
                             className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full border backdrop-blur-sm transition-all ${
                               activeTag === t
-                                ? "bg-white text-black border-white shadow-md"
-                                : "bg-gray-900 text-white border-gray-700 hover:bg-gray-800 hover:border-gray-600"
+                                ? "bg-blue-600 text-white border-blue-500 shadow-md"
+                                : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50 hover:border-blue-400"
                             }`}
                           >
                             <Tag size={10} />
@@ -680,7 +741,7 @@ export default function ChatBot() {
               {/* Enhanced Messages Area - More space now */}
               <div 
                 ref={containerRef} 
-                className="flex-1 overflow-y-auto p-4 bg-black space-y-4"
+                className="flex-1 overflow-y-auto p-4 bg-blue-950 space-y-4"
               >
                 {messages.map((m, index) => (
                   <motion.div
@@ -692,15 +753,15 @@ export default function ChatBot() {
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
                       {m.sender === "bot" && (
-                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
-                          <Bot size={12} className="text-black" />
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                          <Bot size={12} className="text-white" />
                         </div>
                       )}
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm shadow-sm backdrop-blur-sm ${
                           m.sender === "user"
-                            ? "bg-white text-black rounded-br-md"
-                            : "bg-gray-900 border border-gray-700 text-white rounded-bl-md"
+                            ? "bg-blue-600 text-white rounded-br-md"
+                            : "bg-white border border-blue-200 text-slate-900 rounded-bl-md"
                         }`}
                       >
                         <div className="whitespace-pre-wrap leading-relaxed">
@@ -712,7 +773,7 @@ export default function ChatBot() {
                                     <button
                                       key={idx}
                                       onClick={() => router.push(part)}
-                                      className="text-white hover:text-gray-300 underline font-medium cursor-pointer"
+                                      className="text-blue-600 hover:text-blue-700 underline font-medium cursor-pointer"
                                     >
                                       Know More
                                     </button>
@@ -728,7 +789,7 @@ export default function ChatBot() {
                         
                         {/* Message Footer */}
                         <div className="flex items-center justify-between mt-2 text-xs">
-                          <span className={`${m.sender === "user" ? "text-gray-300" : "text-gray-500"}`}>
+                          <span className={`${m.sender === "user" ? "text-blue-100" : "text-slate-500"}`}>
                             {formatTime(m.time)}
                           </span>
                           
@@ -747,17 +808,17 @@ export default function ChatBot() {
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={() => regenerateAnswer(m.id)}
-                                  className="p-1 hover:bg-gray-100 rounded transition-colors"
+                                  className="p-1 hover:bg-blue-50 rounded transition-colors"
                                   title="Regenerate response"
                                 >
-                                  <CornerUpLeft size={12} />
+                                  <CornerUpLeft size={12} className="text-slate-600" />
                                 </button>
                                 <button
                                   onClick={() => handleReaction(m.id, "liked")}
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "liked" 
-                                      ? "text-green-500 bg-green-50" 
-                                      : "hover:bg-gray-100"
+                                      ? "text-green-600 bg-green-50" 
+                                      : "hover:bg-blue-50"
                                   }`}
                                   title="Helpful response"
                                 >
@@ -767,8 +828,8 @@ export default function ChatBot() {
                                   onClick={() => handleReaction(m.id, "disliked")}
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "disliked" 
-                                      ? "text-red-500 bg-red-50" 
-                                      : "hover:bg-gray-100"
+                                      ? "text-red-600 bg-red-50" 
+                                      : "hover:bg-blue-50"
                                   }`}
                                   title="Not helpful"
                                 >
@@ -780,8 +841,8 @@ export default function ChatBot() {
                         </div>
                       </div>
                       {m.sender === "user" && (
-                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
-                          <User size={12} className="text-black" />
+                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                          <User size={12} className="text-white" />
                         </div>
                       )}
                     </div>
@@ -796,27 +857,27 @@ export default function ChatBot() {
                     className="flex justify-start"
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
-                      <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center flex-shrink-0 mt-1">
-                        <Bot size={12} className="text-black" />
+                      <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                        <Bot size={12} className="text-white" />
                       </div>
-                      <div className="bg-gray-900 border border-gray-700 px-4 py-3 rounded-2xl rounded-bl-md">
+                      <div className="bg-white border border-blue-200 px-4 py-3 rounded-2xl rounded-bl-md">
                         <div className="flex items-center gap-2">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-white rounded-full"
+                            className="w-2 h-2 bg-blue-600 rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-white rounded-full"
+                            className="w-2 h-2 bg-blue-600 rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-white rounded-full"
+                            className="w-2 h-2 bg-blue-600 rounded-full"
                           />
-                          <span className="text-xs text-gray-400 ml-2">Thinking...</span>
+                          <span className="text-xs text-slate-600 ml-2">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -827,10 +888,10 @@ export default function ChatBot() {
 
               {/* Enhanced Suggestions - Now more compact */}
               {suggestions.length > 0 && (
-                <div className="border-t border-gray-200/50 bg-white/80 backdrop-blur-sm px-4 py-2">
+                <div className="border-t border-blue-200/50 bg-blue-50/80 backdrop-blur-sm px-4 py-2">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={12} className="text-blue-500" />
-                    <span className="text-xs font-medium text-gray-600">QUICK SUGGESTIONS</span>
+                    <Sparkles size={12} className="text-blue-600" />
+                    <span className="text-xs font-medium text-blue-900">QUICK SUGGESTIONS</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {suggestions.map((s) => (
@@ -842,7 +903,7 @@ export default function ChatBot() {
                           shuffleSuggestions(s); // Shuffle suggestions when user selects one
                           sendMessage(s); // Send the selected suggestion as message
                         }}
-                        className="px-2 py-1 text-xs bg-gray-900 border border-gray-700 rounded-lg hover:bg-gray-800 hover:border-gray-600 transition-all backdrop-blur-sm text-white"
+                        className="px-2 py-1 text-xs bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:border-blue-600 transition-all backdrop-blur-sm text-white"
                       >
                         {s}
                       </motion.button>
@@ -852,7 +913,7 @@ export default function ChatBot() {
               )}
 
               {/* Enhanced Input Area */}
-              <div className="border-t border-gray-200/50 p-4 bg-white/90 backdrop-blur-sm">
+              <div className="border-t border-blue-200/50 p-4 bg-blue-50/90 backdrop-blur-sm">
                 <div className="flex gap-3">
                   <input
                     ref={inputRef}
@@ -861,21 +922,36 @@ export default function ChatBot() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
-                        sendMessage(input);
+                        if (!isStreaming) {
+                          sendMessage(input);
+                        }
                       }
                     }}
                     placeholder="Ask about research, projects, patents..."
-                          className="flex-1 px-4 py-3 rounded-xl border border-gray-700 bg-gray-900 text-white text-sm focus:ring-2 focus:ring-white/30 focus:border-white/50 outline-none transition-all backdrop-blur-sm"
+                    disabled={isStreaming}
+                    className="flex-1 px-4 py-3 rounded-xl border border-blue-300 bg-white text-slate-900 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   />
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => sendMessage(input)}
-                    disabled={!input.trim()}
-                            className="p-3 bg-white text-black rounded-xl hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
-                  >
-                    <Send size={18} />
-                  </motion.button>
+                  {isStreaming ? (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={stopStreaming}
+                      className="p-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all backdrop-blur-sm"
+                      title="Stop generating"
+                    >
+                      <Square size={18} />
+                    </motion.button>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => sendMessage(input)}
+                      disabled={!input.trim()}
+                      className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+                    >
+                      <Send size={18} />
+                    </motion.button>
+                  )}
                 </div>
               </div>
             </motion.div>

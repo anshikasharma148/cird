@@ -9,7 +9,7 @@ export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Animated Background Elements with Glass Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -18,7 +18,7 @@ export default function HeroSection() {
         </div>
         {/* Subtle animated gradient orbs */}
         <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -30,7 +30,7 @@ export default function HeroSection() {
           }}
         />
         <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -98,20 +98,20 @@ export default function HeroSection() {
         </motion.h2>
         
         <motion.div
-          className="mb-6 p-4 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 shadow-lg shadow-black/20"
+          className="mb-6 p-4 bg-blue-500/10 backdrop-blur-md rounded-lg border border-blue-400/30 shadow-lg shadow-blue-900/20"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
           whileHover={{ 
             scale: 1.02,
-            borderColor: "rgba(255, 255, 255, 0.2)",
-            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3)"
+            borderColor: "rgba(96, 165, 250, 0.5)",
+            boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.3)"
           }}
         >
           <p className="text-lg font-semibold text-white text-center">
             MoU Signed Between JUs and JPVL
           </p>
-          <p className="text-sm text-gray-400 text-center mt-1">
+          <p className="text-sm text-blue-200 text-center mt-1">
             Technical Professional Consultancy Projects under the MoU
           </p>
         </motion.div>
@@ -148,7 +148,7 @@ export default function HeroSection() {
           >
             <Button 
               size="lg" 
-              className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl shadow-white/20 transition-all duration-300"
+              className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-500 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl shadow-blue-900/50 transition-all duration-300"
             >
               Explore Research
               <ArrowRight className="ml-2" size={20} />

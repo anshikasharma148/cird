@@ -18,9 +18,9 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
@@ -38,7 +38,7 @@ export default function AboutPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 shadow-lg shadow-white/10">
+              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
                 About CIRD
               </Badge>
             </motion.div>
@@ -55,12 +55,12 @@ export default function AboutPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               whileHover={{ scale: 1.02 }}
-              className="mt-8 p-6 bg-white/5 backdrop-blur-md rounded-lg border border-white/10 shadow-lg shadow-black/20"
+              className="mt-8 p-6 bg-blue-500/10 backdrop-blur-md rounded-lg border border-blue-400/30 shadow-lg shadow-blue-900/20"
             >
               <p className="text-lg font-semibold text-white mb-2">
                 MoU Signed Between JUs   and JPVL
               </p>
-              <p className="text-gray-300">
+              <p className="text-blue-200">
                 Technical Professional Consultancy Projects under the MoU
               </p>
             </motion.div>

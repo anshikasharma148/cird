@@ -235,7 +235,7 @@ function ProfileImage({ member }: { member: any }) {
 
   return (
     <div className="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0">
-      <div className="absolute inset-0 rounded-full bg-white/10 border-4 border-white/20"></div>
+      <div className="absolute inset-0 rounded-full bg-blue-50 border-4 border-blue-200"></div>
       <div className="relative w-full h-full rounded-full overflow-hidden">
         {!imageError ? (
           <Image
@@ -249,8 +249,8 @@ function ProfileImage({ member }: { member: any }) {
             onError={handleImageError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-white/5">
-            <span className="text-white text-4xl font-bold">{initials}</span>
+          <div className="w-full h-full flex items-center justify-center bg-blue-100">
+            <span className="text-blue-900 text-4xl font-bold">{initials}</span>
           </div>
         )}
       </div>
@@ -265,11 +265,11 @@ export default function TeamMemberPage() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Team Member Not Found</h1>
           <Link href="/team">
-            <Button className="bg-white text-black hover:bg-gray-200">
+            <Button className="bg-blue-600 text-white hover:bg-blue-700">
               Back to Team
             </Button>
           </Link>
@@ -282,9 +282,9 @@ export default function TeamMemberPage() {
   const ongoingProjects = member.projects.filter((p: any) => p.status === "ongoing");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
           <Link href="/team">
             <Button variant="ghost" className="mb-6 text-white hover:text-gray-300">
@@ -302,7 +302,7 @@ export default function TeamMemberPage() {
             <ProfileImage member={member} />
             
             <div className="flex-1 text-center md:text-left">
-              <Badge className="mb-4 bg-white/95 backdrop-blur-md text-black border border-white/20 px-4 py-1">
+              <Badge className="mb-4 bg-blue-600 text-white border border-blue-500 px-4 py-1 shadow-lg shadow-blue-900/30">
                 {member.designation}
               </Badge>
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
@@ -317,47 +317,47 @@ export default function TeamMemberPage() {
       </section>
 
       {/* Bio Section */}
-      <section className="py-16 bg-gradient-to-b from-slate-800 to-slate-900">
+      <section className="py-16 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20 mb-8"
+            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8"
           >
-            <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-              <Briefcase className="w-8 h-8" />
+            <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+              <Briefcase className="w-8 h-8 text-blue-600" />
               Biography
             </h2>
-            <p className="text-gray-300 leading-relaxed text-lg mb-6">
+            <p className="text-slate-700 leading-relaxed text-lg mb-6">
               {member.bio}
             </p>
             
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-blue-600" />
                   Education
                 </h3>
-                <p className="text-gray-300">{member.education}</p>
+                <p className="text-slate-700">{member.education}</p>
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-white mb-3 flex items-center gap-2">
-                  <Award className="w-5 h-5" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-blue-600" />
                   Experience
                 </h3>
-                <p className="text-gray-300">{member.experience}</p>
+                <p className="text-slate-700">{member.experience}</p>
               </div>
             </div>
 
             {member.achievements && member.achievements.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-white mb-4">Key Achievements</h3>
+                <h3 className="text-xl font-semibold text-slate-900 mb-4">Key Achievements</h3>
                 <ul className="space-y-2">
                   {member.achievements.map((achievement: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 text-gray-300">
-                      <CheckCircle className="w-5 h-5 text-white mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 text-slate-700">
+                      <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                       <span>{achievement}</span>
                     </li>
                   ))}
@@ -371,10 +371,10 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20 mb-8"
+            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8"
           >
-            <h2 className="text-3xl font-bold text-white mb-4">Role at CIRD</h2>
-            <p className="text-gray-300 leading-relaxed text-lg">
+            <h2 className="text-3xl font-bold text-slate-900 mb-4">Role at CIRD</h2>
+            <p className="text-slate-700 leading-relaxed text-lg">
               {member.cirdRole}
             </p>
           </motion.div>
@@ -384,29 +384,29 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20"
+            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
           >
-            <h2 className="text-3xl font-bold text-white mb-6">CIRD Projects</h2>
+            <h2 className="text-3xl font-bold text-slate-900 mb-6">CIRD Projects</h2>
             
             {completedProjects.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6 text-white" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-6 h-6 text-blue-600" />
                   Completed Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {completedProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white/5 border-white/10">
+                    <Card key={project.id} className="bg-white border-blue-200">
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <Badge className="bg-white/10 text-white border-white/20">
+                          <Badge className="bg-blue-100 text-blue-900 border-blue-300">
                             {project.id}
                           </Badge>
-                          <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
+                          <Badge className="bg-green-100 text-green-900 border-green-300">
                             Completed
                           </Badge>
                         </div>
-                        <CardTitle className="text-white mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-slate-900 mt-2">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}
@@ -416,23 +416,23 @@ export default function TeamMemberPage() {
 
             {ongoingProjects.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <Clock className="w-6 h-6 text-white" />
+                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
+                  <Clock className="w-6 h-6 text-blue-600" />
                   Ongoing Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {ongoingProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white/5 border-white/10">
+                    <Card key={project.id} className="bg-white border-blue-200">
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <Badge className="bg-white/10 text-white border-white/20">
+                          <Badge className="bg-blue-100 text-blue-900 border-blue-300">
                             {project.id}
                           </Badge>
-                          <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30">
+                          <Badge className="bg-blue-600 text-white border-blue-500">
                             Ongoing
                           </Badge>
                         </div>
-                        <CardTitle className="text-white mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-slate-900 mt-2">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}
