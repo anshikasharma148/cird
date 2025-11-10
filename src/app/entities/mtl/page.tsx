@@ -187,7 +187,8 @@ export default function MTLPage() {
                           fill
                           className="object-cover"
                           sizes="100vw"
-                          unoptimized
+                          priority={index === 0}
+                          loading={index === currentSlide ? "eager" : "lazy"}
                           onError={() => handleImageError(index)}
                         />
                       ) : (

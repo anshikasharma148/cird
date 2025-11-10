@@ -245,7 +245,7 @@ function ProfileImage({ member }: { member: any }) {
             fill
             className="object-cover"
             sizes="256px"
-            unoptimized
+            priority
             onError={handleImageError}
           />
         ) : (

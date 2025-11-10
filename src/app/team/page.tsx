@@ -161,6 +161,15 @@ const teamMembers: TeamMember[] = [
   },
   // Nodal Officers of JPVL
   {
+    id: "mkv-rama-rao",
+    name: "Sh. M.K.V Rama Rao",
+    designation: "CTO",
+    department: "JPVL",
+    role: "nodal",
+    slug: "mkv-rama-rao",
+    hasDetailPage: false
+  },
+  {
     id: "nadeem-ahmed",
     name: "Sh. Nadeem Ahmed",
     designation: "",
@@ -242,15 +251,6 @@ const teamMembers: TeamMember[] = [
     hasDetailPage: false
   },
   {
-    id: "mkv-rama-rao",
-    name: "Sh. M.K.V Rama Rao",
-    designation: "CTO",
-    department: "JPVL",
-    role: "nodal",
-    slug: "mkv-rama-rao",
-    hasDetailPage: false
-  },
-  {
     id: "arup-ghosh",
     name: "Sh. Arup Kumar Ghosh",
     designation: "",
@@ -322,7 +322,7 @@ export default function TeamPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
             {coordinationCommittee.map((member, index) => (
               <TeamMemberCard key={member.id} member={member} index={index} />
             ))}
@@ -350,7 +350,7 @@ export default function TeamPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
             {technicalConsultants.map((member, index) => (
               <TeamMemberCard key={member.id} member={member} index={index} />
             ))}
@@ -378,7 +378,7 @@ export default function TeamPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
             {cdcTeam.map((member, index) => (
               <TeamMemberCard key={member.id} member={member} index={index} />
             ))}
@@ -407,7 +407,7 @@ export default function TeamPage() {
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
               {nodalOfficers.map((member, index) => (
                 <TeamMemberCard key={member.id} member={member} index={index} />
               ))}
@@ -463,6 +463,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: index * 0.1 }}
       whileHover={{ y: -5 }}
+      className="w-full max-w-[320px]"
     >
       <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 h-full shadow-lg hover:shadow-xl">
         <CardHeader className="text-center">
@@ -476,7 +477,8 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   fill
                   className="object-cover"
                   sizes="192px"
-                  unoptimized
+                  priority={index < 2}
+                  loading={index < 2 ? "eager" : "lazy"}
                   onError={() => {
                     // Try next image path if available
                     if (currentImageIndex < imagePaths.length - 1) {

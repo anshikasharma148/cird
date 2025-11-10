@@ -44,7 +44,7 @@ const formatTime = (ts: number) =>
 const STORAGE_KEY = (path: string) => `cird_chat_v2:${path || "root"}`;
 
 const DEFAULT_GREETING =
-  "Hello! I'm your SAARTHI. I can help you explore research projects, patents, collaborations, and more. What would you like to know?";
+  "Hello! I'm your SARATHI. I can help you explore research projects, patents, collaborations, and more. What would you like to know?";
 
 const DEFAULT_MESSAGES: Message[] = [
   {
@@ -533,7 +533,7 @@ export default function ChatBot() {
         </AnimatePresence>
 
         <div className="relative flex items-center justify-center">
-          {/* Circular text path for SAARTHI - positioned on top */}
+          {/* Circular text path for SARATHI - positioned on top */}
           <div className="relative w-40 h-40 flex items-center justify-center">
             <svg
               className="absolute inset-0 w-full h-full pointer-events-none"
@@ -563,7 +563,7 @@ export default function ChatBot() {
                   startOffset="50%"
                   textAnchor="middle"
                 >
-                  SAARTHI
+                  SARATHI
                 </textPath>
               </text>
             </svg>
@@ -586,10 +586,9 @@ export default function ChatBot() {
                 <div className="relative w-full h-full rounded-full overflow-hidden">
                   <Image
                     src="/assets/chatbot.png"
-                    alt="SAARTHI Chatbot"
+                    alt="SARATHI Chatbot"
                     fill
                     className="object-cover"
-                    unoptimized
                     priority
                     sizes="64px"
                     onError={(e) => {
@@ -651,7 +650,7 @@ export default function ChatBot() {
                     />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold">SAARTHI</h2>
+                    <h2 className="text-lg font-semibold">SARATHI</h2>
                     <p className="text-xs text-gray-300 opacity-90">
                       Research • Projects • Patents
                     </p>

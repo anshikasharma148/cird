@@ -171,8 +171,8 @@ function ImageSlider({
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                    unoptimized
                     priority={index === 0}
+                    loading={index === currentSlide ? "eager" : "lazy"}
                     onError={() => {
                       console.log(`Error loading image ${index}: ${item.image}`);
                       handleImageError(index);
@@ -333,8 +333,8 @@ export default function TrainingPage() {
           fill
           className="object-cover"
           sizes="100vw"
-          unoptimized
           priority
+          loading="eager"
         />
       </section>
 
