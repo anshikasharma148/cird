@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Microscope, Users, Award, Building2, ChevronLeft, ChevronRight, CircuitBoard, Database, Zap, Target } from "lucide-react";
 import { useState, useEffect } from "react";
+import PageLoader from "@/components/page-loader";
 
 // MTL images - we'll add more as needed
 const mtlImages = Array.from({ length: 10 }, (_, i) => ({
@@ -52,7 +53,9 @@ export default function MTLPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <>
+      <PageLoader message="Welcome to MTL!" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
@@ -187,8 +190,10 @@ export default function MTLPage() {
                           fill
                           className="object-cover"
                           sizes="100vw"
-                          priority={index === 0}
-                          loading={index === currentSlide ? "eager" : "lazy"}
+                          {...(index === 0 
+                            ? { priority: true }
+                            : { loading: index === currentSlide ? "eager" : "lazy" }
+                          )}
                           onError={() => handleImageError(index)}
                         />
                       ) : (
@@ -347,6 +352,7 @@ export default function MTLPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 

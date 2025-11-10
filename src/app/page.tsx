@@ -15,6 +15,31 @@ export default function Home() {
       
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Collaboration & Partnerships Showcase - At the top */}
+      <section className="py-20 bg-gradient-to-b from-blue-950 to-slate-900 relative z-10">
+        <div className="container mx-auto px-8 md:px-16">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <Handshake className="w-8 h-8 text-white" />
+              <h2 className="text-4xl md:text-6xl font-bold text-white">
+                Collaborations & Partnerships
+              </h2>
+            </div>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Building strong industry-academia partnerships for innovation
+            </p>
+          </motion.div>
+
+          <CollaborationSlider />
+        </div>
+      </section>
       
       {/* About Section */}
       <AboutSection />
@@ -132,31 +157,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Collaboration & Partnerships Showcase */}
-      <section className="py-20 bg-gradient-to-b from-blue-950 to-slate-900">
-        <div className="container mx-auto px-8 md:px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Handshake className="w-8 h-8 text-white" />
-              <h2 className="text-4xl md:text-6xl font-bold text-white">
-                Collaborations & Partnerships
-              </h2>
-            </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              Building strong industry-academia partnerships for innovation
-            </p>
-          </motion.div>
-
-          <CollaborationSlider />
         </div>
       </section>
     </div>

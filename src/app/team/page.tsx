@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Users, Award, Building2, GraduationCap, ArrowRight } from "lucide-react";
 import { useState } from "react";
+import PageLoader from "@/components/page-loader";
 
 // Team member data structure
 interface TeamMember {
@@ -268,7 +269,9 @@ export default function TeamPage() {
   const nodalOfficers = teamMembers.filter(m => m.role === "nodal");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <>
+      <PageLoader pageType="team" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
@@ -416,6 +419,7 @@ export default function TeamPage() {
         </section>
       )}
     </div>
+    </>
   );
 }
 

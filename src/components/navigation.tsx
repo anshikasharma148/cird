@@ -133,31 +133,64 @@ export function Navigation() {
               className="sm:hidden bg-blue-950 border-t border-blue-800"
             >
               <div className="px-4 py-4 space-y-2">
-                <Link href="/" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   Home
                 </Link>
-                <Link href="/about" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/about" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   About
                 </Link>
-                <Link href="/research" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/research" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   Research
                 </Link>
                 <div className="px-4 py-2 text-blue-100 font-semibold">
                   Entities
                 </div>
-                <Link href="/entities/cdc" className="block px-8 py-2 text-blue-200 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/entities/cdc" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-8 py-2 text-blue-200 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   CDC - Control Development Centre
                 </Link>
-                <Link href="/entities/mtl" className="block px-8 py-2 text-blue-200 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/entities/mtl" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-8 py-2 text-blue-200 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   MTL - Mechanical Testing Lab
                 </Link>
-                <Link href="/training" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/training" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   Training
                 </Link>
-                <Link href="/team" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="/team" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   Team
                 </Link>
-                <Link href="http://115.242.156.230:3000" target="_blank" className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors">
+                <Link 
+                  href="http://115.242.156.230:3000" 
+                  target="_blank" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
                   Hydrology
                 </Link>
               </div>

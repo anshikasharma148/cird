@@ -15,10 +15,13 @@ import {
   CheckCircle
 } from "lucide-react";
 import Link from "next/link";
+import PageLoader from "@/components/page-loader";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <>
+      <PageLoader pageType="about" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
@@ -413,5 +416,6 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

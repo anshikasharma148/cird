@@ -7,10 +7,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Target, Database, Radio, Monitor, Users } from "lucide-react";
 import Link from "next/link";
+import PageLoader from "@/components/page-loader";
 
 export default function BA07PPAPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <>
+      <PageLoader pageType="project" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
@@ -212,6 +215,7 @@ export default function BA07PPAPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 

@@ -2,49 +2,62 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Handshake, Sparkles, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
+import { Handshake, Sparkles, TrendingUp, ChevronLeft, ChevronRight, LucideIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+
+interface Slide {
+  id: number;
+  type: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image?: string;
+  icon?: LucideIcon;
+  beforeStatement?: string;
+  bgGradient: string;
+}
 
 export default function CollaborationSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
-  const slides = [
+  const slides: Slide[] = [
     {
       id: 1,
       type: "collaboration",
       title: "In Collaboration with JPVL",
       subtitle: "Jaypee Power Ventures Limited",
       description: "Strategic partnership driving industrial research and development initiatives",
-      image: "/assets/partners/jpvl-logo.png", // Placeholder - user will provide
+      image: "/assets/home/jpvl-logo.jpeg",
       bgGradient: "from-blue-600 to-indigo-700"
     },
     {
       id: 2,
-      type: "achievement",
-      title: "14+ Active Projects",
-      subtitle: "Ongoing Research Initiatives",
-      description: "Multi-crore consultancy projects bridging academia and industry",
-      icon: TrendingUp,
+      type: "partnership",
+      title: "Intel Corporation",
+      subtitle: "Technology Innovation Partner",
+      description: "Collaborating with Intel for cutting-edge AI and machine learning solutions",
+      image: "/assets/home/intel.jpg",
       bgGradient: "from-indigo-600 to-purple-700"
     },
     {
       id: 3,
-      type: "innovation",
-      title: "Cutting-Edge Research",
-      subtitle: "Innovation at CIRD",
-      description: "Advancing technology through collaborative research and development",
-      icon: Sparkles,
+      type: "partnership",
+      title: "EDGATE Technologies",
+      subtitle: "Industry-Academia Collaboration",
+      description: "Partnering with EDGATE Technologies for advanced technological solutions",
+      image: "/assets/home/edgate.jpeg",
       bgGradient: "from-purple-600 to-pink-700"
     },
     {
       id: 4,
-      type: "partnership",
-      title: "Industry Partners",
-      subtitle: "Intel Corporation | EDGATE Technologies",
-      description: "Collaborating with leading technology companies for advanced solutions",
-      icon: Handshake,
+      type: "innovation",
+      title: "Sustainable Construction",
+      subtitle: "Bottom Ash Utilization Projects",
+      beforeStatement: "Replacing natural sand with bottom ash in pavers and bricks",
+      description: "Innovative research in sustainable construction materials and practices",
+      image: "/assets/home/paver.png",
       bgGradient: "from-blue-700 to-cyan-700"
     }
   ];
@@ -108,39 +121,66 @@ export default function CollaborationSlider() {
                 zIndex: index === currentSlide ? 10 : 0
               }}
             >
-              <div className={`w-full h-full bg-gradient-to-br ${slide.bgGradient} flex items-center justify-center p-12`}>
-                <div className="text-center max-w-4xl mx-auto">
+              {/* Background Gradient */}
+              <div className={`absolute inset-0 w-full h-full bg-gradient-to-br ${slide.bgGradient}`}></div>
+              
+              {/* Content */}
+              <div className="relative z-10 w-full h-full flex items-center justify-center p-8 md:p-12">
+                <div className="text-center max-w-5xl mx-auto">
+                  {/* Image Display - Medium Size */}
                   {slide.image && !imageErrors[slide.id] ? (
-                    <div className="mb-8 flex justify-center">
-                      <div className="relative w-64 h-32 bg-white/20 backdrop-blur-sm rounded-xl p-6 flex items-center justify-center">
+                    <motion.div
+                      key={`image-${currentSlide}`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="mb-6 md:mb-8 flex justify-center"
+                    >
+                      <div className="relative w-80 h-52 md:w-[500px] md:h-[320px] lg:w-[600px] lg:h-[380px] bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 flex items-center justify-center border border-white/20 shadow-lg">
                         <Image
                           src={slide.image}
                           alt={slide.title}
-                          width={256}
-                          height={128}
-                          className="object-contain"
+                          width={600}
+                          height={380}
+                          className="object-contain max-w-full max-h-full"
+                          priority={index === 0}
+                          loading={index === 0 ? "eager" : "lazy"}
                           onError={() => {
                             setImageErrors(prev => ({ ...prev, [slide.id]: true }));
                           }}
                         />
                       </div>
-                    </div>
-                  ) : (slide.icon || imageErrors[slide.id]) ? (
-                    <div className="mb-8 flex justify-center">
-                      <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        {slide.icon && <slide.icon className="w-16 h-16 text-white" />}
-                        {!slide.icon && imageErrors[slide.id] && (
-                          <Handshake className="w-16 h-16 text-white" />
-                        )}
+                    </motion.div>
+                  ) : (
+                    /* Icon fallback if no image */
+                    slide.icon && (
+                      <div className="mb-8 flex justify-center">
+                        <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <slide.icon className="w-16 h-16 text-white" />
+                        </div>
                       </div>
-                    </div>
-                  ) : null}
+                    )
+                  )}
+                  
+                  {/* Before Statement for Paver */}
+                  {slide.beforeStatement && (
+                    <motion.p
+                      key={`before-${currentSlide}`}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.05 }}
+                      className="text-lg md:text-xl text-blue-200 mb-3 font-medium"
+                    >
+                      {slide.beforeStatement}
+                    </motion.p>
+                  )}
+                  
                   <motion.h3
                     key={`title-${currentSlide}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="text-4xl md:text-5xl font-bold text-white mb-4"
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 md:mb-4"
                   >
                     {slide.title}
                   </motion.h3>
@@ -149,7 +189,7 @@ export default function CollaborationSlider() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
-                    className="text-2xl md:text-3xl text-blue-100 mb-6"
+                    className="text-xl md:text-2xl lg:text-3xl text-blue-100 mb-4 md:mb-6"
                   >
                     {slide.subtitle}
                   </motion.p>
@@ -158,7 +198,7 @@ export default function CollaborationSlider() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
-                    className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto"
+                    className="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto"
                   >
                     {slide.description}
                   </motion.p>

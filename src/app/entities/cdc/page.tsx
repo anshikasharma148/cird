@@ -8,6 +8,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Users, Award, Building2, ChevronLeft, ChevronRight, Code, Bot, Cpu, Brain } from "lucide-react";
 import { useState, useEffect } from "react";
+import PageLoader from "@/components/page-loader";
 
 const cdcRooms = [
   { name: "Reception", image: "/assets/entities/cdc/reception.jpg" },
@@ -83,7 +84,9 @@ export default function CDCPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <>
+      <PageLoader message="Welcome to CDC!" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
@@ -232,8 +235,10 @@ export default function CDCPage() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                        priority={index === 0}
-                        loading={index === currentSlide ? "eager" : "lazy"}
+                        {...(index === 0 
+                          ? { priority: true }
+                          : { loading: index === currentSlide ? "eager" : "lazy" }
+                        )}
                         onError={() => {
                           console.log(`Error loading image ${index}: ${room.image}`);
                           handleImageError(index);
@@ -394,6 +399,7 @@ export default function CDCPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
 

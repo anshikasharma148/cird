@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ArrowLeft, Award, GraduationCap, Briefcase, CheckCircle, Clock } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import PageLoader from "@/components/page-loader";
 
 // Team member detailed data
 const teamMemberData: Record<string, any> = {
@@ -265,7 +266,9 @@ export default function TeamMemberPage() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 flex items-center justify-center">
+      <>
+        <PageLoader pageType="profile" />
+        <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Team Member Not Found</h1>
           <Link href="/team">
@@ -275,6 +278,7 @@ export default function TeamMemberPage() {
           </Link>
         </div>
       </div>
+      </>
     );
   }
 
@@ -282,7 +286,9 @@ export default function TeamMemberPage() {
   const ongoingProjects = member.projects.filter((p: any) => p.status === "ongoing");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <>
+      <PageLoader pageType="profile" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
@@ -443,5 +449,6 @@ export default function TeamMemberPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

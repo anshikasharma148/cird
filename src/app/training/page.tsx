@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import PageLoader from "@/components/page-loader";
 
 // Image Slider Component
 function ImageSlider({ 
@@ -171,8 +172,10 @@ function ImageSlider({
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                    priority={index === 0}
-                    loading={index === currentSlide ? "eager" : "lazy"}
+                    {...(index === 0 
+                      ? { priority: true }
+                      : { loading: index === currentSlide ? "eager" : "lazy" }
+                    )}
                     onError={() => {
                       console.log(`Error loading image ${index}: ${item.image}`);
                       handleImageError(index);
@@ -324,7 +327,9 @@ export default function TrainingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <>
+      <PageLoader pageType="training" />
+      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section - Image Only */}
       <section className="relative w-full h-[70vh] overflow-hidden">
         <Image
@@ -713,5 +718,6 @@ export default function TrainingPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }
