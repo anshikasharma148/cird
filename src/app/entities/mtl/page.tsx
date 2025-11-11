@@ -10,11 +10,21 @@ import { ArrowLeft, Microscope, Users, Award, Building2, ChevronLeft, ChevronRig
 import { useState, useEffect } from "react";
 import PageLoader from "@/components/page-loader";
 
-// MTL images - we'll add more as needed
-const mtlImages = Array.from({ length: 10 }, (_, i) => ({
-  name: `MTL Lab Image ${i + 1}`,
-  image: `/assets/entities/mtl/image-${i + 1}.jpg`
-}));
+// MTL images
+const mtlImages = [
+  {
+    name: "MTL Lab",
+    image: "/assets/entities/mtl/img1.png"
+  },
+  {
+    name: "MTL Lab",
+    image: "/assets/entities/mtl/img2.png"
+  },
+  {
+    name: "MTL Lab",
+    image: "/assets/entities/mtl/img3.png"
+  }
+];
 
 const teamMembers = [
   "Dr. Dharmendra Kumar Shukla",
@@ -26,26 +36,42 @@ const teamMembers = [
 export default function MTLPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  const [isPaused, setIsPaused] = useState(false);
 
   // Auto-slide functionality
   useEffect(() => {
+    if (isPaused || mtlImages.length === 0) return;
+    
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % mtlImages.length);
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isPaused, mtlImages.length]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % mtlImages.length);
+    setIsPaused(true);
+    setCurrentSlide((prev) => {
+      const next = (prev + 1) % mtlImages.length;
+      setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
+      return next;
+    });
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + mtlImages.length) % mtlImages.length);
+    setIsPaused(true);
+    setCurrentSlide((prev) => {
+      const next = (prev - 1 + mtlImages.length) % mtlImages.length;
+      setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
+      return next;
+    });
   };
 
   const goToSlide = (index: number) => {
+    if (index === currentSlide) return;
+    setIsPaused(true);
     setCurrentSlide(index);
+    setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
   };
 
   const handleImageError = (index: number) => {
@@ -160,54 +186,67 @@ export default function MTLPage() {
 
           {/* Image Slider */}
           <div className="relative max-w-6xl mx-auto">
-            <div className="relative aspect-video bg-white/5 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-              {/* Slider Container with sliding animation */}
+            <div className="relative h-[600px] md:h-[700px] lg:h-[800px] bg-slate-800/50 rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+              {/* Slider Container - One image at a time */}
               <div className="relative w-full h-full">
-                <motion.div
-                  className="flex h-full"
-                  animate={{
-                    x: `-${currentSlide * 100}%`
-                  }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 30
-                  }}
-                  style={{
-                    width: `${mtlImages.length * 100}%`
-                  }}
-                >
-                  {mtlImages.map((image, index) => (
-                    <div
-                      key={index}
-                      className="relative flex-shrink-0"
-                      style={{ width: `${100 / mtlImages.length}%` }}
-                    >
-                      {!imageErrors[index] ? (
+                {mtlImages.map((image, index) => (
+                  <motion.div
+                    key={`mtl-image-${index}-${image.name}`}
+                    className="absolute inset-0 w-full h-full"
+                    initial={{ 
+                      opacity: index === 0 ? 1 : 0, 
+                      x: index === 0 ? 0 : index < 0 ? '-100%' : '100%' 
+                    }}
+                    animate={{
+                      opacity: index === currentSlide ? 1 : 0,
+                      x: index === currentSlide ? 0 : index < currentSlide ? '-100%' : '100%'
+                    }}
+                    transition={{
+                      type: "tween",
+                      ease: "easeInOut",
+                      duration: 0.8
+                    }}
+                    style={{
+                      zIndex: index === currentSlide ? 10 : 0,
+                      pointerEvents: index === currentSlide ? 'auto' : 'none'
+                    }}
+                  >
+                    {!imageErrors[index] ? (
+                      <div className="relative w-full h-full flex items-center justify-center bg-slate-900/30 p-4 md:p-8">
                         <Image
                           src={image.image}
                           alt={image.name}
-                          fill
-                          className="object-cover"
-                          sizes="100vw"
+                          width={1276}
+                          height={576}
+                          className="object-contain w-auto h-full max-w-full"
+                          sizes="(max-width: 768px) 95vw, (max-width: 1200px) 85vw, 1200px"
+                          quality={90}
                           {...(index === 0 
                             ? { priority: true }
-                            : { loading: index === currentSlide ? "eager" : "lazy" }
+                            : index === currentSlide || index === (currentSlide + 1) % mtlImages.length
+                            ? { loading: "eager" }
+                            : { loading: "lazy" }
                           )}
-                          onError={() => handleImageError(index)}
+                          onError={(e) => {
+                            console.error(`Error loading image ${index}: ${image.image}`, e);
+                            handleImageError(index);
+                          }}
+                          onLoad={() => {
+                            console.log(`Image ${index} loaded successfully: ${image.image}`);
+                          }}
                         />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-white/5">
-                          <div className="text-center">
-                            <Microscope className="w-20 h-20 text-white/50 mx-auto mb-4" />
-                            <p className="text-white text-lg">{image.name}</p>
-                            <p className="text-gray-400 text-sm mt-2">Image coming soon</p>
-                          </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-white/5">
+                        <div className="text-center">
+                          <Microscope className="w-20 h-20 text-white/50 mx-auto mb-4" />
+                          <p className="text-white text-lg">{image.name}</p>
+                          <p className="text-gray-400 text-sm mt-2">Image coming soon</p>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </motion.div>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
               </div>
               
               {/* Image Name Overlay */}
@@ -216,7 +255,7 @@ export default function MTLPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-10"
+                className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-20 pointer-events-none"
               >
                 <h3 className="text-2xl font-bold text-white">{mtlImages[currentSlide].name}</h3>
               </motion.div>
@@ -224,14 +263,14 @@ export default function MTLPage() {
               {/* Navigation Arrows */}
               <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all flex items-center justify-center z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all flex items-center justify-center z-30 shadow-lg"
                 aria-label="Previous slide"
               >
                 <ChevronLeft className="w-6 h-6" />
               </button>
               <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all flex items-center justify-center z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md text-white hover:bg-white/30 transition-all flex items-center justify-center z-30 shadow-lg"
                 aria-label="Next slide"
               >
                 <ChevronRight className="w-6 h-6" />
