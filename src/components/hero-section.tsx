@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Microscope, Cpu, Brain, Zap } from "lucide-react";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -146,26 +147,30 @@ export default function HeroSection() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
-              size="lg" 
-              className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-500 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl shadow-blue-900/50 transition-all duration-300"
-            >
-              Explore Research
-              <ArrowRight className="ml-2" size={20} />
-            </Button>
+            <Link href="/research">
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700 text-white border border-blue-500 px-8 py-4 text-lg font-semibold rounded-full shadow-xl hover:shadow-2xl shadow-blue-900/50 transition-all duration-300"
+              >
+                Explore Research
+                <ArrowRight className="ml-2" size={20} />
+              </Button>
+            </Link>
           </motion.div>
           
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 shadow-lg shadow-white/10"
-            >
-              View Projects
-            </Button>
+            <Link href="/research">
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full transition-all duration-300 shadow-lg shadow-white/10"
+              >
+                View Projects
+              </Button>
+            </Link>
           </motion.div>
         </motion.div>
 

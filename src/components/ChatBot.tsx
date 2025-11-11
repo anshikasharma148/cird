@@ -522,11 +522,18 @@ export default function ChatBot() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.9 }}
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
-              className="bg-blue-950/95 backdrop-blur-md border border-blue-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl"
+              className="relative mb-2"
             >
-              <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-white" />
-                <span>Ask me anything about CIRD</span>
+              {/* Speech Bubble Cloud */}
+              <div className="relative bg-blue-950/95 backdrop-blur-md border border-blue-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-white" />
+                  <span>Ask me anything about CIRD</span>
+                </div>
+                {/* Speech bubble tail pointing down to bot */}
+                <div className="absolute bottom-0 right-8 transform translate-y-full">
+                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[14px] border-l-transparent border-r-transparent border-t-blue-950/95 drop-shadow-lg"></div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -602,6 +609,19 @@ export default function ChatBot() {
                 <div className="w-full h-full flex items-center justify-center bg-blue-600/20 backdrop-blur-sm rounded-full">
                   <MessageCircle size={28} className="text-white" />
                 </div>
+              )}
+              
+              {/* Notification Badge with "1" */}
+              {popupVisible && !open && (
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                  className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center border-2 border-white shadow-lg z-20"
+                >
+                  <span className="text-white text-xs font-bold">1</span>
+                </motion.div>
               )}
             </motion.button>
           </div>

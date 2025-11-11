@@ -376,12 +376,14 @@ export default function AboutPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
-                  size="lg" 
-                  className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
-                >
-                  Contact Us <ArrowRight className="ml-2" size={20} />
-                </Button>
+                <Link href="/research">
+                  <Button 
+                    size="lg" 
+                    className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                  >
+                    View Research <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}

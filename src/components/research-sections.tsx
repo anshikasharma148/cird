@@ -19,6 +19,7 @@ import {
   Database,
   Cog
 } from "lucide-react";
+import Link from "next/link";
 
 export function AboutSection() {
   return (
@@ -292,12 +293,14 @@ export function CIRDEntities() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button 
-                    className="mt-6 bg-blue-600 text-white hover:bg-blue-700 border border-blue-500 shadow-lg shadow-blue-900/30"
-                    size="sm"
-                  >
-                    Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
+                  <Link href="/entities/cdc">
+                    <Button 
+                      className="mt-6 bg-blue-600 text-white hover:bg-blue-700 border border-blue-500 shadow-lg shadow-blue-900/30"
+                      size="sm"
+                    >
+                      Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
                 </motion.div>
               </CardContent>
             </Card>
@@ -354,12 +357,14 @@ export function CIRDEntities() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Button 
-                    className="mt-6 bg-blue-600 text-white hover:bg-blue-700 border border-blue-500 shadow-lg shadow-blue-900/30"
-                    size="sm"
-                  >
-                    Learn More <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
+                  <Link href="/entities/mtl">
+                    <Button 
+                      className="mt-6 bg-blue-600 text-white hover:bg-blue-700 border border-blue-500 shadow-lg shadow-blue-900/30"
+                      size="sm"
+                    >
+                      Learn More <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </Link>
                 </motion.div>
               </CardContent>
             </Card>

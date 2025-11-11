@@ -364,24 +364,28 @@ export default function EntitiesPage() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
-                  size="lg" 
-                  className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
-                >
-                  Explore Opportunities <ArrowRight className="ml-2" size={20} />
-                </Button>
+                <Link href="/research">
+                  <Button 
+                    size="lg" 
+                    className="bg-white/95 backdrop-blur-md text-black hover:bg-white border border-white/20 px-8 py-4 text-lg font-semibold rounded-full shadow-xl shadow-white/20"
+                  >
+                    Explore Research <ArrowRight className="ml-2" size={20} />
+                  </Button>
+                </Link>
               </motion.div>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg shadow-white/10"
-                >
-                  Contact Research Teams
-                </Button>
+                <Link href="/team">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="border-2 border-white/80 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 hover:border-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg shadow-white/10"
+                  >
+                    Meet Our Team
+                  </Button>
+                </Link>
               </motion.div>
             </div>
           </motion.div>
