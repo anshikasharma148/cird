@@ -2,11 +2,11 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Sparkles, TrendingUp, Brain, Code, Users, BookOpen, Building2, GraduationCap, Microscope } from "lucide-react";
+import { Sparkles, TrendingUp, Brain, Code, Users, BookOpen, Building2, GraduationCap, Microscope, Mail } from "lucide-react";
 
 interface PageLoaderProps {
   message?: string;
-  pageType?: "home" | "about" | "research" | "training" | "team" | "entities" | "project" | "profile";
+  pageType?: "home" | "about" | "research" | "training" | "team" | "entities" | "project" | "profile" | "contact";
 }
 
 const pageMessages: Record<string, string> = {
@@ -18,6 +18,7 @@ const pageMessages: Record<string, string> = {
   entities: "Exploring CIRD Entities...",
   project: "Loading Project Details...",
   profile: "Loading Profile...",
+  contact: "Loading Contact Information...",
 };
 
 const pageIcons: Record<string, typeof Brain> = {
@@ -29,6 +30,7 @@ const pageIcons: Record<string, typeof Brain> = {
   entities: Building2,
   project: TrendingUp,
   profile: Users,
+  contact: Mail,
 };
 
 export default function PageLoader({ message, pageType = "home" }: PageLoaderProps) {

@@ -110,6 +110,28 @@ app.get("/health", (req, res) => {
 });
 
 /**
+ * 404 handler for undefined routes - return JSON instead of HTML
+ */
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Route not found",
+    path: req.path,
+    method: req.method,
+  });
+});
+
+/**
+ * Global error handler - ensure all errors return JSON
+ */
+app.use((err, req, res, next) => {
+  console.error("❌ Global error handler:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal server error",
+    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+  });
+});
+
+/**
  * 🚀 Start the Server
  * Render automatically injects its own PORT (usually 10000)
  */

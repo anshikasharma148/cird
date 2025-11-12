@@ -86,23 +86,34 @@ export function Footer() {
             >
               <h4 className="text-lg font-semibold text-white mb-4">Connect With Us</h4>
               <div className="space-y-3">
-                <div className="flex items-center space-x-3 text-gray-400">
-                  <MapPin className="w-4 h-4 text-cyan-400" />
-                  <span>Jaypee University of Engineering and Technology, Guna</span>
+                <div className="flex items-start space-x-3 text-gray-400">
+                  <MapPin className="w-4 h-4 text-cyan-400 mt-1 flex-shrink-0" />
+                  <span>Jaypee University of Engineering and Technology, Guna, Madhya Pradesh, India</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-400">
-                  <Mail className="w-4 h-4 text-cyan-400" />
-                  <span>cird@juetguna.in</span>
+                  <Mail className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                  <a href="mailto:support@cird.co.in" className="hover:text-cyan-400 transition-colors">
+                    support@cird.co.in
+                  </a>
                 </div>
-                <div className="flex items-center space-x-3 text-gray-400">
-                  <Phone className="w-4 h-4 text-cyan-400" />
-                  <span>+91-XXXX-XXXXXX</span>
+                <div className="flex items-start space-x-3 text-gray-400">
+                  <Phone className="w-4 h-4 text-cyan-400 mt-1 flex-shrink-0" />
+                  <div>
+                    <a href="tel:+919893808251" className="hover:text-cyan-400 transition-colors block">
+                      +91 9893808251
+                    </a>
+                    <span className="text-xs text-gray-500 block mt-1">Dr. Dhananjay R. Mishra</span>
+                  </div>
                 </div>
                 <div className="pt-4 border-t border-slate-700">
                   <h5 className="text-white font-semibold mb-2">Leadership</h5>
                   <div className="text-sm text-gray-400 space-y-1">
-                    <div><strong className="text-cyan-400">Coordinator & Incharge:</strong> Dr. Dhananjay R. Mishra</div>
-                    <div><strong className="text-cyan-400">Co-Coordinator:</strong> Dr. Amit Kumar Srivastava</div>
+                    <div>
+                      <strong className="text-cyan-400">Coordinator & Incharge of CDC:</strong> Dr. Dhananjay R. Mishra
+                    </div>
+                    <div className="pt-1">
+                      <strong className="text-cyan-400">Co-Coordinator:</strong> Dr. Amit Kumar Srivastava
+                    </div>
                   </div>
                 </div>
                 <div className="pt-2">

@@ -106,6 +106,11 @@ export function Navigation() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
+                  <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                    <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                   <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
                   </Link>
@@ -184,6 +189,13 @@ export function Navigation() {
                   className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
                 >
                   Team
+                </Link>
+                <Link 
+                  href="/contact" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
+                  Contact
                 </Link>
                 <Link 
                   href="http://115.242.156.230:3000" 
