@@ -10,8 +10,8 @@ import { ArrowLeft, Microscope, Users, Award, Building2, ChevronLeft, ChevronRig
 import { useState, useEffect } from "react";
 import PageLoader from "@/components/page-loader";
 
-// MTL images - Generate array for all 19 images
-const mtlImages = Array.from({ length: 19 }, (_, i) => ({
+// MTL images - Generate array for all 34 images
+const mtlImages = Array.from({ length: 34 }, (_, i) => ({
   name: "MTL Lab",
   image: `/assets/entities/mtl/img${i + 1}.jpeg`
 }));
