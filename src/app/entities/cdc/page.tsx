@@ -91,7 +91,7 @@ const getCDCTeamImagePath = (slug: string): string[] => {
     "dhananjay-mishra": ["/assets/team/dhananjay-mishra.jpg"],
     "amit-srivastava": ["/assets/team/amit-srivastava.jpg"],
     "anshika-sharma": ["/assets/team/anshika-sharma.jpeg"],
-    "nitesh-pandey": ["/assets/team/nitesh-pandey.png"],
+    "nitesh-pandey": ["/assets/team/nitesh-pandey.jpeg"],
     "shashwat-shukla": ["/assets/team/shashwat-shukla.jpg"],
   };
   
@@ -718,16 +718,20 @@ export default function CDCPage() {
           </motion.div>
 
           {/* Coordinators Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto mb-8">
+          <div className="flex flex-wrap justify-center gap-8 max-w-4xl mx-auto mb-8">
             {coordinators.map((member, index) => (
-              <EnhancedCDCTeamCard key={member.id} member={member} index={index} />
+              <div key={member.id} className="w-full max-w-[320px]">
+                <EnhancedCDCTeamCard member={member} index={index} />
+              </div>
             ))}
           </div>
 
           {/* Members Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-[1080px] mx-auto justify-items-center">
             {members.map((member, index) => (
-              <EnhancedCDCTeamCard key={member.id} member={member} index={coordinators.length + index} />
+              <div key={member.id} className="w-full max-w-[320px]">
+                <EnhancedCDCTeamCard member={member} index={coordinators.length + index} />
+              </div>
             ))}
           </div>
         </div>
@@ -816,13 +820,18 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
               {!imageError && currentImagePath ? (
                 <Image
+                  key={`${member.slug}-${currentImagePath}`}
                   src={currentImagePath}
                   alt={member.name}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
                   sizes="160px"
                   priority={index < 2}
                   loading={index < 2 ? "eager" : "lazy"}
+                  unoptimized={false}
+                  style={{ 
+                    objectPosition: member.slug === 'anshika-sharma' ? 'center 30%' : 'center top' 
+                  }}
                   onError={() => {
                     if (currentImageIndex < imagePaths.length - 1) {
                       setCurrentImageIndex(currentImageIndex + 1);

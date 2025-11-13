@@ -158,7 +158,7 @@ const teamMemberData: Record<string, any> = {
     name: "Er. Nitesh Pandey",
     designation: "Software Development Engineer I (SDE-I)",
     department: "Control Development Centre, CIRD, JUET Guna",
-    image: "/assets/team/nitesh-pandey.png",
+    image: "/assets/team/nitesh-pandey.jpeg",
     bio: "Er. Nitesh Pandey is a Software Development Engineer I (SDE-I) at the Control Development Centre (CDC) of CIRD, JUET Guna. He specializes in research and development projects focused on automation, artificial intelligence, and industrial monitoring systems. His expertise spans system design, robotics, SCADA systems, and predictive modeling.",
     education: "B.Tech in Engineering from JUET, Guna",
     experience: "Working on cutting-edge research and development projects in automation, AI, and industrial monitoring. Specializes in system design, robotics, SCADA systems, and predictive modeling for industrial applications.",

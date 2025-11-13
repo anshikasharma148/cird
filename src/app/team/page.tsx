@@ -16,7 +16,7 @@ interface TeamMember {
   designation: string;
   department: string;
   image?: string;
-  role: "coordination" | "technical" | "cdc" | "nodal";
+  role: "coordination" | "technical" | "cdc" | "mtl" | "nodal";
   slug: string;
   hasDetailPage: boolean;
 }
@@ -260,12 +260,50 @@ const teamMembers: TeamMember[] = [
     slug: "arup-ghosh",
     hasDetailPage: false
   },
+  // MTL Team
+  {
+    id: "dharmendra-shukla-mtl",
+    name: "Dr. Dharmendra Kumar Shukla",
+    designation: "",
+    department: "Assistant Professor (SG), Civil, JUET, Guna",
+    role: "mtl",
+    slug: "dharmendra-shukla",
+    hasDetailPage: true
+  },
+  {
+    id: "rs-chauhan",
+    name: "R.S. Chauhan",
+    designation: "",
+    department: "MTL, CIRD",
+    role: "mtl",
+    slug: "rs-chauhan",
+    hasDetailPage: false
+  },
+  {
+    id: "kk-purohit",
+    name: "K.K. Purohit",
+    designation: "",
+    department: "MTL, CIRD",
+    role: "mtl",
+    slug: "kk-purohit",
+    hasDetailPage: false
+  },
+  {
+    id: "bhanu-pratap",
+    name: "Bhanu Pratap Arya",
+    designation: "",
+    department: "MTL, CIRD",
+    role: "mtl",
+    slug: "bhanu-pratap",
+    hasDetailPage: false
+  },
 ];
 
 export default function TeamPage() {
   const coordinationCommittee = teamMembers.filter(m => m.role === "coordination");
   const technicalConsultants = teamMembers.filter(m => m.role === "technical");
   const cdcTeam = teamMembers.filter(m => m.role === "cdc");
+  const mtlTeam = teamMembers.filter(m => m.role === "mtl");
   const nodalOfficers = teamMembers.filter(m => m.role === "nodal");
 
   return (
@@ -389,9 +427,39 @@ export default function TeamPage() {
         </div>
       </section>
 
+      {/* MTL Team Section */}
+      {mtlTeam.length > 0 && (
+        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+          <div className="container mx-auto px-8 md:px-16">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-12"
+            >
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <Users className="w-8 h-8 text-white" />
+                <h2 className="text-4xl md:text-6xl font-bold text-white">
+                  Mechanical Testing Lab Team
+                </h2>
+              </div>
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                Meet the talented professionals driving innovation and excellence at the Mechanical Testing Lab
+              </p>
+            </motion.div>
+
+            <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+              {mtlTeam.map((member, index) => (
+                <TeamMemberCard key={member.id} member={member} index={index} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Nodal Officers of JPVL Section */}
       {nodalOfficers.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+        <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
           <div className="container mx-auto px-8 md:px-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -432,11 +500,14 @@ const getImagePath = (slug: string): string[] => {
     "dharmendra-shukla": ["/assets/team/dk-shukla.png"],
     "gaurav-saxena": ["/assets/team/gaurav-saxena.png"],
     "manoj-dubey": ["/assets/team/manoj-dubey.jpg"],
-    "nitesh-pandey": ["/assets/team/nitesh-pandey.png"],
+    "nitesh-pandey": ["/assets/team/nitesh-pandey.jpeg"],
     "pankaj-dumka": ["/assets/team/pankaj-dumka.png"],
     "pmv-subba-rao": ["/assets/team/pmv-subbarao.jpeg"],
     "rohit-mishra": ["/assets/team/rohit-mishra.png"],
     "shashwat-shukla": ["/assets/team/shashwat-shukla.jpg"],
+    "rs-chauhan": ["/assets/team/rs-chauhan.jpeg"],
+    "kk-purohit": ["/assets/team/kk-purohit.jpeg"],
+    "bhanu-pratap": ["/assets/team/bhanu-pratap.jpeg"],
   };
   
   // Return mapped paths or try common extensions
@@ -529,13 +600,18 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
               {!imageError && currentImagePath ? (
                 <Image
+                  key={`${member.slug}-${currentImagePath}`}
                   src={currentImagePath}
                   alt={member.name}
                   fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
                   sizes="160px"
                   priority={index < 2}
                   loading={index < 2 ? "eager" : "lazy"}
+                  unoptimized={false}
+                  style={{ 
+                    objectPosition: member.slug === 'anshika-sharma' ? 'center 30%' : 'center top' 
+                  }}
                   onError={() => {
                     if (currentImageIndex < imagePaths.length - 1) {
                       setCurrentImageIndex(currentImageIndex + 1);
