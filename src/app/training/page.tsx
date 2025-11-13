@@ -26,7 +26,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import PageLoader from "@/components/page-loader";
 
-// Image Slider Component
+// Advanced Image Slider Component
 function ImageSlider({ 
   images, 
   title 
@@ -37,19 +37,39 @@ function ImageSlider({
   const [currentSlide, setCurrentSlide] = useState(0);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Auto-slide functionality - pause if video is playing
+  // Auto-slide functionality with progress tracking - pause if video is playing
   useEffect(() => {
-    if (isPaused || images.length === 0 || isVideoPlaying) return;
+    if (isPaused || isHovered || images.length === 0 || isVideoPlaying) {
+      setProgress(0);
+      return;
+    }
     
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % images.length);
-    }, 5000); // Change slide every 5 seconds
+    const duration = 5000; // 5 seconds
+    const interval = 100; // Update every 100ms for smooth progress
+    let elapsed = 0;
 
-    return () => clearInterval(interval);
-  }, [isPaused, images.length, isVideoPlaying]);
+    const progressInterval = setInterval(() => {
+      elapsed += interval;
+      setProgress((elapsed / duration) * 100);
+    }, interval);
+
+    const slideInterval = setTimeout(() => {
+      setDirection('right');
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+      setProgress(0);
+    }, duration);
+
+    return () => {
+      clearInterval(progressInterval);
+      clearTimeout(slideInterval);
+    };
+  }, [isPaused, isHovered, images.length, currentSlide, isVideoPlaying]);
 
   // Reset video playing state when slide changes
   useEffect(() => {
@@ -62,6 +82,8 @@ function ImageSlider({
 
   const nextSlide = () => {
     setIsPaused(true);
+    setDirection('right');
+    setProgress(0);
     setCurrentSlide((prev) => {
       const next = (prev + 1) % images.length;
       setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
@@ -71,6 +93,8 @@ function ImageSlider({
 
   const prevSlide = () => {
     setIsPaused(true);
+    setDirection('left');
+    setProgress(0);
     setCurrentSlide((prev) => {
       const next = (prev - 1 + images.length) % images.length;
       setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
@@ -81,6 +105,8 @@ function ImageSlider({
   const goToSlide = (index: number) => {
     if (index === currentSlide) return;
     setIsPaused(true);
+    setDirection(index > currentSlide ? 'right' : 'left');
+    setProgress(0);
     setCurrentSlide(index);
     setTimeout(() => setIsPaused(false), 6000); // Resume auto-play after manual navigation
   };
@@ -107,149 +133,354 @@ function ImageSlider({
         {title}
       </h3>
       
-      {/* Image Slider */}
-      <div className="relative max-w-6xl mx-auto">
-        <div className="relative aspect-video bg-slate-100 rounded-xl overflow-hidden border border-blue-200 shadow-2xl">
-          {/* Slider Container */}
-          <div className="relative w-full h-full">
-            {images.map((item, index) => (
-              <motion.div
-                key={`slide-${index}-${item.name}`}
-                className="absolute inset-0 w-full h-full"
-                initial={{ opacity: 0, x: index === 0 ? 0 : '100%' }}
-                animate={{
-                  opacity: index === currentSlide ? 1 : 0,
-                  x: index === currentSlide ? 0 : index < currentSlide ? '-100%' : '100%'
-                }}
-                transition={{
-                  type: "tween",
-                  ease: "easeInOut",
-                  duration: 0.8
-                }}
-                style={{
-                  zIndex: index === currentSlide ? 10 : 0
-                }}
-              >
-                {item.type === 'video' ? (
-                  <div className="relative w-full h-full bg-black">
-                    {index === currentSlide ? (
-                      <video
-                        ref={videoRef}
-                        src={item.image}
-                        className="w-full h-full object-contain"
-                        controls
-                        onPlay={() => {
-                          setIsVideoPlaying(true);
-                        }}
-                        onPause={() => {
-                          setIsVideoPlaying(false);
-                        }}
-                        onEnded={() => {
-                          setIsVideoPlaying(false);
-                          // Auto-advance to next slide after video ends
-                          setTimeout(() => {
-                            setCurrentSlide((prev) => (prev + 1) % images.length);
-                          }, 1000);
-                        }}
-                        onError={() => handleImageError(index)}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : (
-                      <video
-                        src={item.image}
-                        className="w-full h-full object-contain"
-                        preload="metadata"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    )}
-                  </div>
-                ) : !imageErrors[index] ? (
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
-                    {...(index === 0 
-                      ? { priority: true }
-                      : { loading: index === currentSlide ? "eager" : "lazy" }
-                    )}
-                    onError={() => {
-                      console.log(`Error loading image ${index}: ${item.image}`);
-                      handleImageError(index);
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-slate-100">
-                    <div className="text-center">
-                      <ImageIcon className="w-20 h-20 text-blue-400 mx-auto mb-4" />
-                      <p className="text-slate-900 text-lg">{item.name}</p>
-                      <p className="text-slate-600 text-sm mt-2">Image coming soon</p>
+      {/* Advanced Image Slider */}
+      <div 
+        className="relative max-w-6xl mx-auto"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="relative aspect-video bg-gradient-to-br from-slate-100 via-blue-50/30 to-slate-100 rounded-2xl overflow-hidden border-2 border-blue-200/50 shadow-2xl backdrop-blur-sm group">
+          {/* Animated background gradient */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-cyan-600/5"
+            animate={{
+              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          />
+
+          {/* Slider Container with 3D effect */}
+          <div className="relative w-full h-full perspective-1000">
+            {images.map((item, index) => {
+              const isActive = index === currentSlide;
+              const isNext = index === (currentSlide + 1) % images.length;
+              const isPrev = index === (currentSlide - 1 + images.length) % images.length;
+              
+              return (
+                <motion.div
+                  key={`slide-${index}-${item.name}`}
+                  className="absolute inset-0 w-full h-full"
+                  initial={false}
+                  animate={{
+                    opacity: isActive ? 1 : isNext || isPrev ? 0.3 : 0,
+                    scale: isActive ? 1 : isNext || isPrev ? 0.95 : 0.9,
+                    x: isActive 
+                      ? 0 
+                      : index < currentSlide 
+                        ? direction === 'left' ? '-120%' : '-100%'
+                        : direction === 'right' ? '120%' : '100%',
+                    rotateY: isActive ? 0 : index < currentSlide ? -15 : 15,
+                    zIndex: isActive ? 20 : isNext || isPrev ? 10 : 0,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30,
+                    duration: 0.8
+                  }}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    pointerEvents: isActive ? 'auto' : 'none'
+                  }}
+                >
+                  {item.type === 'video' ? (
+                    <div className="relative w-full h-full bg-black">
+                      {index === currentSlide ? (
+                        <video
+                          ref={videoRef}
+                          src={item.image}
+                          className="w-full h-full object-contain"
+                          controls
+                          onPlay={() => {
+                            setIsVideoPlaying(true);
+                          }}
+                          onPause={() => {
+                            setIsVideoPlaying(false);
+                          }}
+                          onEnded={() => {
+                            setIsVideoPlaying(false);
+                            setTimeout(() => {
+                              setCurrentSlide((prev) => (prev + 1) % images.length);
+                            }, 1000);
+                          }}
+                          onError={() => handleImageError(index)}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <video
+                          src={item.image}
+                          className="w-full h-full object-contain"
+                          preload="metadata"
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                     </div>
-                  </div>
-                )}
-              </motion.div>
-            ))}
+                  ) : !imageErrors[index] ? (
+                    <motion.div 
+                      className="relative w-full h-full flex items-center justify-center bg-slate-50/50 p-4"
+                      whileHover={isActive ? { scale: 1.02 } : {}}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        fill
+                        className="object-contain drop-shadow-2xl"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+                        quality={90}
+                        {...(index === 0 
+                          ? { priority: true }
+                          : isActive || isNext || isPrev
+                          ? { loading: "eager" }
+                          : { loading: "lazy" }
+                        )}
+                        onError={() => {
+                          console.log(`Error loading image ${index}: ${item.image}`);
+                          handleImageError(index);
+                        }}
+                      />
+                      {/* Image glow effect */}
+                      {isActive && (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-radial from-blue-500/10 via-transparent to-transparent pointer-events-none"
+                          animate={{
+                            opacity: [0.2, 0.4, 0.2],
+                          }}
+                          transition={{
+                            duration: 3,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        />
+                      )}
+                    </motion.div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                      <div className="text-center">
+                        <ImageIcon className="w-20 h-20 text-blue-400 mx-auto mb-4" />
+                        <p className="text-slate-900 text-lg">{item.name}</p>
+                        <p className="text-slate-600 text-sm mt-2">Image coming soon</p>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
           
-          {/* Image Name Overlay - Hide for videos to avoid interference with controls */}
+          {/* Progress Bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-30">
+            <motion.div
+              className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1, ease: "linear" }}
+            />
+          </div>
+
+          {/* Image Counter & Info Overlay */}
           {images[currentSlide]?.type !== 'video' && (
             <motion.div
               key={currentSlide}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 z-10 pointer-events-none"
+              className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/70 to-transparent p-6 z-30 pointer-events-none"
             >
-              <h4 className="text-2xl font-bold text-white">{images[currentSlide].name}</h4>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-2xl font-bold text-white mb-1">{images[currentSlide].name}</h4>
+                  <p className="text-gray-300 text-sm">Image {currentSlide + 1} of {images.length}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-bold text-white/80">{String(currentSlide + 1).padStart(2, '0')}</div>
+                  <div className="text-sm text-gray-400">/{String(images.length).padStart(2, '0')}</div>
+                </div>
+              </div>
             </motion.div>
           )}
           
-          {/* Video Name Overlay - Show above video, less intrusive */}
+          {/* Video Name Overlay */}
           {images[currentSlide]?.type === 'video' && (
             <motion.div
               key={currentSlide}
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 z-10 pointer-events-none"
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/90 via-black/70 to-transparent p-4 z-30 pointer-events-none"
             >
-              <h4 className="text-xl font-bold text-white">{images[currentSlide].name}</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="text-xl font-bold text-white">{images[currentSlide].name}</h4>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-white/80">{String(currentSlide + 1).padStart(2, '0')}</div>
+                  <div className="text-xs text-gray-400">/{String(images.length).padStart(2, '0')}</div>
+                </div>
+              </div>
             </motion.div>
           )}
 
-          {/* Navigation Arrows */}
-          <button
+          {/* Enhanced Navigation Arrows */}
+          <motion.button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-blue-600/90 backdrop-blur-md text-white hover:bg-blue-700 transition-all flex items-center justify-center z-20 shadow-lg"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-2xl border border-blue-500/50 group/arrow"
             aria-label="Previous slide"
+            whileHover={{ scale: 1.1, x: -5 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
+            <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
+            <motion.div
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              animate={{
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.button>
+          
+          <motion.button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-blue-600/90 backdrop-blur-md text-white hover:bg-blue-700 transition-all flex items-center justify-center z-20 shadow-lg"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-2xl border border-blue-500/50 group/arrow"
             aria-label="Next slide"
+            whileHover={{ scale: 1.1, x: 5 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <ChevronRight className="w-6 h-6" />
-          </button>
+            <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
+            <motion.div
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/30 to-cyan-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              animate={{
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.button>
+
+          {/* Play/Pause Button */}
+          <motion.button
+            onClick={() => setIsPaused(!isPaused)}
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-lg border border-blue-500/50"
+            aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {isPaused ? (
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+              </svg>
+            )}
+          </motion.button>
         </div>
 
-        {/* Slide Indicators */}
+        {/* Thumbnail Navigation */}
+        <div className="mt-8">
+          <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide px-2">
+            {images.map((item, index) => (
+              <motion.button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                  index === currentSlide
+                    ? "border-blue-500 shadow-lg shadow-blue-500/50 scale-110"
+                    : "border-blue-200 hover:border-blue-400 opacity-60 hover:opacity-100"
+                }`}
+                whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label={`Go to slide ${index + 1}`}
+              >
+                {item.type === 'video' ? (
+                  <div className="relative w-full h-full bg-black">
+                    <video
+                      src={item.image}
+                      className="w-full h-full object-cover"
+                      preload="metadata"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <Video className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                ) : !imageErrors[index] ? (
+                  <>
+                    <Image
+                      src={item.image}
+                      alt={`Thumbnail ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                      loading="lazy"
+                    />
+                    {index === currentSlide && (
+                      <motion.div
+                        className="absolute inset-0 bg-blue-500/30"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      />
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-slate-200 flex items-center justify-center">
+                    <ImageIcon className="w-6 h-6 text-blue-400" />
+                  </div>
+                )}
+                {/* Active indicator */}
+                {index === currentSlide && (
+                  <motion.div
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
+                    layoutId="activeThumbnail"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </motion.button>
+            ))}
+          </div>
+        </div>
+
+        {/* Enhanced Slide Indicators */}
         <div className="flex justify-center gap-2 mt-6 flex-wrap">
           {images.map((_, index) => (
-            <button
+            <motion.button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
+              className={`relative rounded-full transition-all ${
                 index === currentSlide
-                  ? "bg-blue-600 w-8"
-                  : "bg-blue-300 hover:bg-blue-400"
+                  ? "bg-gradient-to-r from-blue-500 to-purple-500 w-10 h-3"
+                  : "bg-blue-300 hover:bg-blue-400 w-3 h-3"
               }`}
               aria-label={`Go to slide ${index + 1}`}
-            />
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              {index === currentSlide && (
+                <motion.div
+                  className="absolute inset-0 rounded-full bg-white/50"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.5, 0, 0.5],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>

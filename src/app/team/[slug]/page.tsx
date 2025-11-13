@@ -205,9 +205,10 @@ const teamMemberData: Record<string, any> = {
   }
 };
 
-// Profile Image Component
+// Enhanced Profile Image Component
 function ProfileImage({ member }: { member: any }) {
   const initials = member.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2);
+  const [isHovered, setIsHovered] = useState(false);
   
   // Try alternative extensions if main image fails
   const getAlternativePaths = (originalPath: string): string[] => {
@@ -235,27 +236,58 @@ function ProfileImage({ member }: { member: any }) {
   const currentImagePath = alternativePaths[currentPathIndex] || member.image;
 
   return (
-    <div className="relative w-48 h-48 md:w-64 md:h-64 flex-shrink-0">
-      <div className="absolute inset-0 rounded-full bg-blue-50 border-4 border-blue-200"></div>
-      <div className="relative w-full h-full rounded-full overflow-hidden">
+    <motion.div
+      className="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.05 }}
+      transition={{ type: "spring", stiffness: 300 }}
+    >
+      {/* Outer glow ring */}
+      <motion.div
+        className="absolute -inset-2 rounded-full border-blue-500 opacity-50"
+        animate={isHovered ? {
+          scale: [1, 1.1, 1],
+          opacity: [0.5, 0.8, 0.5]
+        } : {}}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+      
+      {/* Middle ring */}
+      <div className="absolute inset-0 rounded-full border-blue-500 border-4 bg-gradient-to-br from-blue-50 to-blue-100"></div>
+      
+      {/* Image container */}
+      <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-2xl">
         {!imageError ? (
           <Image
             key={currentImagePath}
             src={currentImagePath}
             alt={member.name}
             fill
-            className="object-cover"
-            sizes="256px"
+            className="object-cover transition-transform duration-500 hover:scale-110"
+            sizes="224px"
             priority
             onError={handleImageError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-blue-100">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
             <span className="text-blue-900 text-4xl font-bold">{initials}</span>
           </div>
         )}
       </div>
-    </div>
+
+      {/* Decorative elements */}
+      <motion.div
+        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full"
+        animate={isHovered ? { rotate: 360 } : {}}
+        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div
+        className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full"
+        animate={isHovered ? { rotate: -360 } : {}}
+        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+      />
+    </motion.div>
   );
 }
 
@@ -303,18 +335,18 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="flex flex-col md:flex-row gap-8 items-center md:items-start"
+            className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center"
           >
             <ProfileImage member={member} />
             
             <div className="flex-1 text-center md:text-left">
-              <Badge className="mb-4 bg-blue-600 text-white border border-blue-500 px-4 py-1 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 px-4 py-1.5 text-sm font-semibold shadow-lg shadow-blue-900/30">
                 {member.designation}
               </Badge>
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
                 {member.name}
               </h1>
-              <p className="text-xl text-gray-300 mb-6">
+              <p className="text-lg md:text-xl text-gray-300">
                 {member.department}
               </p>
             </div>
@@ -329,7 +361,7 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8"
+            className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8 backdrop-blur-sm"
           >
             <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
               <Briefcase className="w-8 h-8 text-blue-600" />
@@ -377,7 +409,7 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8"
+            className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8 backdrop-blur-sm"
           >
             <h2 className="text-3xl font-bold text-slate-900 mb-4">Role at CIRD</h2>
             <p className="text-slate-700 leading-relaxed text-lg">
@@ -402,7 +434,7 @@ export default function TeamMemberPage() {
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {completedProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white border-blue-200">
+                    <Card key={project.id} className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 backdrop-blur-sm">
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <Badge className="bg-blue-100 text-blue-900 border-blue-300">
@@ -428,7 +460,7 @@ export default function TeamMemberPage() {
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {ongoingProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white border-blue-200">
+                    <Card key={project.id} className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 backdrop-blur-sm">
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <Badge className="bg-blue-100 text-blue-900 border-blue-300">

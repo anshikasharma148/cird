@@ -452,39 +452,91 @@ const getImagePath = (slug: string): string[] => {
   ];
 };
 
-// Team Member Card Component
+// Team Member Card Component - Enhanced with CDC styling
 function TeamMemberCard({ member, index }: { member: TeamMember; index: number }) {
   const imagePaths = getImagePath(member.slug);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const initials = member.name.split(' ').map(n => n[0]).join('').slice(0, 2);
   
   const currentImagePath = imagePaths[currentImageIndex] || imagePaths[0];
 
+  // Determine role for styling
+  const role = member.role === "coordination" ? "coordinator" : 
+               member.role === "cdc" && member.designation.includes("Coordinator") ? "coordinator" :
+               member.role === "cdc" && member.designation.includes("Co-coordinator") ? "co-coordinator" :
+               "member";
+
+  const style = {
+    border: "border-blue-500",
+    glow: "shadow-blue-500/50",
+    badge: role === "coordinator" 
+      ? "bg-gradient-to-r from-blue-600 to-blue-700" 
+      : role === "co-coordinator"
+      ? "bg-gradient-to-r from-blue-500 to-blue-600"
+      : "bg-gradient-to-r from-blue-500 to-blue-600",
+    accent: "text-blue-600"
+  };
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: index * 0.1 }}
-      whileHover={{ y: -5 }}
-      className="w-full max-w-[320px]"
+      transition={{ duration: 0.4 }}
+      viewport={{ once: true }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative w-full max-w-[320px]"
     >
-      <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 h-full shadow-lg hover:shadow-xl">
-        <CardHeader className="text-center">
-          <div className="relative w-48 h-48 mx-auto mb-4">
-            <div className="absolute inset-0 rounded-full bg-blue-50 border-2 border-blue-200"></div>
-            <div className="relative w-full h-full rounded-full overflow-hidden">
+      {/* Glow effect on hover */}
+      <motion.div
+        className={`absolute -inset-1 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
+        animate={isHovered ? { scale: [1, 1.05, 1] } : {}}
+        transition={{ duration: 2, repeat: Infinity }}
+      />
+
+      <Card className={`relative bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 ${style.border} hover:border-opacity-100 transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group backdrop-blur-sm`}>
+        {/* Subtle animated background pattern */}
+        <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat'
+          }}></div>
+        </div>
+
+        <CardHeader className="text-center relative z-10 pb-2 pt-6">
+          {/* Profile Image - Smaller size */}
+          <motion.div
+            className="relative w-40 h-40 mx-auto mb-4"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            {/* Outer glow ring */}
+            <motion.div
+              className={`absolute -inset-2 rounded-full ${style.border} opacity-50`}
+              animate={isHovered ? {
+                scale: [1, 1.1, 1],
+                opacity: [0.5, 0.8, 0.5]
+              } : {}}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
+            
+            {/* Middle ring */}
+            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-blue-50 to-blue-100`}></div>
+            
+            {/* Image container */}
+            <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
               {!imageError && currentImagePath ? (
                 <Image
                   src={currentImagePath}
                   alt={member.name}
                   fill
-                  className="object-cover"
-                  sizes="192px"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="160px"
                   priority={index < 2}
                   loading={index < 2 ? "eager" : "lazy"}
                   onError={() => {
-                    // Try next image path if available
                     if (currentImageIndex < imagePaths.length - 1) {
                       setCurrentImageIndex(currentImageIndex + 1);
                     } else {
@@ -493,33 +545,57 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-100">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
                   <span className="text-blue-900 text-3xl font-bold">{initials}</span>
                 </div>
               )}
             </div>
+
+            {/* Decorative elements */}
+            <motion.div
+              className={`absolute -top-2 -right-2 w-6 h-6 ${style.badge} rounded-full`}
+              animate={isHovered ? { rotate: 360 } : {}}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            />
+            <motion.div
+              className={`absolute -bottom-2 -left-2 w-4 h-4 ${style.badge} rounded-full`}
+              animate={isHovered ? { rotate: -360 } : {}}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
+            />
+          </motion.div>
+
+          {/* Name and Details - Compact - No animation delay */}
+          <div className="px-2">
+            <CardTitle className="text-xl text-slate-900 mb-1.5 font-bold group-hover:text-blue-700 transition-colors leading-tight">
+              {member.name}
+            </CardTitle>
+            {member.designation && (
+              <p className={`text-xs font-semibold mb-1.5 ${style.accent} leading-tight`}>
+                {member.designation}
+              </p>
+            )}
+            <p className="text-slate-600 text-xs leading-tight mb-3">{member.department}</p>
           </div>
-          <CardTitle className="text-xl text-slate-900 mb-2">{member.name}</CardTitle>
-          {member.designation && (
-            <p className="text-slate-600 text-sm mb-1">{member.designation}</p>
-          )}
-          <p className="text-slate-500 text-xs">{member.department}</p>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="relative z-10 pt-0 pb-4">
           {member.hasDetailPage && (
             <Link href={`/team/${member.slug}`}>
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white border border-blue-500 px-4 py-2 rounded-lg text-sm transition-all flex items-center justify-center gap-2 shadow-md">
-                  View Profile
-                  <ArrowRight className="w-4 h-4" />
+                <button className={`w-full ${style.badge} text-white border-0 px-4 py-2 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl group/btn`}>
+                  <span>View Full Profile</span>
+                  <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                 </button>
               </motion.div>
             </Link>
           )}
         </CardContent>
+
+        {/* Bottom accent line */}
+        <div className={`absolute bottom-0 left-0 right-0 h-1 ${style.badge}`} />
       </Card>
     </motion.div>
   );
