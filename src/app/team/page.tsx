@@ -344,7 +344,7 @@ export default function TeamPage() {
       </section>
 
       {/* Coordination Committee Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="coordination" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -372,7 +372,7 @@ export default function TeamPage() {
       </section>
 
       {/* Technical Professional Consultant Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section id="technical" className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -400,7 +400,7 @@ export default function TeamPage() {
       </section>
 
       {/* CDC Team Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="cdc" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -429,7 +429,7 @@ export default function TeamPage() {
 
       {/* MTL Team Section */}
       {mtlTeam.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+        <section id="mtl" className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
           <div className="container mx-auto px-8 md:px-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -459,7 +459,7 @@ export default function TeamPage() {
 
       {/* Nodal Officers of JPVL Section */}
       {nodalOfficers.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+        <section id="nodal" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
           <div className="container mx-auto px-8 md:px-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -626,18 +626,6 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                 </div>
               )}
             </div>
-
-            {/* Decorative elements */}
-            <motion.div
-              className={`absolute -top-2 -right-2 w-6 h-6 ${style.badge} rounded-full`}
-              animate={isHovered ? { rotate: 360 } : {}}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div
-              className={`absolute -bottom-2 -left-2 w-4 h-4 ${style.badge} rounded-full`}
-              animate={isHovered ? { rotate: -360 } : {}}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            />
           </motion.div>
 
           {/* Name and Details - Compact - No animation delay */}

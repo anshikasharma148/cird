@@ -846,18 +846,6 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
                 </div>
               )}
             </div>
-
-            {/* Decorative elements */}
-            <motion.div
-              className={`absolute -top-2 -right-2 w-6 h-6 ${style.badge} rounded-full`}
-              animate={isHovered ? { rotate: 360 } : {}}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            />
-            <motion.div
-              className={`absolute -bottom-2 -left-2 w-4 h-4 ${style.badge} rounded-full`}
-              animate={isHovered ? { rotate: -360 } : {}}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            />
           </motion.div>
 
           {/* Name and Details - Compact - No animation delay */}

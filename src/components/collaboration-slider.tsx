@@ -205,7 +205,7 @@ export default function CollaborationSlider() {
                             height={380}
                             className="object-contain max-w-full max-h-full drop-shadow-2xl"
                             priority={index === 0}
-                            loading={isActive || isNext || isPrev ? "eager" : "lazy"}
+                            {...(index !== 0 && { loading: isActive || isNext || isPrev ? "eager" : "lazy" })}
                             onError={() => {
                               setImageErrors(prev => ({ ...prev, [slide.id]: true }));
                             }}

@@ -613,7 +613,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Overview Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="overview" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -703,7 +703,7 @@ export default function TrainingPage() {
       </section>
 
       {/* AI Srijan FDP Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="ai-srijan" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -797,7 +797,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Power Plant Visit Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="power-plant" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -852,7 +852,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Closing Ceremony Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="closing" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
