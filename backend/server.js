@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import nodemailer from "nodemailer";
 import { cirdSystemPrompt } from "./data/cirdSystemPrompt.js"; // ✅ Imported system data
 
 dotenv.config();
@@ -98,6 +99,77 @@ app.post("/api/embed", async (req, res) => {
     res.status(500).json({
       error: err.message,
       details: err.response?.data || "Unknown error in /api/embed",
+    });
+  }
+});
+
+/**
+ * /api/contact — Send contact form email
+ */
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, subject, message } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    // Create transporter (using Gmail SMTP or environment variables)
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || "smtp.gmail.com",
+      port: parseInt(process.env.SMTP_PORT || "587"),
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    });
+
+    // Email content
+    const mailOptions = {
+      from: process.env.SMTP_USER || email,
+      to: "cird@juetguna.in",
+      replyTo: email,
+      subject: `Contact Form: ${subject}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #1e40af;">New Contact Form Submission</h2>
+          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Subject:</strong> ${subject}</p>
+          </div>
+          <div style="background-color: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 20px 0;">
+            <h3 style="color: #1e40af; margin-top: 0;">Message:</h3>
+            <p style="white-space: pre-wrap; line-height: 1.6;">${message}</p>
+          </div>
+        </div>
+      `,
+      text: `
+        New Contact Form Submission
+        
+        Name: ${name}
+        Email: ${email}
+        Subject: ${subject}
+        
+        Message:
+        ${message}
+      `,
+    };
+
+    // Send email
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ 
+      success: true, 
+      message: "Your message has been sent successfully!" 
+    });
+  } catch (err) {
+    console.error("❌ Error in /api/contact:", err);
+    res.status(500).json({
+      error: "Failed to send message. Please try again later.",
+      details: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
   }
 });
