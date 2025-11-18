@@ -9,11 +9,18 @@ import Image from "next/image";
 import { ArrowLeft, Microscope, Users, Award, Building2, ChevronLeft, ChevronRight, CircuitBoard, Database, Zap, Target, Sparkles, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 
-// MTL images - Generate array for all 34 images
-const mtlImages = Array.from({ length: 34 }, (_, i) => ({
-  name: "MTL Lab",
-  image: `/assets/entities/mtl/img${i + 1}.jpeg`
-}));
+// MTL images - Exclude images: 1, 2, 3, 4, 7, 8, 12, 20, 21, 22, 26, 28, 31, 34
+const excludedImages = [1, 2, 3, 4, 7, 8, 12, 20, 21, 22, 26, 28, 31, 34];
+const mtlImages = Array.from({ length: 34 }, (_, i) => {
+  const imageNumber = i + 1;
+  if (excludedImages.includes(imageNumber)) {
+    return null;
+  }
+  return {
+    name: "MTL Lab",
+    image: `/assets/entities/mtl/img${imageNumber}.jpeg`
+  };
+}).filter((img): img is { name: string; image: string } => img !== null);
 
 // MTL Team Members
 interface MTLTeamMember {
@@ -721,9 +728,11 @@ export default function MTLPage() {
           )}
 
           {/* Members Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
             {mtlMembers.map((member, index) => (
-              <EnhancedMTLTeamCard key={member.id} member={member} index={mtlCoordinators.length + index} />
+              <div key={member.id} className="w-full max-w-[320px]">
+                <EnhancedMTLTeamCard member={member} index={mtlCoordinators.length + index} />
+              </div>
             ))}
           </div>
         </div>

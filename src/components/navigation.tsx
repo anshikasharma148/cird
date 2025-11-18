@@ -79,8 +79,8 @@ export function Navigation() {
                         Research
                       </span>
                     </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl">
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
+                  <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl w-max max-w-2xl">
+                      <ul className="grid gap-3 p-4 w-max">
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
@@ -175,8 +175,8 @@ export function Navigation() {
                         Entities
                       </span>
                     </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl">
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
+                  <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl w-max max-w-xl">
+                      <ul className="grid gap-3 p-4 w-max">
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
@@ -226,8 +226,8 @@ export function Navigation() {
                         Training
                       </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl">
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
+                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl w-max max-w-xl">
+                      <ul className="grid gap-3 p-4 w-max">
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
@@ -307,8 +307,8 @@ export function Navigation() {
                         Team
                       </span>
                     </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl">
-                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-1 lg:w-[600px]">
+                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-blue-200 shadow-xl w-max max-w-xl">
+                      <ul className="grid gap-3 p-4 w-max">
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
