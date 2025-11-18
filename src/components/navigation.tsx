@@ -41,32 +41,32 @@ export function Navigation() {
           }`}
         >
           <div className="container mx-auto px-4 sm:px-8 md:px-16 flex h-16 items-center justify-between">
-            <div className="flex">
+            <div className="flex flex-shrink-0">
               <Link href="/" className="flex items-center space-x-2 group">
                 <div className="text-left">
                   <div className="font-bold text-sm sm:text-lg md:text-xl text-white">
                     <span className="font-bold">CIRD</span>
                   </div>
-                  <div className="text-xs sm:text-sm text-blue-200">CIRD - JUET, Guna</div>
+                  <div className="text-xs sm:text-sm text-blue-200 hidden xs:block">CIRD - JUET, Guna</div>
                 </div>
               </Link>
             </div>
-            <NavigationMenu>
-              <NavigationMenuList className="hidden sm:flex">
+            <NavigationMenu className="hidden md:block flex-1">
+              <NavigationMenuList className="flex flex-wrap justify-end gap-0.5 md:gap-1">
                 <NavigationMenuItem>
-                  <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                  <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">Home</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                  <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">About</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <div className="relative group/nav">
                     <NavigationMenuTrigger 
-                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer"
+                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
                       onClick={(e) => {
                         // Navigate when clicking the text, but not when clicking chevron
                         const target = e.target as HTMLElement;
@@ -163,7 +163,7 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <div className="relative group/nav">
                     <NavigationMenuTrigger 
-                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer"
+                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
                       onClick={(e) => {
                         const target = e.target as HTMLElement;
                         if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -214,7 +214,7 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <div className="relative group/nav">
                     <NavigationMenuTrigger 
-                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer"
+                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
                       onClick={(e) => {
                         const target = e.target as HTMLElement;
                         if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -295,7 +295,7 @@ export function Navigation() {
                 <NavigationMenuItem>
                   <div className="relative group/nav">
                     <NavigationMenuTrigger 
-                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer"
+                      className="bg-transparent text-blue-100 hover:bg-blue-600 hover:text-white data-[state=open]:bg-blue-600 data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
                       onClick={(e) => {
                         const target = e.target as HTMLElement;
                         if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -389,12 +389,12 @@ export function Navigation() {
                   </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                  <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                  <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
                   </Link>
                 </NavigationMenuItem>
@@ -405,7 +405,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="sm:hidden text-white hover:bg-blue-800"
+              className="md:hidden text-white hover:bg-blue-800 flex-shrink-0 ml-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -415,11 +415,7 @@ export function Navigation() {
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div
-              className={`sm:hidden border-t transition-all duration-300 ${
-                isScrolled
-                  ? "bg-white/5 backdrop-blur-md border-white/10"
-                  : "bg-transparent backdrop-blur-none border-transparent"
-              }`}
+              className="md:hidden border-t border-white/10 bg-gradient-to-b from-blue-950/95 via-blue-900/95 to-indigo-950/95 backdrop-blur-md transition-all duration-300 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
             >
               <div className="px-4 py-4 space-y-2">
                 <Link 
