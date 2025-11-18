@@ -4,12 +4,50 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, User, MapPin, Sparkles, ArrowRight } from "lucide-react";
-import PageLoader from "@/components/page-loader";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sphere, MeshDistortMaterial, Float } from "@react-three/drei";
-import { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+
+// Check if WebGL is available
+function isWebGLAvailable(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    return !!gl;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Error boundary implementation for WebGL errors
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode; onError: (error: Error) => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode; onError: (error: Error) => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    this.props.onError(error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 // 3D Animated Contact Icons
 function ContactIcon3D({ position, color, icon }: { position: [number, number, number]; color: string; icon: string }) {
@@ -73,27 +111,56 @@ function ParticleField() {
 }
 
 function Contact3DBackground() {
-  return (
+  const [webGLAvailable, setWebGLAvailable] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setWebGLAvailable(isWebGLAvailable());
+  }, []);
+
+  // Fallback when WebGL is not available
+  const fallbackBackground = (
     <div className="absolute inset-0 -z-10 opacity-30">
-      <Canvas camera={{ position: [0, 0, 8], fov: 75 }}>
-        <ambientLight intensity={0.6} />
-        <pointLight position={[10, 10, 10]} intensity={1} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#3b82f6" />
-        <ContactIcon3D position={[-3, 2, 0]} color="#3b82f6" icon="mail" />
-        <ContactIcon3D position={[0, -2, 0]} color="#8b5cf6" icon="phone" />
-        <ContactIcon3D position={[3, 2, 0]} color="#06b6d4" icon="user" />
-        <ParticleField />
-        <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-      </Canvas>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-950/50 via-blue-900/50 to-indigo-950/50"></div>
     </div>
+  );
+
+  if (!webGLAvailable || hasError) {
+    return fallbackBackground;
+  }
+
+  return (
+    <ErrorBoundary
+      fallback={fallbackBackground}
+      onError={() => setHasError(true)}
+    >
+      <div className="absolute inset-0 -z-10 opacity-30">
+        <Canvas 
+          camera={{ position: [0, 0, 8], fov: 75 }}
+          gl={{ 
+            antialias: false,
+            alpha: true,
+            powerPreference: "high-performance",
+            failIfMajorPerformanceCaveat: false
+          }}
+        >
+          <ambientLight intensity={0.6} />
+          <pointLight position={[10, 10, 10]} intensity={1} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} color="#3b82f6" />
+          <ContactIcon3D position={[-3, 2, 0]} color="#3b82f6" icon="mail" />
+          <ContactIcon3D position={[0, -2, 0]} color="#8b5cf6" icon="phone" />
+          <ContactIcon3D position={[3, 2, 0]} color="#06b6d4" icon="user" />
+          <ParticleField />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+        </Canvas>
+      </div>
+    </ErrorBoundary>
   );
 }
 
 export default function ContactPage() {
   return (
-    <>
-      <PageLoader pageType="contact" />
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-indigo-950 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-blue-950 to-indigo-950 relative overflow-hidden">
         {/* 3D Background */}
         <Contact3DBackground />
 
@@ -339,6 +406,5 @@ export default function ContactPage() {
           </div>
         </section>
       </div>
-    </>
   );
 }

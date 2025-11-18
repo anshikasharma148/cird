@@ -24,7 +24,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
-import PageLoader from "@/components/page-loader";
 
 // Advanced Image Slider Component
 function ImageSlider({ 
@@ -558,9 +557,7 @@ export default function TrainingPage() {
   ];
 
   return (
-    <>
-      <PageLoader pageType="training" />
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section - Image Only */}
       <section className="relative w-full h-[70vh] overflow-hidden">
         <Image
@@ -949,6 +946,5 @@ export default function TrainingPage() {
         </div>
       </section>
     </div>
-    </>
   );
 }

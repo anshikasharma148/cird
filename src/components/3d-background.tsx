@@ -2,9 +2,22 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Sphere, MeshDistortMaterial, Float, Text3D, Center } from "@react-three/drei";
-import { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+
+// Check if WebGL is available
+function isWebGLAvailable(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  try {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    return !!gl;
+  } catch (e) {
+    return false;
+  }
+}
 
 function AnimatedSphere() {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -106,18 +119,82 @@ function DNAHelix() {
   );
 }
 
+// Error boundary implementation for WebGL errors
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode; onError: (error: Error) => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode; onError: (error: Error) => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    this.props.onError(error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
 export default function Background3D() {
-  return (
+  const [webGLAvailable, setWebGLAvailable] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    setWebGLAvailable(isWebGLAvailable());
+  }, []);
+
+  // Fallback gradient background when WebGL is not available
+  const fallbackBackground = (
     <div className="fixed inset-0 -z-10 pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <AnimatedSphere />
-        <ParticleField />
-        <DNAHelix />
-        <OrbitControls enableZoom={false} enablePan={false} />
-      </Canvas>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950">
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundRepeat: 'repeat'
+          }}></div>
+        </div>
+      </div>
     </div>
+  );
+
+  if (!webGLAvailable || hasError) {
+    return fallbackBackground;
+  }
+
+  return (
+    <ErrorBoundary
+      fallback={fallbackBackground}
+      onError={() => setHasError(true)}
+    >
+      <div className="fixed inset-0 -z-10 pointer-events-none">
+        <Canvas 
+          camera={{ position: [0, 0, 5], fov: 75 }}
+          gl={{ 
+            antialias: false,
+            alpha: true,
+            powerPreference: "high-performance",
+            failIfMajorPerformanceCaveat: false
+          }}
+        >
+          <ambientLight intensity={0.5} />
+          <pointLight position={[10, 10, 10]} />
+          <AnimatedSphere />
+          <ParticleField />
+          <DNAHelix />
+          <OrbitControls enableZoom={false} enablePan={false} />
+        </Canvas>
+      </div>
+    </ErrorBoundary>
   );
 }
 

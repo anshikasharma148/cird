@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { Users, Award, Building2, GraduationCap, ArrowRight } from "lucide-react";
 import { useState } from "react";
-import PageLoader from "@/components/page-loader";
 
 // Team member data structure
 interface TeamMember {
@@ -171,12 +170,12 @@ const teamMembers: TeamMember[] = [
     hasDetailPage: false
   },
   {
-    id: "nadeem-ahmed",
+    id: "nadeem-ahmad",
     name: "Sh. Nadeem Ahmed",
     designation: "",
     department: "JNSTPP, JPVL",
     role: "nodal",
-    slug: "nadeem-ahmed",
+    slug: "nadeem-ahmad",
     hasDetailPage: false
   },
   {
@@ -297,6 +296,15 @@ const teamMembers: TeamMember[] = [
     slug: "bhanu-pratap",
     hasDetailPage: false
   },
+  {
+    id: "chanesh-verma",
+    name: "Chanesh Verma",
+    designation: "",
+    department: "Lab Attendant, MTL, CIRD",
+    role: "mtl",
+    slug: "chanesh-verma",
+    hasDetailPage: false
+  },
 ];
 
 export default function TeamPage() {
@@ -307,9 +315,7 @@ export default function TeamPage() {
   const nodalOfficers = teamMembers.filter(m => m.role === "nodal");
 
   return (
-    <>
-      <PageLoader pageType="team" />
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
@@ -487,7 +493,6 @@ export default function TeamPage() {
         </section>
       )}
     </div>
-    </>
   );
 }
 
@@ -508,6 +513,9 @@ const getImagePath = (slug: string): string[] => {
     "rs-chauhan": ["/assets/team/rs-chauhan.jpeg"],
     "kk-purohit": ["/assets/team/kk-purohit.jpeg"],
     "bhanu-pratap": ["/assets/team/bhanu-pratap.jpeg"],
+    "nadeem-ahmad": ["/assets/team/nadeem-ahmad.jpeg"],
+    "rakesh-singh": ["/assets/team/rakesh-singh.jpeg"],
+    "chanesh-verma": ["/assets/team/chanesh-verma.jpeg"],
   };
   
   // Return mapped paths or try common extensions

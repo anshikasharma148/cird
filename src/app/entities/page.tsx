@@ -23,7 +23,6 @@ import {
   TrendingUp
 } from "lucide-react";
 import Link from "next/link";
-import PageLoader from "@/components/page-loader";
 
 export default function EntitiesPage() {
   const entities = [
@@ -120,9 +119,7 @@ export default function EntitiesPage() {
   ];
 
   return (
-    <>
-      <PageLoader pageType="entities" />
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
       <section className="py-20 bg-gradient-to-br from-black via-gray-900 to-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
@@ -392,6 +389,5 @@ export default function EntitiesPage() {
         </div>
       </section>
     </div>
-    </>
   );
 }

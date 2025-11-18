@@ -8,7 +8,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Microscope, Users, Award, Building2, ChevronLeft, ChevronRight, CircuitBoard, Database, Zap, Target, Sparkles, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import PageLoader from "@/components/page-loader";
 
 // MTL images - Generate array for all 34 images
 const mtlImages = Array.from({ length: 34 }, (_, i) => ({
@@ -63,6 +62,15 @@ const mtlTeamMembers: MTLTeamMember[] = [
     slug: "bhanu-pratap",
     hasDetailPage: false,
     role: "member"
+  },
+  {
+    id: "chanesh-verma",
+    name: "Chanesh Verma",
+    designation: "",
+    department: "Lab Attendant, MTL, CIRD",
+    slug: "chanesh-verma",
+    hasDetailPage: false,
+    role: "member"
   }
 ];
 
@@ -77,6 +85,7 @@ const getMTLTeamImagePath = (slug: string): string[] => {
     "rs-chauhan": ["/assets/team/rs-chauhan.jpeg"],
     "kk-purohit": ["/assets/team/kk-purohit.jpeg"],
     "bhanu-pratap": ["/assets/team/bhanu-pratap.jpeg"],
+    "chanesh-verma": ["/assets/team/chanesh-verma.jpeg"],
   };
   
   if (imageMap[slug]) {
@@ -163,9 +172,7 @@ export default function MTLPage() {
   };
 
   return (
-    <>
-      <PageLoader message="Welcome to MTL!" />
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
@@ -722,7 +729,6 @@ export default function MTLPage() {
         </div>
       </section>
     </div>
-    </>
   );
 }
 
