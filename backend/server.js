@@ -110,69 +110,48 @@ app.post("/api/contact", async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
-    // Validate required fields
     if (!name || !email || !subject || !message) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    // Create transporter (using Gmail SMTP or environment variables)
+    // SMTP2GO transporter
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || "smtp.gmail.com",
-      port: parseInt(process.env.SMTP_PORT || "587"),
-      secure: false, // true for 465, false for other ports
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT),
+      secure: false,
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
 
-    // Email content
-    const mailOptions = {
-      from: process.env.SMTP_USER || email,
-      to: "cird@juetguna.in",
+    await transporter.sendMail({
+      from: `"CIRD Website Contact" <support@cird.co.in>`,
+      to: "support@cird.co.in",
       replyTo: email,
-      subject: `Contact Form: ${subject}`,
+      subject: `New Contact Form Submission: ${subject}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #1e40af;">New Contact Form Submission</h2>
-          <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Subject:</strong> ${subject}</p>
-          </div>
-          <div style="background-color: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 20px 0;">
-            <h3 style="color: #1e40af; margin-top: 0;">Message:</h3>
-            <p style="white-space: pre-wrap; line-height: 1.6;">${message}</p>
-          </div>
-        </div>
+        <h2>New Inquiry</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Subject:</b> ${subject}</p>
+        <p><b>Message:</b><br>${message}</p>
       `,
-      text: `
-        New Contact Form Submission
-        
-        Name: ${name}
-        Email: ${email}
-        Subject: ${subject}
-        
-        Message:
-        ${message}
-      `,
-    };
+    });
 
-    // Send email
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ 
-      success: true, 
-      message: "Your message has been sent successfully!" 
+    return res.status(200).json({
+      success: true,
+      message: "Message sent successfully!",
     });
   } catch (err) {
-    console.error("❌ Error in /api/contact:", err);
-    res.status(500).json({
-      error: "Failed to send message. Please try again later.",
-      details: process.env.NODE_ENV === "development" ? err.message : undefined,
+    console.error("❌ Email error:", err);
+    return res.status(500).json({
+      error: "Failed to send message",
+      details: err.message,
     });
   }
 });
+
 
 /**
  * /health — Simple uptime route for monitoring
