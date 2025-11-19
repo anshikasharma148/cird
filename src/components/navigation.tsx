@@ -389,6 +389,11 @@ export function Navigation() {
                   </div>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
+                  <Link href="/mou" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
+                    <span className="group-hover:scale-105 transition-transform duration-200">MoU</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
                   <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-blue-100">
                     <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
                   </Link>
@@ -583,6 +588,13 @@ export function Navigation() {
                   className="block px-8 py-2 text-blue-200 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
                 >
                   Nodal Officers
+                </Link>
+                <Link 
+                  href="/mou" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block px-4 py-2 text-blue-100 hover:bg-blue-600 hover:text-white rounded-md transition-colors"
+                >
+                  MoU
                 </Link>
                 <Link 
                   href="/contact" 

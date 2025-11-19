@@ -5,12 +5,27 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Microscope, Cpu, Brain, Zap } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Hero Background Image */}
+      <div className="absolute inset-0">
+        <Image
+          src="/assets/home/hero-image.jpg"
+          alt="CIRD Hero Background"
+          fill
+          priority
+          className="object-cover"
+          quality={90}
+        />
+        {/* Overlay for better text readability while keeping image visible */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/50 via-blue-900/40 to-indigo-950/50"></div>
+      </div>
+
       {/* Animated Background Elements with Glass Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950">
+      <div className="absolute inset-0">
         <div className="absolute inset-0 opacity-30">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -78,18 +93,18 @@ export default function HeroSection() {
         <Zap size={30} />
       </motion.div>
 
-      <div className="relative z-10 text-center px-8 md:px-16 max-w-6xl mx-auto">
+      <div className="relative z-10 text-center px-8 md:px-16 max-w-6xl mx-auto w-full flex flex-col items-center">
         <motion.h1
-          className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold mb-6 text-white"
+          className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Centre for Industrial Research and Development
+          <span className="whitespace-nowrap">Centre for Industrial Research and Development</span>
         </motion.h1>
 
         <motion.h2
-          className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 text-gray-300"
+          className="text-lg sm:text-xl md:text-2xl font-semibold mb-6 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
@@ -97,41 +112,22 @@ export default function HeroSection() {
           <span className="block sm:inline">Industry–Academia Interface</span>
           <span className="block sm:inline sm:ml-2">| Jaypee Universities at Jaypee University of Engineering and Technology (JUET), Guna</span>
         </motion.h2>
-        
-        <motion.div
-          className="mb-6 p-4 bg-blue-500/10 backdrop-blur-md rounded-lg border border-blue-400/30 shadow-lg shadow-blue-900/20"
+
+        <motion.p
+          className="text-lg md:text-xl text-white mb-6 max-w-5xl mx-auto leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          whileHover={{ 
-            scale: 1.02,
-            borderColor: "rgba(96, 165, 250, 0.5)",
-            boxShadow: "0 20px 25px -5px rgba(59, 130, 246, 0.3)"
-          }}
-        >
-          <p className="text-lg font-semibold text-white text-center">
-            MoU Signed Between JUs and JPVL
-          </p>
-          <p className="text-sm text-blue-200 text-center mt-1">
-            Technical Professional Consultancy Projects under the MoU
-          </p>
-        </motion.div>
-
-        <motion.p
-          className="text-lg md:text-xl text-gray-300 mb-6 max-w-5xl mx-auto leading-relaxed"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
         >
           Facilitating research translation, technology development, intellectual property (IPR) management, 
           R&D collaboration, technology transfer and commercialization, and mentoring.
         </motion.p>
 
         <motion.p
-          className="text-base md:text-lg text-gray-400 mb-8 max-w-4xl mx-auto leading-relaxed"
+          className="text-base md:text-lg text-white mb-8 max-w-4xl mx-auto leading-relaxed drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.7 }}
         >
           <strong className="text-white">Mission:</strong> "To be a dynamic interface with industry, fostering innovation, 
           research collaboration, and sustainable commercialization of science and technology for mutual benefit."
@@ -182,20 +178,20 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 1 }}
         >
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">15+</div>
-            <div className="text-sm text-gray-400">Research Projects</div>
+            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">15+</div>
+            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Research Projects</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">5</div>
-            <div className="text-sm text-gray-400">Patents Filed</div>
+            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">5</div>
+            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Patents Filed</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">50+</div>
-            <div className="text-sm text-gray-400">Publications</div>
+            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">50+</div>
+            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Publications</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">3</div>
-            <div className="text-sm text-gray-400">Research Centers</div>
+            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">3</div>
+            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Research Centers</div>
           </div>
         </motion.div>
       </div>

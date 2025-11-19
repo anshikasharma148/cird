@@ -516,6 +516,7 @@ const getImagePath = (slug: string): string[] => {
     "nadeem-ahmad": ["/assets/team/nadeem-ahmad.jpeg"],
     "rakesh-singh": ["/assets/team/rakesh-singh.jpeg"],
     "chanesh-verma": ["/assets/team/chanesh-verma.jpeg"],
+    "mkv-rama-rao": ["/assets/team/mkv-rama-rao.png"],
   };
   
   // Return mapped paths or try common extensions
