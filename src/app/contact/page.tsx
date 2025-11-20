@@ -187,7 +187,7 @@ export default function ContactPage() {
                       value={form.name}
                       onChange={handleChange}
                       className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                      placeholder="John Doe"
+                  
                     />
                   </motion.div>
 
@@ -207,7 +207,7 @@ export default function ContactPage() {
                       value={form.email}
                       onChange={handleChange}
                       className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                      placeholder="john@example.com"
+                    
                     />
                   </motion.div>
                 </div>
@@ -227,7 +227,7 @@ export default function ContactPage() {
                     value={form.phone}
                     onChange={handleChange}
                     className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                    placeholder="+91 1234567890"
+                    
                   />
                 </motion.div>
 
@@ -246,7 +246,7 @@ export default function ContactPage() {
                     value={form.subject}
                     onChange={handleChange}
                     className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                    placeholder="What is this about?"
+                    
                   />
                 </motion.div>
 
