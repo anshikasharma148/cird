@@ -509,7 +509,7 @@ const getImagePath = (slug: string): string[] => {
     "pankaj-dumka": ["/assets/team/pankaj-dumka.png"],
     "pmv-subba-rao": ["/assets/team/pmv-subbarao.jpeg"],
     "rohit-mishra": ["/assets/team/rohit-mishra.png"],
-    "shashwat-shukla": ["/assets/team/shashwat-shukla.jpg"],
+    "shashwat-shukla": ["/assets/team/shashwat-shukla.jpeg"],
     "rs-chauhan": ["/assets/team/rs-chauhan.jpeg"],
     "kk-purohit": ["/assets/team/kk-purohit.jpeg"],
     "bhanu-pratap": ["/assets/team/bhanu-pratap.jpeg"],

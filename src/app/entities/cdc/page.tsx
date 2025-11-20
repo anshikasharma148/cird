@@ -91,7 +91,7 @@ const getCDCTeamImagePath = (slug: string): string[] => {
     "amit-srivastava": ["/assets/team/amit-srivastava.jpg"],
     "anshika-sharma": ["/assets/team/anshika-sharma.jpeg"],
     "nitesh-pandey": ["/assets/team/nitesh-pandey.jpeg"],
-    "shashwat-shukla": ["/assets/team/shashwat-shukla.jpg"],
+    "shashwat-shukla": ["/assets/team/shashwat-shukla.jpeg"],
   };
   
   if (imageMap[slug]) {
