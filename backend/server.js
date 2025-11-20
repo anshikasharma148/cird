@@ -108,50 +108,65 @@ app.post("/api/embed", async (req, res) => {
  */
 app.post("/api/contact", async (req, res) => {
   try {
-    const { name, email, subject, message } = req.body;
+    const { name, email, phone, subject, message } = req.body;
 
+    // Validate required fields
     if (!name || !email || !subject || !message) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({
+        error: "Name, email, subject, and message are required.",
+      });
     }
 
-    // SMTP2GO transporter
+    // Create SMTP transporter
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT),
-secure: process.env.SMTP_PORT == "465" ? true : false,
-
+      secure: process.env.SMTP_PORT === "465",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
     });
 
+    // Email HTML template
+    const emailHTML = `
+      <h2>New Inquiry from CIRD Website</h2>
+
+      <p><b>Name:</b> ${name}</p>
+      <p><b>Email:</b> ${email}</p>
+      ${phone ? `<p><b>Phone:</b> ${phone}</p>` : ""}
+
+      <p><b>Subject:</b> ${subject}</p>
+
+      <p style="margin-top:10px;"><b>Message:</b><br>${message}</p>
+
+      <hr style="margin:20px 0; opacity:0.3;" />
+      <p style="color:#666;">This message was sent via the CIRD Website Contact Form.</p>
+    `;
+
+    // Send email
     await transporter.sendMail({
       from: `"CIRD Website Contact" <support@cird.co.in>`,
       to: "support@cird.co.in",
       replyTo: email,
       subject: `New Contact Form Submission: ${subject}`,
-      html: `
-        <h2>New Inquiry</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Subject:</b> ${subject}</p>
-        <p><b>Message:</b><br>${message}</p>
-      `,
+      html: emailHTML,
     });
 
     return res.status(200).json({
       success: true,
       message: "Message sent successfully!",
     });
+
   } catch (err) {
-    console.error("❌ Email error:", err);
     return res.status(500).json({
       error: "Failed to send message",
       details: err.message,
     });
   }
 });
+
+
 
 
 /**

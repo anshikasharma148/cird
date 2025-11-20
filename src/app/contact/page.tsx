@@ -9,6 +9,7 @@ export default function ContactPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     subject: "",
     message: "",
   });
@@ -39,7 +40,7 @@ export default function ContactPage() {
       if (!res.ok) throw new Error(data.error);
 
       setMsg("Message sent successfully!");
-      setForm({ name: "", email: "", subject: "", message: "" });
+      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
     } catch (err: any) {
       setMsg("Error: " + err.message);
     } finally {
@@ -210,6 +211,25 @@ export default function ContactPage() {
                     />
                   </motion.div>
                 </div>
+
+                {/* Phone Field */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.55 }}
+                >
+                  <label className="block mb-2 font-semibold text-gray-200">
+                    Phone Number <span className="text-gray-400 text-sm">(Optional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
+                    placeholder="+91 1234567890"
+                  />
+                </motion.div>
 
                 {/* Subject Field */}
                 <motion.div

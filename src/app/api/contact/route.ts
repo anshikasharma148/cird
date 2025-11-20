@@ -15,12 +15,12 @@ function escapeHtml(text: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, subject, message } = await request.json();
+    const { name, email, phone, subject, message } = await request.json();
 
     // Validate required fields
     if (!name || !email || !subject || !message) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "All required fields must be filled" },
         { status: 400 }
       );
     }
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
     // Sanitize inputs
     const sanitizedName = escapeHtml(name);
     const sanitizedEmail = escapeHtml(email);
+    const sanitizedPhone = phone ? escapeHtml(phone) : "";
     const sanitizedSubject = escapeHtml(subject);
     const sanitizedMessage = escapeHtml(message);
 
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p><strong>Name:</strong> ${sanitizedName}</p>
             <p><strong>Email:</strong> ${sanitizedEmail}</p>
+            ${sanitizedPhone ? `<p><strong>Phone:</strong> ${sanitizedPhone}</p>` : ''}
             <p><strong>Subject:</strong> ${sanitizedSubject}</p>
           </div>
           <div style="background-color: #ffffff; padding: 20px; border-left: 4px solid #3b82f6; margin: 20px 0;">
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
         
         Name: ${sanitizedName}
         Email: ${sanitizedEmail}
+        ${sanitizedPhone ? `Phone: ${sanitizedPhone}` : ''}
         Subject: ${sanitizedSubject}
         
         Message:
