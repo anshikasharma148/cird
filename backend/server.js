@@ -102,9 +102,8 @@ app.post("/api/embed", async (req, res) => {
     });
   }
 });
-
 /**
- * /api/contact — Send contact form email
+ * /api/contact — Send contact form email (Enhanced Styled Email)
  */
 app.post("/api/contact", async (req, res) => {
   try {
@@ -128,20 +127,75 @@ app.post("/api/contact", async (req, res) => {
       },
     });
 
-    // Email HTML template
+    // Premium Styled Email Template
     const emailHTML = `
-      <h2>New Inquiry from CIRD Website</h2>
+      <div style="font-family: Arial, sans-serif; background:#f4f6fa; padding:30px;">
+        <div style="
+          max-width:600px;
+          margin:auto;
+          background:white;
+          border-radius:12px;
+          padding:30px;
+          box-shadow:0 4px 20px rgba(0,0,0,0.08);
+        ">
+          
+          <!-- Header -->
+          <div style="text-align:center; margin-bottom:30px;">
+            <h1 style="
+              margin:0;
+              font-size:26px;
+              background: linear-gradient(90deg, #2563eb, #4f46e5);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+            ">
+              📩 New Contact Form Submission
+            </h1>
+            <p style="color:#6b7280; font-size:15px; margin-top:8px;">
+              A new message has been received from the CIRD website.
+            </p>
+          </div>
 
-      <p><b>Name:</b> ${name}</p>
-      <p><b>Email:</b> ${email}</p>
-      ${phone ? `<p><b>Phone:</b> ${phone}</p>` : ""}
+          <!-- User Info Card -->
+          <div style="
+            background:#f0f4ff;
+            padding:20px;
+            border-radius:10px;
+            border-left:4px solid #2563eb;
+            margin-bottom:25px;
+          ">
+            <p style="margin:8px 0;"><b>Name:</b> ${name}</p>
+            <p style="margin:8px 0;"><b>Email:</b> ${email}</p>
+            ${phone ? `<p style="margin:8px 0;"><b>Phone:</b> ${phone}</p>` : ""}
+            <p style="margin:8px 0;"><b>Subject:</b> ${subject}</p>
+          </div>
 
-      <p><b>Subject:</b> ${subject}</p>
+          <!-- Message Box -->
+          <div style="
+            background:white;
+            border-radius:10px;
+            border:1px solid #e5e7eb;
+            padding:20px;
+          ">
+            <h3 style="
+              margin-top:0;
+              color:#1e3a8a;
+              font-size:18px;
+            ">Message:</h3>
 
-      <p style="margin-top:10px;"><b>Message:</b><br>${message}</p>
+            <p style="line-height:1.7; font-size:15px; white-space:pre-line;">
+              ${message}
+            </p>
+          </div>
 
-      <hr style="margin:20px 0; opacity:0.3;" />
-      <p style="color:#666;">This message was sent via the CIRD Website Contact Form.</p>
+          <hr style="margin:30px 0; border:none; border-top:1px solid #e5e7eb;" />
+
+          <!-- Footer -->
+          <div style="text-align:center; color:#6b7280; font-size:14px;">
+            <p>This message was sent via the <b>CIRD Website Contact Form</b>.</p>
+          </div>
+
+        </div>
+      </div>
     `;
 
     // Send email
@@ -165,9 +219,6 @@ app.post("/api/contact", async (req, res) => {
     });
   }
 });
-
-
-
 
 /**
  * /health — Simple uptime route for monitoring
