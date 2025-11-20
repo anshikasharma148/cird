@@ -3,7 +3,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MessageSquare, Send, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
+import { Mail, MessageSquare, Send, CheckCircle, AlertCircle, Loader2, MapPin } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Dynamically import the map component to avoid SSR issues
+const MapComponent = dynamic(() => import("@/components/map"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[500px] bg-slate-800 rounded-lg flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+    </div>
+  ),
+});
 
 export default function ContactPage() {
   const [form, setForm] = useState({
@@ -317,6 +328,61 @@ export default function ContactPage() {
                   </motion.button>
                 </motion.div>
               </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Map Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.9 }}
+          className="mt-16"
+        >
+          <Card className="bg-gradient-to-br from-white/10 via-blue-950/30 to-indigo-950/30 backdrop-blur-md border-2 border-blue-500/30 shadow-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 group">
+            {/* Animated background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            
+            <CardHeader className="bg-gradient-to-r from-blue-600/30 via-indigo-600/30 to-purple-600/30 border-b border-white/20 relative z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-3xl text-white flex items-center mb-2">
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatDelay: 2
+                      }}
+                    >
+                      <MapPin className="w-8 h-8 mr-3 text-blue-400 drop-shadow-lg" />
+                    </motion.div>
+                    Our Location
+                  </CardTitle>
+                  <p className="text-gray-200 mt-2 text-lg">
+                    Find us at <span className="font-semibold text-blue-300">Jaypee University of Engineering and Technology</span>, Guna
+                  </p>
+                </div>
+                <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-lg border border-blue-400/30">
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-sm text-gray-200 font-medium">Live Map</span>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 relative z-10">
+              <div className="w-full h-[500px] md:h-[600px] relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                  <MapComponent />
+                </div>
+                {/* Decorative corner accents */}
+                <div className="absolute top-4 left-4 w-20 h-20 border-t-2 border-l-2 border-blue-400/30 rounded-tl-lg pointer-events-none z-20" />
+                <div className="absolute top-4 right-4 w-20 h-20 border-t-2 border-r-2 border-indigo-400/30 rounded-tr-lg pointer-events-none z-20" />
+                <div className="absolute bottom-4 left-4 w-20 h-20 border-b-2 border-l-2 border-purple-400/30 rounded-bl-lg pointer-events-none z-20" />
+                <div className="absolute bottom-4 right-4 w-20 h-20 border-b-2 border-r-2 border-blue-400/30 rounded-br-lg pointer-events-none z-20" />
+              </div>
             </CardContent>
           </Card>
         </motion.div>
