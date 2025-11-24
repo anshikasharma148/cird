@@ -6,21 +6,15 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // JUET Guna coordinates
-const JUET_GUNA_COORDS: [number, number] = [24.6475, 77.3103];
+const JUET_GUNA: [number, number] = [24.6475, 77.3103];
 
-// Create custom marker with JUET text
-const createCustomIcon = () => {
-  return L.divIcon({
+// Create custom JUET marker
+const createJUETMarker = () =>
+  L.divIcon({
     className: "custom-marker",
     html: `
-      <div style="
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transform: translateY(-100%);
-      ">
-        <!-- Pulse animation ring -->
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translateY(-100%);">
+        
         <div class="pulse-ring" style="
           position: absolute;
           width: 60px;
@@ -30,9 +24,9 @@ const createCustomIcon = () => {
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
+          animation: pulse 2s infinite;
         "></div>
-        
-        <!-- Marker pin -->
+
         <div style="
           position: relative;
           width: 0;
@@ -42,8 +36,7 @@ const createCustomIcon = () => {
           border-top: 30px solid #3b82f6;
           filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
         "></div>
-        
-        <!-- JUET Label -->
+
         <div style="
           position: absolute;
           top: -50px;
@@ -54,133 +47,100 @@ const createCustomIcon = () => {
           font-weight: 700;
           font-size: 14px;
           white-space: nowrap;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
           border: 2px solid white;
           transform: translateX(-50%);
           left: 50%;
-        ">
-          🎓 JUET
-        </div>
+          box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+        ">🎓 JUET</div>
       </div>
     `,
     iconSize: [30, 50],
     iconAnchor: [15, 50],
     popupAnchor: [0, -50],
   });
-};
 
 export default function MapComponent() {
-  const [isMounted, setIsMounted] = useState(false);
+  const [mapType, setMapType] = useState<"satellite" | "street">("satellite");
+  const [mounted, setMounted] = useState(false);
+
+  const MAPPLS_KEY = process.env.NEXT_PUBLIC_MAPPLS_KEY || "";
+  const hasKey = MAPPLS_KEY !== "";
 
   useEffect(() => {
-    setIsMounted(true);
-    
-    // Add custom styles for the map
-    const style = document.createElement("style");
-    style.id = "leaflet-custom-styles";
-    style.textContent = `
-      .leaflet-container {
-        background: #1e293b !important;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        height: 100% !important;
-        width: 100% !important;
-      }
-      .leaflet-popup-content-wrapper {
-        background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
-        color: white !important;
-        border-radius: 12px !important;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
-      }
-      .leaflet-popup-content {
-        margin: 20px !important;
-        color: white !important;
-      }
-      .leaflet-popup-tip {
-        background: #3b82f6 !important;
-      }
-      .leaflet-control-zoom a {
-        background: rgba(30, 41, 59, 0.9) !important;
-        color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        backdrop-filter: blur(10px);
-      }
-      .leaflet-control-zoom a:hover {
-        background: rgba(59, 130, 246, 0.9) !important;
-      }
-      .custom-marker {
-        background: transparent !important;
-        border: none !important;
-      }
-      .pulse-ring {
-        animation: pulse 2s infinite;
-      }
-      @keyframes pulse {
-        0% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 1;
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(2);
-          opacity: 0;
-        }
-      }
-    `;
-    
-    if (!document.getElementById("leaflet-custom-styles")) {
-      document.head.appendChild(style);
-    }
-
-    return () => {
-      const existingStyle = document.getElementById("leaflet-custom-styles");
-      if (existingStyle) {
-        document.head.removeChild(existingStyle);
-      }
-    };
+    setMounted(true);
   }, []);
 
-  if (!isMounted) {
+  if (!mounted) {
     return (
       <div className="w-full h-full bg-slate-800 rounded-lg flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading map...</p>
-        </div>
+        <div className="text-center text-gray-300">Loading map...</div>
       </div>
     );
   }
 
-  const customIcon = createCustomIcon();
+  // Mappls tile URLs
+  const MAPPLS_STREET = `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_KEY}/tile/map/{z}/{x}/{y}.png`;
+  const MAPPLS_SAT = `https://apis.mappls.com/advancedmaps/v1/${MAPPLS_KEY}/tile/hybrid/{z}/{x}/{y}.png`;
+
+  const OSM_STREET = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+  const customIcon = createJUETMarker();
 
   return (
     <div className="relative w-full h-full" style={{ minHeight: "500px" }}>
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-transparent to-indigo-600/5 pointer-events-none z-10 rounded-lg" />
       
+      {/* Map Type Toggle */}
+      <div className="absolute top-4 right-4 z-[1000] flex gap-2">
+        <button
+          onClick={() => setMapType("satellite")}
+          className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${
+            mapType === "satellite"
+              ? "bg-blue-600 text-white shadow-lg"
+              : "bg-white/20 text-gray-200"
+          }`}
+        >
+          🛰️ Satellite
+        </button>
+
+        <button
+          onClick={() => setMapType("street")}
+          className={`px-4 py-2 rounded-lg font-semibold text-sm transition ${
+            mapType === "street"
+              ? "bg-blue-600 text-white shadow-lg"
+              : "bg-white/20 text-gray-200"
+          }`}
+        >
+          🗺️ Street
+        </button>
+      </div>
+
       <MapContainer
-        center={JUET_GUNA_COORDS}
+        center={JUET_GUNA}
         zoom={15}
-        style={{ height: "100%", width: "100%", minHeight: "500px", zIndex: 0 }}
         scrollWheelZoom={true}
+        style={{ height: "100%", width: "100%" }}
         className="rounded-lg"
-        key="map-container"
+        key={mapType + hasKey}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright" style="color: #3b82f6;">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Marker position={JUET_GUNA_COORDS} icon={customIcon}>
+        {hasKey ? (
+          <TileLayer
+            url={mapType === "satellite" ? MAPPLS_SAT : MAPPLS_STREET}
+            maxZoom={20}
+            minZoom={2}
+            attribution='&copy; <a href="https://www.mappls.com/">Mappls</a>'
+          />
+        ) : (
+          <TileLayer url={OSM_STREET} />
+        )}
+
+        <Marker icon={customIcon} position={JUET_GUNA}>
           <Popup>
             <div className="text-center" style={{ color: "white" }}>
-              <div className="mb-3">
-                <div className="text-2xl mb-2">🎓</div>
-                <h3 className="font-bold text-lg mb-2" style={{ color: "white" }}>
-                  Jaypee University of Engineering and Technology
-                </h3>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm opacity-90">📍 Guna, Madhya Pradesh, India</p>
-                <p className="text-sm opacity-90">🏛️ Centre of Industrial Research and Development (CIRD)</p>
-              </div>
+              <h3 className="text-lg font-bold mb-2">
+                Jaypee University of Engineering and Technology
+              </h3>
+              <p>📍 Guna, Madhya Pradesh, India</p>
+              <p>🏛️ CIRD - Centre for Industrial Research & Development</p>
             </div>
           </Popup>
         </Marker>
@@ -188,4 +148,3 @@ export default function MapComponent() {
     </div>
   );
 }
-
