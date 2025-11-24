@@ -59,25 +59,6 @@ export default function ContactPage() {
     }
   };
 
-  const emailCards = [
-    {
-      email: "support@cird.co.in",
-      title: "Support",
-      description: "For technical support and general inquiries",
-      icon: Mail,
-      color: "bg-blue-600",
-      delay: 0.1,
-    },
-    {
-      email: "coordinator@cird.co.in",
-      title: "Coordinator",
-      description: "For coordination and administrative matters",
-      icon: MessageSquare,
-      color: "bg-indigo-600",
-      delay: 0.2,
-    },
-  ];
-
   const isSuccess = msg && !msg.startsWith("Error:");
 
   return (
@@ -127,44 +108,35 @@ export default function ContactPage() {
           </p>
         </motion.div>
 
-        {/* Email Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-          {emailCards.map((card, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: card.delay }}
-              whileHover={{ y: -5, scale: 1.02 }}
-            >
-              <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl cursor-pointer group">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center space-x-4">
-                    <motion.div
-                      className={`p-4 rounded-2xl ${card.color} shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                      whileHover={{ rotate: 5 }}
-                    >
-                      <card.icon className="w-8 h-8 text-white" />
-                    </motion.div>
-                    <div className="flex-1">
-                      <CardTitle className="text-2xl text-white mb-1">{card.title}</CardTitle>
-                      <p className="text-gray-400 text-sm">{card.description}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <a
-                    href={`mailto:${card.email}`}
-                    className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 flex items-center group/link"
-                  >
-                    <Mail className="w-5 h-5 mr-2 group-hover/link:translate-x-1 transition-transform" />
-                    {card.email}
-                  </a>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
+        {/* Contact Email Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mb-16 flex justify-center"
+        >
+          <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl max-w-md w-full">
+            <CardHeader>
+              <CardTitle className="text-2xl text-white mb-4 text-center">Contact on:</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <a
+                href="mailto:support@cird.co.in"
+                className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
+              >
+                <Mail className="w-5 h-5 mr-2 group-hover/link:translate-x-1 transition-transform" />
+                support@cird.co.in
+              </a>
+              <a
+                href="mailto:coordinator@cird.co.in"
+                className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
+              >
+                <Mail className="w-5 h-5 mr-2 group-hover/link:translate-x-1 transition-transform" />
+                coordinator@cird.co.in
+              </a>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Contact Form Section */}
         <motion.div
