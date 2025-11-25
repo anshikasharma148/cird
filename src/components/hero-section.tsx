@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin, Mail, Linkedin } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -20,12 +20,41 @@ import {
 // Hero images for slider
 const heroImages = [
   {
-    src: "/assets/home/hero-image.jpg",
-    alt: "CIRD Hero Image",
+    src: "/assets/hero/img1.jpeg",
+    alt: "CIRD Hero Image 1",
     title: "Driving Innovation Forward",
     subtitle: "Transforming research into real-world solutions"
   },
-  // Add more images here when available
+  {
+    src: "/assets/hero/img2.jpeg",
+    alt: "CIRD Hero Image 2",
+    title: "Driving Innovation Forward",
+    subtitle: "Transforming research into real-world solutions"
+  },
+  {
+    src: "/assets/hero/img3.jpg",
+    alt: "CIRD Hero Image 3",
+    title: "Driving Innovation Forward",
+    subtitle: "Transforming research into real-world solutions"
+  },
+  {
+    src: "/assets/hero/img4.jpg",
+    alt: "CIRD Hero Image 4",
+    title: "Driving Innovation Forward",
+    subtitle: "Transforming research into real-world solutions"
+  },
+  {
+    src: "/assets/hero/img5.jpg",
+    alt: "CIRD Hero Image 5",
+    title: "Driving Innovation Forward",
+    subtitle: "Transforming research into real-world solutions"
+  },
+  {
+    src: "/assets/hero/img6.jpg",
+    alt: "CIRD Hero Image 6",
+    title: "Driving Innovation Forward",
+    subtitle: "Transforming research into real-world solutions"
+  }
 ];
 
 // Stats data with links
@@ -75,7 +104,22 @@ const stats = [
 export default function HeroSection() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [headerHeight, setHeaderHeight] = useState(152); // Default height
+  const headerRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Calculate header height
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
+      }
+    };
+    
+    updateHeaderHeight();
+    window.addEventListener('resize', updateHeaderHeight);
+    return () => window.removeEventListener('resize', updateHeaderHeight);
+  }, []);
 
   // Auto-slide functionality for hero images
   useEffect(() => {
@@ -102,59 +146,61 @@ export default function HeroSection() {
 
   return (
     <section className="relative w-full bg-white">
-      {/* Header Section with Logo and Full Form */}
-      <div className="bg-[#e1b382] border-b border-[#c89666]">
-        <div className="container mx-auto px-4 sm:px-8 md:px-16 py-4">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            {/* Logo and Full Form */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                {/* Logo Circle */}
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-xl">C</span>
-                </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-[#2d545e] tracking-tight">
-                    CIRD
-                  </h1>
-                  <p className="text-sm md:text-base lg:text-lg text-[#2d545e] font-medium">
-                    Centre for Industrial Research and Development
-                  </p>
+      {/* Fixed Header and Navigation Container */}
+      <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-[#e1b382] z-50 shadow-sm">
+        {/* Header Section with Logo and Full Form */}
+        <div className="border-b border-[#c89666]">
+          <div className="container mx-auto px-4 sm:px-8 md:px-16 py-4">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              {/* Logo and Full Form */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
+                  {/* Logo Circle */}
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center shadow-lg">
+                    <span className="text-white font-bold text-xl">C</span>
+                  </div>
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-[#2d545e] tracking-tight">
+                      CIRD
+                    </h1>
+                    <p className="text-sm md:text-base lg:text-lg text-[#2d545e] font-medium">
+                      Centre for Industrial Research and Development
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contact Info and Social Links */}
-            <div className="flex items-center gap-4 md:gap-6">
-              <div className="hidden md:flex flex-col items-end text-right gap-1">
-                <div className="flex items-center gap-2 text-sm text-[#2d545e]">
-                  <MapPin className="w-4 h-4 text-[#2d545e]" />
-                  <span>Jaypee University of Engineering and Technology, Guna, Madhya Pradesh, India</span>
+              {/* Contact Info and Social Links */}
+              <div className="flex items-center gap-4 md:gap-6">
+                <div className="hidden md:flex flex-col items-end text-right gap-1">
+                  <div className="flex items-center gap-2 text-sm text-[#2d545e]">
+                    <MapPin className="w-4 h-4 text-[#2d545e]" />
+                    <span>Jaypee University of Engineering and Technology, Guna, Madhya Pradesh, India</span>
+                  </div>
+                  <a href="mailto:support@cird.co.in" className="flex items-center gap-2 text-sm text-[#2d545e] hover:text-[#12343b] transition-colors">
+                    <Mail className="w-4 h-4 text-[#2d545e]" />
+                    <span>support@cird.co.in</span>
+                  </a>
                 </div>
-                <a href="mailto:support@cird.co.in" className="flex items-center gap-2 text-sm text-[#2d545e] hover:text-[#12343b] transition-colors">
-                  <Mail className="w-4 h-4 text-[#2d545e]" />
-                  <span>support@cird.co.in</span>
-                </a>
-              </div>
-              <div className="flex items-center gap-2">
-                <a 
-                  href="https://www.linkedin.com/in/center-of-industrial-research-and-development/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="w-8 h-8 rounded-full bg-[#e1b382] hover:bg-[#2d545e] flex items-center justify-center transition-colors group"
-                >
-                  <Linkedin className="w-4 h-4 text-[#2d545e] group-hover:text-white" />
-                </a>
+                <div className="flex items-center gap-2">
+                  <a 
+                    href="https://www.linkedin.com/in/center-of-industrial-research-and-development/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-8 h-8 rounded-full bg-[#e1b382] hover:bg-[#2d545e] flex items-center justify-center transition-colors group"
+                  >
+                    <Linkedin className="w-4 h-4 text-[#2d545e] group-hover:text-white" />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation Bar */}
-      <div className="bg-[#e1b382] border-b border-[#c89666] relative z-50 shadow-sm">
-        <div className="container mx-auto px-4 sm:px-8 md:px-16">
-          <nav className="flex h-16 items-center justify-end">
+        {/* Navigation Bar */}
+        <div className="border-b border-[#c89666]">
+          <div className="container mx-auto px-4 sm:px-8 md:px-16">
+            <nav className="flex h-16 items-center justify-end">
             <NavigationMenu className="flex-1 justify-end">
               <NavigationMenuList className="flex flex-wrap justify-end gap-0.5 md:gap-1">
                 <NavigationMenuItem>
@@ -513,12 +559,14 @@ export default function HeroSection() {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-          </nav>
+            </nav>
+          </div>
         </div>
       </div>
 
       {/* Hero Image Section */}
-      <div className="relative w-full h-[75vh] md:h-[83vh] overflow-hidden">
+      <div className="relative w-full h-[85vh] md:h-[100vh] overflow-hidden" style={{ paddingTop: `${headerHeight}px` }}>
+        {/* Image Slider - Only images change */}
         {heroImages.map((image, index) => {
           const isActive = index === currentImageIndex;
           return (
@@ -543,50 +591,51 @@ export default function HeroSection() {
                 alt={image.alt}
                 fill
                 priority={index === 0}
-                className="object-cover"
+                className="object-cover object-top"
                 quality={90}
               />
-              {/* Overlay with text */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center">
-                <div className="container mx-auto px-8 md:px-16 z-10">
-                  <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: isActive ? 1 : 0, x: isActive ? 0 : -50 }}
-                    transition={{ duration: 0.8, delay: 0.3 }}
-                    className="max-w-2xl"
-                  >
-                    <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2 leading-tight">
-                      {image.title}
-                    </h2>
-                    <p className="text-base md:text-lg text-white/90 mb-4">
-                      {image.subtitle}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Link href="/research">
-                        <Button 
-                          size="lg" 
-                          className="bg-[#2d545e] hover:bg-[#12343b] text-white px-6 py-4 text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                          Explore Research
-                          <ArrowRight className="ml-2" size={18} />
-                        </Button>
-                      </Link>
-                      <Link href="/about">
-                        <Button 
-                          variant="outline" 
-                          size="lg"
-                          className="border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-6 py-4 text-base font-semibold rounded-lg transition-all duration-300"
-                        >
-                          Learn More
-                        </Button>
-                      </Link>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
             </motion.div>
           );
         })}
+        
+        {/* Fixed Overlay with text - Doesn't change with images */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center z-10">
+          <div className="container mx-auto px-8 md:px-16">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="max-w-2xl"
+            >
+              <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-2 leading-tight">
+                {heroImages[0].title}
+              </h2>
+              <p className="text-lg md:text-xl lg:text-2xl text-white/90 mb-4">
+                {heroImages[0].subtitle}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/research">
+                  <Button 
+                    size="lg" 
+                    className="bg-[#2d545e] hover:bg-[#12343b] text-white px-6 py-4 text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Explore Research
+                    <ArrowRight className="ml-2" size={18} />
+                  </Button>
+                </Link>
+                <Link href="/about">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-6 py-4 text-base font-semibold rounded-lg transition-all duration-300"
+                  >
+                    Learn More
+                  </Button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
 
         {/* Navigation Arrows - Only show if more than one image */}
         {heroImages.length > 1 && (
