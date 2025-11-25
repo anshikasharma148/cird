@@ -333,22 +333,31 @@ export default function AboutPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { number: "15+", label: "Research Projects" },
-              { number: "5", label: "Patents Filed" },
-              { number: "50+", label: "Publications" },
-              { number: "3", label: "Research Centers" }
-            ].map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="text-center"
-              >
-                <div className="text-5xl font-bold text-white mb-2">{stat.number}</div>
-                <div className="text-gray-400">{stat.label}</div>
-              </motion.div>
-            ))}
+              { number: "15+", label: "Research Projects", link: null },
+              { number: "10", label: "Patents Filed", link: "/patents" },
+              { number: "50+", label: "Publications", link: null },
+              { number: "3", label: "Research Centers", link: null }
+            ].map((stat, index) => {
+              const content = (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: index * 0.2 }}
+                  className={`text-center ${stat.link ? 'hover:scale-105 transition-transform duration-200 cursor-pointer group' : ''}`}
+                >
+                  <div className={`text-5xl font-bold text-white mb-2 ${stat.link ? 'group-hover:text-blue-400 transition-colors' : ''}`}>{stat.number}</div>
+                  <div className={`text-gray-400 ${stat.link ? 'group-hover:text-blue-300 transition-colors' : ''}`}>{stat.label}</div>
+                </motion.div>
+              );
+              return stat.link ? (
+                <Link key={index} href={stat.link} className="block">
+                  {content}
+                </Link>
+              ) : (
+                content
+              );
+            })}
           </div>
         </div>
       </section>

@@ -181,10 +181,10 @@ export default function HeroSection() {
             <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">15+</div>
             <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Research Projects</div>
           </div>
-          <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">5</div>
-            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Patents Filed</div>
-          </div>
+          <Link href="/patents" className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group">
+            <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)] group-hover:text-blue-300 transition-colors">10</div>
+            <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)] group-hover:text-blue-200 transition-colors">Patents Filed</div>
+          </Link>
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2 drop-shadow-[0_2px_6px_rgba(0,0,0,0.9)]">50+</div>
             <div className="text-sm text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.8)]">Publications</div>

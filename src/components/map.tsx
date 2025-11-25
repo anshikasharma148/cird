@@ -68,6 +68,54 @@ export default function MapComponent() {
 
   useEffect(() => {
     setMounted(true);
+    
+    // Add custom styles for Leaflet popup
+    const style = document.createElement("style");
+    style.id = "leaflet-popup-styles";
+    style.textContent = `
+      .leaflet-popup-content-wrapper {
+        background: linear-gradient(135deg, #1e40af, #3b82f6) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+        padding: 0 !important;
+      }
+      .leaflet-popup-content {
+        margin: 20px !important;
+        color: white !important;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+      }
+      .leaflet-popup-content p {
+        color: white !important;
+        margin: 8px 0 !important;
+      }
+      .leaflet-popup-content h3 {
+        color: white !important;
+        margin-bottom: 12px !important;
+      }
+      .leaflet-popup-tip {
+        background: #3b82f6 !important;
+      }
+      .leaflet-popup-close-button {
+        color: white !important;
+        font-size: 24px !important;
+        padding: 8px !important;
+      }
+      .leaflet-popup-close-button:hover {
+        color: #fbbf24 !important;
+      }
+    `;
+    
+    if (!document.getElementById("leaflet-popup-styles")) {
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      const existingStyle = document.getElementById("leaflet-popup-styles");
+      if (existingStyle) {
+        document.head.removeChild(existingStyle);
+      }
+    };
   }, []);
 
   if (!mounted) {
@@ -135,12 +183,27 @@ export default function MapComponent() {
 
         <Marker icon={customIcon} position={JUET_GUNA}>
           <Popup>
-            <div className="text-center" style={{ color: "white" }}>
-              <h3 className="text-lg font-bold mb-2">
+            <div style={{ 
+              textAlign: "center", 
+              color: "white",
+              padding: "10px",
+              minWidth: "200px"
+            }}>
+              <div style={{ fontSize: "24px", marginBottom: "8px" }}>🎓</div>
+              <h3 style={{ 
+                fontWeight: "bold", 
+                fontSize: "18px", 
+                marginBottom: "12px",
+                color: "white"
+              }}>
                 Jaypee University of Engineering and Technology
               </h3>
-              <p>📍 Guna, Madhya Pradesh, India</p>
-              <p>🏛️ CIRD - Centre for Industrial Research & Development</p>
+              <p style={{ margin: "8px 0", color: "white", fontSize: "14px" }}>
+                📍 Guna, Madhya Pradesh, India
+              </p>
+              <p style={{ margin: "8px 0", color: "white", fontSize: "14px" }}>
+                🏛️ CIRD - Centre for Industrial Research & Development
+              </p>
             </div>
           </Popup>
         </Marker>

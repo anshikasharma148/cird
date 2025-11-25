@@ -74,10 +74,10 @@ export default function Home() {
                 <div className="text-3xl font-bold text-white mb-2">11</div>
                 <div className="text-sm text-gray-400">Ongoing Projects</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">18</div>
-                <div className="text-sm text-gray-400">Patents Filed</div>
-              </div>
+              <Link href="/patents" className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group">
+                <div className="text-3xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">18</div>
+                <div className="text-sm text-gray-400 group-hover:text-blue-300 transition-colors">Patents Filed</div>
+              </Link>
             </div>
           </div>
 
