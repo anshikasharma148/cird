@@ -525,14 +525,14 @@ export default function ChatBot() {
               className="relative mb-2"
             >
               {/* Speech Bubble Cloud */}
-              <div className="relative bg-blue-950/95 backdrop-blur-md border border-blue-800 shadow-2xl text-white text-sm px-4 py-3 rounded-2xl">
+              <div className="relative bg-[#2d545e]/95 backdrop-blur-md border border-[#12343b] shadow-2xl text-white text-sm px-4 py-3 rounded-2xl">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-white" />
+                  <Sparkles size={16} className="text-[#e1b382]" />
                   <span>Ask me anything about CIRD</span>
                 </div>
                 {/* Speech bubble tail pointing down to bot */}
                 <div className="absolute bottom-0 right-8 transform translate-y-full">
-                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[14px] border-l-transparent border-r-transparent border-t-blue-950/95 drop-shadow-lg"></div>
+                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[14px] border-l-transparent border-r-transparent border-t-[#2d545e]/95 drop-shadow-lg"></div>
                 </div>
               </div>
             </motion.div>
@@ -606,8 +606,8 @@ export default function ChatBot() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-blue-600/20 backdrop-blur-sm rounded-full">
-                  <MessageCircle size={28} className="text-white" />
+                <div className="w-full h-full flex items-center justify-center bg-[#2d545e]/20 backdrop-blur-sm rounded-full">
+                  <MessageCircle size={28} className="text-[#2d545e]" />
                 </div>
               )}
               
@@ -633,7 +633,7 @@ export default function ChatBot() {
         {open && (
           <>
             <motion.div
-              className="fixed inset-0 bg-blue-950/20 backdrop-blur-sm z-[999]"
+              className="fixed inset-0 bg-[#2d545e]/20 backdrop-blur-sm z-[999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -650,28 +650,28 @@ export default function ChatBot() {
                 stiffness: 300,
                 mass: 0.8
               }}
-              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-blue-950/95 backdrop-blur-xl text-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-blue-800"
+              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-white backdrop-blur-xl text-[#2d545e] rounded-3xl shadow-2xl flex flex-col overflow-hidden border-2 border-[#c89666]"
               style={{
                 height: "min(80vh, 650px)",
                 maxHeight: "650px",
               }}
             >
               {/* Enhanced Header */}
-              <div className="flex items-center justify-between bg-blue-950 text-white px-5 py-4 border-b border-blue-800">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white px-5 py-4 border-b border-[#c89666]">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                      <Bot size={20} className="text-black" />
+                    <div className="w-10 h-10 rounded-full bg-[#e1b382] flex items-center justify-center">
+                      <Bot size={20} className="text-[#2d545e]" />
                     </div>
                     <motion.div 
-                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-white rounded-full border-2 border-black"
+                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#e1b382] rounded-full border-2 border-[#2d545e]"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     />
                   </div>
                   <div>
                     <h2 className="text-lg font-semibold">SARATHI</h2>
-                    <p className="text-xs text-gray-300 opacity-90">
+                    <p className="text-xs text-white/80 opacity-90">
                       Research • Projects • Patents
                     </p>
                   </div>
@@ -682,7 +682,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowFilters(!showFilters)}
                     title="Toggle filters"
-                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
                   >
                     <Filter size={16} />
                   </motion.button>
@@ -691,7 +691,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={exportChat} 
                     title="Export conversation" 
-                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
                   >
                     <Download size={16} />
                   </motion.button>
@@ -700,7 +700,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={clearChat} 
                     title="Clear conversation" 
-                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
                   >
                     <Trash2 size={16} />
                   </motion.button>
@@ -709,7 +709,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setOpen(false)} 
                     title="Close chat" 
-                    className="p-2 hover:bg-blue-600/20 rounded-xl transition-colors"
+                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
                   >
                     <X size={18} />
                   </motion.button>
@@ -723,12 +723,12 @@ export default function ChatBot() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-b border-blue-200/50 bg-blue-50/80 backdrop-blur-sm overflow-hidden"
+                    className="border-b border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm overflow-hidden"
                   >
                     <div className="px-4 py-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <Tag size={14} className="text-blue-600" />
-                        <span className="text-xs font-medium text-blue-900">FILTER BY TOPIC</span>
+                        <Tag size={14} className="text-[#2d545e]" />
+                        <span className="text-xs font-medium text-[#2d545e]">FILTER BY TOPIC</span>
                       </div>
                       
                       <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
@@ -743,8 +743,8 @@ export default function ChatBot() {
                             }}
                             className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full border backdrop-blur-sm transition-all ${
                               activeTag === t
-                                ? "bg-blue-600 text-white border-blue-500 shadow-md"
-                                : "bg-white text-blue-900 border-blue-300 hover:bg-blue-50 hover:border-blue-400"
+                                ? "bg-[#2d545e] text-white border-[#12343b] shadow-md"
+                                : "bg-white text-[#2d545e] border-[#c89666] hover:bg-[#e1b382]/20 hover:border-[#2d545e]"
                             }`}
                           >
                             <Tag size={10} />
@@ -760,7 +760,7 @@ export default function ChatBot() {
               {/* Enhanced Messages Area - More space now */}
               <div 
                 ref={containerRef} 
-                className="flex-1 overflow-y-auto p-4 bg-blue-950 space-y-4"
+                className="flex-1 overflow-y-auto p-4 bg-[#e1b382]/10 space-y-4"
               >
                 {messages.map((m, index) => (
                   <motion.div
@@ -772,15 +772,15 @@ export default function ChatBot() {
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
                       {m.sender === "bot" && (
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                        <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
                           <Bot size={12} className="text-white" />
                         </div>
                       )}
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm shadow-sm backdrop-blur-sm ${
                           m.sender === "user"
-                            ? "bg-blue-600 text-white rounded-br-md"
-                            : "bg-white border border-blue-200 text-slate-900 rounded-bl-md"
+                            ? "bg-[#2d545e] text-white rounded-br-md"
+                            : "bg-white border border-[#c89666] text-[#2d545e] rounded-bl-md"
                         }`}
                       >
                         <div className="whitespace-pre-wrap leading-relaxed">
@@ -792,7 +792,7 @@ export default function ChatBot() {
                                     <button
                                       key={idx}
                                       onClick={() => router.push(part)}
-                                      className="text-blue-600 hover:text-blue-700 underline font-medium cursor-pointer"
+                                      className="text-[#2d545e] hover:text-[#12343b] underline font-medium cursor-pointer"
                                     >
                                       Know More
                                     </button>
@@ -808,7 +808,7 @@ export default function ChatBot() {
                         
                         {/* Message Footer */}
                         <div className="flex items-center justify-between mt-2 text-xs">
-                          <span className={`${m.sender === "user" ? "text-blue-100" : "text-slate-500"}`}>
+                          <span className={`${m.sender === "user" ? "text-white/80" : "text-gray-500"}`}>
                             {formatTime(m.time)}
                           </span>
                           
@@ -827,17 +827,17 @@ export default function ChatBot() {
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={() => regenerateAnswer(m.id)}
-                                  className="p-1 hover:bg-blue-50 rounded transition-colors"
+                                  className="p-1 hover:bg-[#e1b382]/20 rounded transition-colors"
                                   title="Regenerate response"
                                 >
-                                  <CornerUpLeft size={12} className="text-slate-600" />
+                                  <CornerUpLeft size={12} className="text-gray-600" />
                                 </button>
                                 <button
                                   onClick={() => handleReaction(m.id, "liked")}
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "liked" 
                                       ? "text-green-600 bg-green-50" 
-                                      : "hover:bg-blue-50"
+                                      : "hover:bg-[#e1b382]/20"
                                   }`}
                                   title="Helpful response"
                                 >
@@ -848,7 +848,7 @@ export default function ChatBot() {
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "disliked" 
                                       ? "text-red-600 bg-red-50" 
-                                      : "hover:bg-blue-50"
+                                      : "hover:bg-[#e1b382]/20"
                                   }`}
                                   title="Not helpful"
                                 >
@@ -860,7 +860,7 @@ export default function ChatBot() {
                         </div>
                       </div>
                       {m.sender === "user" && (
-                        <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                        <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
                           <User size={12} className="text-white" />
                         </div>
                       )}
@@ -876,27 +876,27 @@ export default function ChatBot() {
                     className="flex justify-start"
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
-                      <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
                         <Bot size={12} className="text-white" />
                       </div>
-                      <div className="bg-white border border-blue-200 px-4 py-3 rounded-2xl rounded-bl-md">
+                      <div className="bg-white border border-[#c89666] px-4 py-3 rounded-2xl rounded-bl-md">
                         <div className="flex items-center gap-2">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-blue-600 rounded-full"
+                            className="w-2 h-2 bg-[#2d545e] rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-blue-600 rounded-full"
+                            className="w-2 h-2 bg-[#2d545e] rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-blue-600 rounded-full"
+                            className="w-2 h-2 bg-[#2d545e] rounded-full"
                           />
-                          <span className="text-xs text-slate-600 ml-2">Thinking...</span>
+                          <span className="text-xs text-gray-600 ml-2">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -907,10 +907,10 @@ export default function ChatBot() {
 
               {/* Enhanced Suggestions - Now more compact */}
               {suggestions.length > 0 && (
-                <div className="border-t border-blue-200/50 bg-blue-50/80 backdrop-blur-sm px-4 py-2">
+                <div className="border-t border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={12} className="text-blue-600" />
-                    <span className="text-xs font-medium text-blue-900">QUICK SUGGESTIONS</span>
+                    <Sparkles size={12} className="text-[#2d545e]" />
+                    <span className="text-xs font-medium text-[#2d545e]">QUICK SUGGESTIONS</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {suggestions.map((s) => (
@@ -922,7 +922,7 @@ export default function ChatBot() {
                           shuffleSuggestions(s); // Shuffle suggestions when user selects one
                           sendMessage(s); // Send the selected suggestion as message
                         }}
-                        className="px-2 py-1 text-xs bg-blue-600 border border-blue-500 rounded-lg hover:bg-blue-700 hover:border-blue-600 transition-all backdrop-blur-sm text-white"
+                        className="px-2 py-1 text-xs bg-[#2d545e] border border-[#12343b] rounded-lg hover:bg-[#12343b] hover:border-[#2d545e] transition-all backdrop-blur-sm text-white"
                       >
                         {s}
                       </motion.button>
@@ -932,7 +932,7 @@ export default function ChatBot() {
               )}
 
               {/* Enhanced Input Area */}
-              <div className="border-t border-blue-200/50 p-4 bg-blue-50/90 backdrop-blur-sm">
+              <div className="border-t border-[#c89666] p-4 bg-[#e1b382]/20 backdrop-blur-sm">
                 <div className="flex gap-3">
                   <input
                     ref={inputRef}
@@ -948,7 +948,7 @@ export default function ChatBot() {
                     }}
                     placeholder="Ask about research, projects, patents..."
                     disabled={isStreaming}
-                    className="flex-1 px-4 py-3 rounded-xl border border-blue-300 bg-white text-slate-900 text-sm focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   {isStreaming ? (
                     <motion.button
@@ -966,7 +966,7 @@ export default function ChatBot() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => sendMessage(input)}
                       disabled={!input.trim()}
-                      className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+                      className="p-3 bg-[#2d545e] text-white rounded-xl hover:bg-[#12343b] transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
                     >
                       <Send size={18} />
                     </motion.button>

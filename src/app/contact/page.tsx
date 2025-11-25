@@ -10,8 +10,8 @@ import dynamic from "next/dynamic";
 const MapComponent = dynamic(() => import("@/components/map"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[500px] bg-slate-800 rounded-lg flex items-center justify-center">
-      <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+    <div className="w-full h-[500px] bg-[#e1b382]/20 rounded-lg flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-[#2d545e]" />
     </div>
   ),
 });
@@ -62,11 +62,11 @@ export default function ContactPage() {
   const isSuccess = msg && !msg.startsWith("Error:");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-950 via-slate-900 to-blue-950 text-white py-20 px-4 md:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40 py-20 px-4 md:px-6 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl"
+          className="absolute top-20 left-10 w-72 h-72 bg-[#2d545e]/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -78,7 +78,7 @@ export default function ContactPage() {
           }}
         ></motion.div>
         <motion.div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-[#e1b382]/10 rounded-full blur-3xl"
           animate={{
             scale: [1, 1.3, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -100,10 +100,10 @@ export default function ContactPage() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-white to-indigo-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold mb-4 text-[#2d545e]">
             Contact Us
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
             Get in touch with us. We're here to help and answer any questions you might have.
           </p>
         </motion.div>
@@ -115,21 +115,21 @@ export default function ContactPage() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="mb-16 flex justify-center"
         >
-          <Card className="bg-white/5 backdrop-blur-md border-white/10 hover:border-white/20 transition-all duration-300 shadow-xl hover:shadow-2xl max-w-md w-full">
+          <Card className="bg-white border-2 border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-xl hover:shadow-2xl max-w-md w-full">
             <CardHeader>
-              <CardTitle className="text-2xl text-white mb-4 text-center">Contact on:</CardTitle>
+              <CardTitle className="text-2xl text-[#2d545e] mb-4 text-center">Contact on:</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <a
                 href="mailto:support@cird.co.in"
-                className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
+                className="text-[#2d545e] hover:text-[#12343b] font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
               >
                 <Mail className="w-5 h-5 mr-2 group-hover/link:translate-x-1 transition-transform" />
                 support@cird.co.in
               </a>
               <a
                 href="mailto:coordinator@cird.co.in"
-                className="text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
+                className="text-[#2d545e] hover:text-[#12343b] font-semibold text-lg transition-colors duration-200 flex items-center justify-center group/link"
               >
                 <Mail className="w-5 h-5 mr-2 group-hover/link:translate-x-1 transition-transform" />
                 coordinator@cird.co.in
@@ -144,13 +144,13 @@ export default function ContactPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <Card className="bg-white/5 backdrop-blur-md border-white/10 shadow-2xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 border-b border-white/10">
-              <CardTitle className="text-3xl text-white flex items-center">
-                <MessageSquare className="w-8 h-8 mr-3 text-blue-400" />
+          <Card className="bg-white border-2 border-[#c89666] shadow-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-[#2d545e]/10 to-[#e1b382]/20 border-b border-[#c89666]">
+              <CardTitle className="text-3xl text-[#2d545e] flex items-center">
+                <MessageSquare className="w-8 h-8 mr-3 text-[#2d545e]" />
                 Send us a Message
               </CardTitle>
-              <p className="text-gray-300 mt-2">Fill out the form below and we'll get back to you as soon as possible.</p>
+              <p className="text-gray-700 mt-2">Fill out the form below and we'll get back to you as soon as possible.</p>
             </CardHeader>
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -161,16 +161,16 @@ export default function ContactPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
                   >
-                    <label className="block mb-2 font-semibold text-gray-200">
-                      Your Name <span className="text-red-400">*</span>
+                    <label className="block mb-2 font-semibold text-[#2d545e]">
+                      Your Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       required
                       name="name"
                       value={form.name}
                       onChange={handleChange}
-                      className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                  
+                      placeholder="Enter your name"
+                      className="w-full p-4 rounded-lg bg-white border-2 border-[#c89666] text-[#2d545e] placeholder-gray-400 outline-none focus:border-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/50 transition-all duration-300"
                     />
                   </motion.div>
 
@@ -180,8 +180,8 @@ export default function ContactPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.5 }}
                   >
-                    <label className="block mb-2 font-semibold text-gray-200">
-                      Your Email <span className="text-red-400">*</span>
+                    <label className="block mb-2 font-semibold text-[#2d545e]">
+                      Your Email <span className="text-red-500">*</span>
                     </label>
                     <input
                       required
@@ -189,8 +189,8 @@ export default function ContactPage() {
                       name="email"
                       value={form.email}
                       onChange={handleChange}
-                      className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                    
+                      placeholder="Enter your email"
+                      className="w-full p-4 rounded-lg bg-white border-2 border-[#c89666] text-[#2d545e] placeholder-gray-400 outline-none focus:border-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/50 transition-all duration-300"
                     />
                   </motion.div>
                 </div>
@@ -201,16 +201,16 @@ export default function ContactPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.55 }}
                 >
-                  <label className="block mb-2 font-semibold text-gray-200">
-                    Phone Number <span className="text-gray-400 text-sm">(Optional)</span>
+                  <label className="block mb-2 font-semibold text-[#2d545e]">
+                    Phone Number <span className="text-gray-500 text-sm">(Optional)</span>
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                    
+                    placeholder="Enter your phone number (optional)"
+                    className="w-full p-4 rounded-lg bg-white border-2 border-[#c89666] text-[#2d545e] placeholder-gray-400 outline-none focus:border-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/50 transition-all duration-300"
                   />
                 </motion.div>
 
@@ -220,16 +220,16 @@ export default function ContactPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
                 >
-                  <label className="block mb-2 font-semibold text-gray-200">
-                    Subject <span className="text-red-400">*</span>
+                  <label className="block mb-2 font-semibold text-[#2d545e]">
+                    Subject <span className="text-red-500">*</span>
                   </label>
                   <input
                     required
                     name="subject"
                     value={form.subject}
                     onChange={handleChange}
-                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
-                    
+                    placeholder="Enter subject"
+                    className="w-full p-4 rounded-lg bg-white border-2 border-[#c89666] text-[#2d545e] placeholder-gray-400 outline-none focus:border-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/50 transition-all duration-300"
                   />
                 </motion.div>
 
@@ -239,8 +239,8 @@ export default function ContactPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.7 }}
                 >
-                  <label className="block mb-2 font-semibold text-gray-200">
-                    Message <span className="text-red-400">*</span>
+                  <label className="block mb-2 font-semibold text-[#2d545e]">
+                    Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     required
@@ -248,7 +248,7 @@ export default function ContactPage() {
                     value={form.message}
                     onChange={handleChange}
                     rows={6}
-                    className="w-full p-4 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 resize-none"
+                    className="w-full p-4 rounded-lg bg-white border-2 border-[#c89666] text-[#2d545e] placeholder-gray-400 outline-none focus:border-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/50 transition-all duration-300 resize-none"
                     placeholder="Write your message here..."
                   />
                 </motion.div>
@@ -284,7 +284,7 @@ export default function ContactPage() {
                     disabled={loading}
                     whileHover={{ scale: loading ? 1 : 1.02 }}
                     whileTap={{ scale: loading ? 1 : 0.98 }}
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
+                    className="w-full bg-gradient-to-r from-[#2d545e] to-[#12343b] hover:from-[#12343b] hover:to-[#2d545e] disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2"
                   >
                     {loading ? (
                       <>
@@ -311,14 +311,14 @@ export default function ContactPage() {
           transition={{ duration: 0.8, delay: 0.9 }}
           className="mt-16"
         >
-          <Card className="bg-gradient-to-br from-white/10 via-blue-950/30 to-indigo-950/30 backdrop-blur-md border-2 border-blue-500/30 shadow-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-300 group">
+          <Card className="bg-white border-2 border-[#c89666] shadow-2xl overflow-hidden hover:border-[#2d545e] transition-all duration-300 group">
             {/* Animated background gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-indigo-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#2d545e]/10 via-[#e1b382]/10 to-[#c89666]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             
-            <CardHeader className="bg-gradient-to-r from-blue-600/30 via-indigo-600/30 to-purple-600/30 border-b border-white/20 relative z-10">
+            <CardHeader className="bg-gradient-to-r from-[#2d545e]/10 to-[#e1b382]/20 border-b border-[#c89666] relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-3xl text-white flex items-center mb-2">
+                  <CardTitle className="text-3xl text-[#2d545e] flex items-center mb-2">
                     <motion.div
                       animate={{ 
                         scale: [1, 1.1, 1],
@@ -330,17 +330,17 @@ export default function ContactPage() {
                         repeatDelay: 2
                       }}
                     >
-                      <MapPin className="w-8 h-8 mr-3 text-blue-400 drop-shadow-lg" />
+                      <MapPin className="w-8 h-8 mr-3 text-[#2d545e] drop-shadow-lg" />
                     </motion.div>
                     Our Location
                   </CardTitle>
-                  <p className="text-gray-200 mt-2 text-lg">
-                    Find us at <span className="font-semibold text-blue-300">Jaypee University of Engineering and Technology</span>, Guna
+                  <p className="text-gray-700 mt-2 text-lg">
+                    Find us at <span className="font-semibold text-[#2d545e]">Jaypee University of Engineering and Technology</span>, Guna
                   </p>
                 </div>
-                <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-blue-500/20 rounded-lg border border-blue-400/30">
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-sm text-gray-200 font-medium">Live Map</span>
+                <div className="hidden md:flex items-center space-x-2 px-4 py-2 bg-[#e1b382]/20 rounded-lg border border-[#c89666]">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+                  <span className="text-sm text-[#2d545e] font-medium">Live Map</span>
                 </div>
               </div>
             </CardHeader>
@@ -350,10 +350,10 @@ export default function ContactPage() {
                   <MapComponent />
                 </div>
                 {/* Decorative corner accents */}
-                <div className="absolute top-4 left-4 w-20 h-20 border-t-2 border-l-2 border-blue-400/30 rounded-tl-lg pointer-events-none z-20" />
-                <div className="absolute top-4 right-4 w-20 h-20 border-t-2 border-r-2 border-indigo-400/30 rounded-tr-lg pointer-events-none z-20" />
-                <div className="absolute bottom-4 left-4 w-20 h-20 border-b-2 border-l-2 border-purple-400/30 rounded-bl-lg pointer-events-none z-20" />
-                <div className="absolute bottom-4 right-4 w-20 h-20 border-b-2 border-r-2 border-blue-400/30 rounded-br-lg pointer-events-none z-20" />
+                <div className="absolute top-4 left-4 w-20 h-20 border-t-2 border-l-2 border-[#2d545e]/30 rounded-tl-lg pointer-events-none z-20" />
+                <div className="absolute top-4 right-4 w-20 h-20 border-t-2 border-r-2 border-[#e1b382]/30 rounded-tr-lg pointer-events-none z-20" />
+                <div className="absolute bottom-4 left-4 w-20 h-20 border-b-2 border-l-2 border-[#c89666]/30 rounded-bl-lg pointer-events-none z-20" />
+                <div className="absolute bottom-4 right-4 w-20 h-20 border-b-2 border-r-2 border-[#2d545e]/30 rounded-br-lg pointer-events-none z-20" />
               </div>
             </CardContent>
           </Card>

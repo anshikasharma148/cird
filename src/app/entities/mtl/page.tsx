@@ -179,7 +179,7 @@ export default function MTLPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
@@ -200,7 +200,7 @@ export default function MTLPage() {
         {/* Content */}
         <div className="container mx-auto px-8 md:px-16 relative z-10 py-20">
           <Link href="/entities">
-            <Button variant="ghost" className="mb-6 text-white hover:text-gray-300 bg-white/10 backdrop-blur-sm">
+            <Button variant="ghost" className="mb-6 text-white hover:text-gray-700 bg-white/10 backdrop-blur-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Entities
             </Button>
@@ -217,7 +217,7 @@ export default function MTLPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Badge className="mb-6 bg-white/95 backdrop-blur-md text-black border border-white/20 px-6 py-2 text-sm font-medium shadow-lg shadow-white/10">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-white/20 px-6 py-2 text-sm font-medium shadow-lg shadow-white/10">
                 Mechanical Testing Lab
               </Badge>
             </motion.div>
@@ -232,22 +232,22 @@ export default function MTLPage() {
       </section>
 
       {/* Description Section */}
-      <section className="py-16 bg-gradient-to-b from-slate-800 to-slate-900">
+      <section className="py-16 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20 mb-8"
+            className="bg-white rounded-xl p-8 border border-[#c89666] shadow-xl mb-8"
           >
-            <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-              <Building2 className="w-8 h-8" />
+            <h2 className="text-3xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
+              <Building2 className="w-8 h-8 text-[#2d545e]" />
               About MTL Lab
             </h2>
-            <p className="text-gray-300 leading-relaxed text-lg mb-6">
+            <p className="text-gray-700 leading-relaxed text-lg mb-6">
               The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological research and development. Our lab focuses on cutting-edge technologies and innovative solutions for modern industrial challenges.
             </p>
-            <p className="text-gray-300 leading-relaxed text-lg">
+            <p className="text-gray-700 leading-relaxed text-lg">
               The lab operates under the Centre for Industrial Research and Development (CIRD) and plays a crucial role in materials research, technology innovation, laboratory testing, and research & development activities. We provide comprehensive testing and analysis services for various industrial applications.
             </p>
           </motion.div>
@@ -256,7 +256,7 @@ export default function MTLPage() {
       </section>
 
       {/* Image Slider Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -264,10 +264,10 @@ export default function MTLPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              MTL Lab <span className="text-white">Facilities</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              MTL Lab <span className="text-[#2d545e]">Facilities</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Explore our state-of-the-art laboratory facilities and infrastructure
             </p>
           </motion.div>
@@ -278,10 +278,10 @@ export default function MTLPage() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className="relative h-[600px] md:h-[700px] lg:h-[800px] bg-gradient-to-br from-slate-800/80 via-slate-900/80 to-slate-800/80 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl backdrop-blur-sm group">
+            <div className="relative h-[600px] md:h-[700px] lg:h-[800px] bg-gradient-to-br from-[#2d545e]/80 via-[#12343b]/80 to-[#2d545e]/80 rounded-2xl overflow-hidden border-2 border-[#e1b382]/30 shadow-2xl backdrop-blur-sm group">
               {/* Animated background gradient */}
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10"
+                className="absolute inset-0 bg-gradient-to-r from-[#2d545e]/10 via-[#e1b382]/10 to-[#c89666]/10"
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
@@ -370,7 +370,7 @@ export default function MTLPage() {
                           <div className="text-center">
                             <Microscope className="w-20 h-20 text-white/50 mx-auto mb-4" />
                             <p className="text-white text-lg">{image.name}</p>
-                            <p className="text-gray-400 text-sm mt-2">Image coming soon</p>
+                            <p className="text-gray-600 text-sm mt-2">Image coming soon</p>
                           </div>
                         </div>
                       )}
@@ -382,7 +382,7 @@ export default function MTLPage() {
               {/* Progress Bar */}
               <div className="absolute top-0 left-0 right-0 h-1 bg-white/10 z-30">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500"
+                  className="h-full bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666]"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.1, ease: "linear" }}
@@ -400,11 +400,11 @@ export default function MTLPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-2xl font-bold text-white mb-1">{mtlImages[currentSlide].name}</h3>
-                    <p className="text-gray-300 text-sm">Image {currentSlide + 1} of {mtlImages.length}</p>
+                    <p className="text-white/80 text-sm">Image {currentSlide + 1} of {mtlImages.length}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-white/80">{String(currentSlide + 1).padStart(2, '0')}</div>
-                    <div className="text-sm text-gray-400">/{String(mtlImages.length).padStart(2, '0')}</div>
+                    <div className="text-sm text-white/60">/{String(mtlImages.length).padStart(2, '0')}</div>
                   </div>
                 </div>
               </motion.div>
@@ -419,7 +419,7 @@ export default function MTLPage() {
               >
                 <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/20 to-[#e1b382]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
                   animate={{
                     scale: [1, 1.2, 1],
                   }}
@@ -440,7 +440,7 @@ export default function MTLPage() {
               >
                 <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/20 to-cyan-500/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+                  className="absolute inset-0 rounded-full bg-gradient-to-r from-[#e1b382]/20 to-[#c89666]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
                   animate={{
                     scale: [1, 1.2, 1],
                   }}
@@ -481,7 +481,7 @@ export default function MTLPage() {
                     onClick={() => goToSlide(index)}
                     className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       index === currentSlide
-                        ? "border-blue-400 shadow-lg shadow-blue-500/50 scale-110"
+                        ? "border-[#e1b382] shadow-lg shadow-[#e1b382]/50 scale-110"
                         : "border-white/20 hover:border-white/40 opacity-60 hover:opacity-100"
                     }`}
                     whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
@@ -500,21 +500,21 @@ export default function MTLPage() {
                         />
                         {index === currentSlide && (
                           <motion.div
-                            className="absolute inset-0 bg-blue-500/30"
+                            className="absolute inset-0 bg-[#e1b382]/30"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                           />
                         )}
                       </>
                     ) : (
-                      <div className="w-full h-full bg-slate-700 flex items-center justify-center">
+                      <div className="w-full h-full bg-[#2d545e] flex items-center justify-center">
                         <Microscope className="w-6 h-6 text-white/50" />
                       </div>
                     )}
                     {/* Active indicator */}
                     {index === currentSlide && (
                       <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-blue-400"
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-[#e1b382]"
                         layoutId="activeThumbnail"
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
@@ -532,7 +532,7 @@ export default function MTLPage() {
                   onClick={() => goToSlide(index)}
                   className={`relative rounded-full transition-all ${
                     index === currentSlide
-                      ? "bg-gradient-to-r from-blue-500 to-purple-500 w-10 h-3"
+                      ? "bg-gradient-to-r from-[#2d545e] to-[#e1b382] w-10 h-3"
                       : "bg-white/30 hover:bg-white/50 w-3 h-3"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -561,7 +561,7 @@ export default function MTLPage() {
       </section>
 
       {/* Focus Areas Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-800 to-slate-900">
+      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -569,8 +569,8 @@ export default function MTLPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Focus <span className="text-white">Areas</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Focus <span className="text-[#2d545e]">Areas</span>
             </h2>
           </motion.div>
 
@@ -606,21 +606,21 @@ export default function MTLPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="bg-white/5 backdrop-blur-md rounded-xl p-6 border border-white/10 hover:border-white/30 transition-all shadow-lg hover:shadow-xl"
+                className="bg-white rounded-xl p-6 border border-[#c89666] hover:border-[#2d545e] transition-all shadow-lg hover:shadow-xl"
               >
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-lg bg-white">
-                    <area.icon className="w-6 h-6 text-black" />
+                  <div className="p-3 rounded-lg bg-[#2d545e]">
+                    <area.icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white">{area.title}</h3>
+                  <h3 className="text-xl font-semibold text-[#2d545e]">{area.title}</h3>
                 </div>
-                <p className="text-gray-300 mb-4">{area.description}</p>
+                <p className="text-gray-700 mb-4">{area.description}</p>
                 <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-gray-400 mb-2">Key Projects:</h4>
+                  <h4 className="text-sm font-semibold text-[#2d545e] mb-2">Key Projects:</h4>
                   {area.projects.map((project, projectIndex) => (
                     <div key={projectIndex} className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                      <span className="text-sm text-gray-300">{project}</span>
+                      <div className="w-1.5 h-1.5 bg-[#2d545e] rounded-full"></div>
+                      <span className="text-sm text-gray-700">{project}</span>
                     </div>
                   ))}
                 </div>
@@ -631,7 +631,7 @@ export default function MTLPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -647,8 +647,8 @@ export default function MTLPage() {
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-5xl font-bold text-white mb-2">{stat.number}</div>
-                <div className="text-gray-400">{stat.label}</div>
+                <div className="text-5xl font-bold text-[#2d545e] mb-2">{stat.number}</div>
+                <div className="text-gray-600">{stat.label}</div>
               </motion.div>
             ))}
           </div>
@@ -656,11 +656,11 @@ export default function MTLPage() {
       </section>
 
       {/* Enhanced MTL Team Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-800 via-blue-950 to-slate-900 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-b from-[#2d545e] to-[#12343b] relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 opacity-10">
           <motion.div
-            className="absolute top-20 left-10 w-72 h-72 bg-blue-500 rounded-full blur-3xl"
+            className="absolute top-20 left-10 w-72 h-72 bg-[#e1b382] rounded-full blur-3xl"
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.3, 0.5, 0.3],
@@ -672,7 +672,7 @@ export default function MTLPage() {
             }}
           />
           <motion.div
-            className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600 rounded-full blur-3xl"
+            className="absolute bottom-20 right-10 w-96 h-96 bg-[#c89666] rounded-full blur-3xl"
             animate={{
               scale: [1, 1.3, 1],
               opacity: [0.3, 0.5, 0.3],
@@ -699,19 +699,19 @@ export default function MTLPage() {
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
-                <Sparkles className="w-10 h-10 text-blue-400" />
+                <Sparkles className="w-10 h-10 text-[#e1b382]" />
               </motion.div>
               <h2 className="text-4xl md:text-6xl font-bold text-white">
-                MTL <span className="text-blue-400">Team</span>
+                MTL <span className="text-[#e1b382]">Team</span>
               </h2>
               <motion.div
                 animate={{ rotate: [360, 0] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
-                <Sparkles className="w-10 h-10 text-blue-400" />
+                <Sparkles className="w-10 h-10 text-[#e1b382]" />
               </motion.div>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
               Meet the talented professionals driving innovation and excellence at the Mechanical Testing Lab
             </p>
           </motion.div>
@@ -751,14 +751,14 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
   
   const currentImagePath = imagePaths[currentImageIndex] || imagePaths[0];
 
-  // Unified blue theme styling for all roles
+  // Unified theme styling for all roles
   const style = {
-    border: "border-blue-500",
-    glow: "shadow-blue-500/50",
+    border: "border-[#c89666]",
+    glow: "shadow-[#e1b382]/50",
     badge: member.role === "coordinator" 
-      ? "bg-gradient-to-r from-blue-600 to-blue-700" 
-      : "bg-gradient-to-r from-blue-500 to-blue-600",
-    accent: "text-blue-600"
+      ? "bg-gradient-to-r from-[#2d545e] to-[#12343b]" 
+      : "bg-gradient-to-r from-[#2d545e] to-[#12343b]",
+    accent: "text-[#2d545e]"
   };
 
   return (
@@ -773,16 +773,16 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
     >
       {/* Glow effect on hover */}
       <motion.div
-        className={`absolute -inset-1 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
+        className={`absolute -inset-1 bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666] rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
         animate={isHovered ? { scale: [1, 1.05, 1] } : {}}
         transition={{ duration: 2, repeat: Infinity }}
       />
 
-      <Card className={`relative bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 ${style.border} hover:border-opacity-100 transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group backdrop-blur-sm`}>
+      <Card className={`relative bg-white border-2 ${style.border} hover:border-[#2d545e] transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group`}>
         {/* Subtle animated background pattern */}
         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d545e' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat'
           }}></div>
         </div>
@@ -814,7 +814,7 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
             />
             
             {/* Middle ring */}
-            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-blue-50 to-blue-100`}></div>
+            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20`}></div>
             
             {/* Image container */}
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
@@ -841,8 +841,8 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                  <span className="text-blue-900 text-3xl font-bold">{initials}</span>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20">
+                  <span className="text-[#2d545e] text-3xl font-bold">{initials}</span>
                 </div>
               )}
             </div>
@@ -850,7 +850,7 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
 
           {/* Name and Details - Compact - No animation delay */}
           <div className="px-2">
-            <CardTitle className="text-xl text-slate-900 mb-1.5 font-bold group-hover:text-blue-700 transition-colors leading-tight">
+            <CardTitle className="text-xl text-[#2d545e] mb-1.5 font-bold group-hover:text-[#12343b] transition-colors leading-tight">
               {member.name}
             </CardTitle>
             {member.designation && (
@@ -858,7 +858,7 @@ function EnhancedMTLTeamCard({ member, index }: { member: MTLTeamMember; index: 
                 {member.designation}
               </p>
             )}
-            <p className="text-slate-600 text-xs leading-tight mb-3">{member.department}</p>
+            <p className="text-gray-600 text-xs leading-tight mb-3">{member.department}</p>
           </div>
         </CardHeader>
 

@@ -244,7 +244,7 @@ function ProfileImage({ member }: { member: any }) {
     >
       {/* Outer glow ring */}
       <motion.div
-        className="absolute -inset-2 rounded-full border-blue-500 opacity-50"
+        className="absolute -inset-2 rounded-full border-[#c89666] opacity-50"
         animate={isHovered ? {
           scale: [1, 1.1, 1],
           opacity: [0.5, 0.8, 0.5]
@@ -253,7 +253,7 @@ function ProfileImage({ member }: { member: any }) {
       />
       
       {/* Middle ring */}
-      <div className="absolute inset-0 rounded-full border-blue-500 border-4 bg-gradient-to-br from-blue-50 to-blue-100"></div>
+      <div className="absolute inset-0 rounded-full border-[#c89666] border-4 bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20"></div>
       
       {/* Image container */}
       <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-2xl">
@@ -269,20 +269,20 @@ function ProfileImage({ member }: { member: any }) {
             onError={handleImageError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-            <span className="text-blue-900 text-4xl font-bold">{initials}</span>
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20">
+            <span className="text-[#2d545e] text-4xl font-bold">{initials}</span>
           </div>
         )}
       </div>
 
       {/* Decorative elements */}
       <motion.div
-        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full"
+        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-full"
         animate={isHovered ? { rotate: 360 } : {}}
         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
       />
       <motion.div
-        className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full"
+        className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-full"
         animate={isHovered ? { rotate: -360 } : {}}
         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
       />
@@ -297,11 +297,11 @@ export default function TeamMemberPage() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-[#2d545e] to-[#12343b] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-white mb-4">Team Member Not Found</h1>
           <Link href="/team">
-            <Button className="bg-blue-600 text-white hover:bg-blue-700">
+            <Button className="bg-[#e1b382] text-[#2d545e] hover:bg-[#c89666]">
               Back to Team
             </Button>
           </Link>
@@ -314,12 +314,12 @@ export default function TeamMemberPage() {
   const ongoingProjects = member.projects.filter((p: any) => p.status === "ongoing");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
           <Link href="/team">
-            <Button variant="ghost" className="mb-6 text-white hover:text-gray-300">
+            <Button variant="ghost" className="mb-6 text-white hover:text-[#e1b382]">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Team
             </Button>
@@ -334,13 +334,13 @@ export default function TeamMemberPage() {
             <ProfileImage member={member} />
             
             <div className="flex-1 text-center md:text-left">
-              <Badge className="mb-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white border-0 px-4 py-1.5 text-sm font-semibold shadow-lg shadow-blue-900/30">
+              <Badge className="mb-3 bg-[#e1b382] text-[#2d545e] border-0 px-4 py-1.5 text-sm font-semibold shadow-lg">
                 {member.designation}
               </Badge>
               <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
                 {member.name}
               </h1>
-              <p className="text-lg md:text-xl text-gray-300">
+              <p className="text-lg md:text-xl text-white/90">
                 {member.department}
               </p>
             </div>
@@ -349,47 +349,47 @@ export default function TeamMemberPage() {
       </section>
 
       {/* Bio Section */}
-      <section className="py-16 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section className="py-16 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8 backdrop-blur-sm"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
           >
-            <h2 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
+              <Briefcase className="w-8 h-8 text-[#2d545e]" />
               Biography
             </h2>
-            <p className="text-slate-700 leading-relaxed text-lg mb-6">
+            <p className="text-gray-700 leading-relaxed text-lg mb-6">
               {member.bio}
             </p>
             
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-blue-600" />
+                <h3 className="text-xl font-semibold text-[#2d545e] mb-3 flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-[#2d545e]" />
                   Education
                 </h3>
-                <p className="text-slate-700">{member.education}</p>
+                <p className="text-gray-700">{member.education}</p>
               </div>
               
               <div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-blue-600" />
+                <h3 className="text-xl font-semibold text-[#2d545e] mb-3 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-[#2d545e]" />
                   Experience
                 </h3>
-                <p className="text-slate-700">{member.experience}</p>
+                <p className="text-gray-700">{member.experience}</p>
               </div>
             </div>
 
             {member.achievements && member.achievements.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-4">Key Achievements</h3>
+                <h3 className="text-xl font-semibold text-[#2d545e] mb-4">Key Achievements</h3>
                 <ul className="space-y-2">
                   {member.achievements.map((achievement: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 text-slate-700">
-                      <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 text-gray-700">
+                      <CheckCircle className="w-5 h-5 text-[#2d545e] mt-0.5 flex-shrink-0" />
                       <span>{achievement}</span>
                     </li>
                   ))}
@@ -403,10 +403,10 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8 backdrop-blur-sm"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
           >
-            <h2 className="text-3xl font-bold text-slate-900 mb-4">Role at CIRD</h2>
-            <p className="text-slate-700 leading-relaxed text-lg">
+            <h2 className="text-3xl font-bold text-[#2d545e] mb-4">Role at CIRD</h2>
+            <p className="text-gray-700 leading-relaxed text-lg">
               {member.cirdRole}
             </p>
           </motion.div>
@@ -416,29 +416,29 @@ export default function TeamMemberPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
           >
-            <h2 className="text-3xl font-bold text-slate-900 mb-6">CIRD Projects</h2>
+            <h2 className="text-3xl font-bold text-[#2d545e] mb-6">CIRD Projects</h2>
             
             {completedProjects.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6 text-blue-600" />
+                <h3 className="text-xl font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-6 h-6 text-[#2d545e]" />
                   Completed Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {completedProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 backdrop-blur-sm">
+                    <Card key={project.id} className="bg-white border-2 border-[#c89666]">
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <Badge className="bg-blue-100 text-blue-900 border-blue-300">
+                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
                             {project.id}
                           </Badge>
                           <Badge className="bg-green-100 text-green-900 border-green-300">
                             Completed
                           </Badge>
                         </div>
-                        <CardTitle className="text-slate-900 mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-[#2d545e] mt-2">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}
@@ -448,23 +448,23 @@ export default function TeamMemberPage() {
 
             {ongoingProjects.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-2">
-                  <Clock className="w-6 h-6 text-blue-600" />
+                <h3 className="text-xl font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
+                  <Clock className="w-6 h-6 text-[#2d545e]" />
                   Ongoing Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {ongoingProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 border-blue-200 backdrop-blur-sm">
+                    <Card key={project.id} className="bg-white border-2 border-[#c89666]">
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <Badge className="bg-blue-100 text-blue-900 border-blue-300">
+                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
                             {project.id}
                           </Badge>
-                          <Badge className="bg-blue-600 text-white border-blue-500">
+                          <Badge className="bg-[#2d545e] text-white border-[#12343b]">
                             Ongoing
                           </Badge>
                         </div>
-                        <CardTitle className="text-slate-900 mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-[#2d545e] mt-2">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}

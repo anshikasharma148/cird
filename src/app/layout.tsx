@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Navigation } from "@/components/navigation";
+import { HomeNavigation } from "@/components/home-navigation";
 import { Footer } from "@/components/footer";
 import ChatBot from "@/components/ChatBot";
 
@@ -23,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <Navigation />
+      <body className={`${inter.variable} font-sans antialiased bg-[#e1b382]/30`}>
+        <HomeNavigation />
         <main>{children}</main>
         <Footer />
         <ChatBot /> {/* <- Chat appears globally */}

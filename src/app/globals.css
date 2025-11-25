@@ -3,46 +3,55 @@
 
 @layer base {
   :root {
-    --background: 210 4% 6%; /* dark charcoal */
-    --foreground: 0 0% 95%; /* near white */
-    --card: 210 4% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 210 4% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 210 4% 95%;
-    --primary-foreground: 210 4% 6%;
-    --secondary: 210 4% 18%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 210 4% 18%;
-    --muted-foreground: 0 0% 80%;
-    --accent: 210 4% 96%;
-    --accent-foreground: 0 0% 6%;
+    --background: 30 50% 75%; /* Sand Tan #e1b382 */
+    --foreground: 195 45% 20%; /* Night Blue #2d545e */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 195 45% 20%; /* Night Blue */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 195 45% 20%; /* Night Blue */
+    --primary: 195 45% 25%; /* Night Blue #2d545e */
+    --primary-foreground: 0 0% 100%; /* white */
+    --secondary: 30 45% 70%; /* Sand Tan Shadow #c89666 */
+    --secondary-foreground: 195 45% 20%; /* Night Blue */
+    --muted: 30 45% 70%; /* Sand Tan Shadow */
+    --muted-foreground: 195 35% 35%; /* medium Night Blue */
+    --accent: 195 45% 25%; /* Night Blue */
+    --accent-foreground: 0 0% 100%; /* white */
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 210 4% 18%;
-    --input: 210 4% 12%;
-    --ring: 210 4% 80%;
+    --border: 30 40% 65%; /* Sand Tan Shadow border */
+    --input: 30 50% 75%; /* Sand Tan */
+    --ring: 195 45% 25%; /* Night Blue */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 210 4% 6%;
-    --foreground: 0 0% 95%;
-    --card: 210 4% 8%;
-    --card-foreground: 0 0% 95%;
-    --popover: 210 4% 8%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 210 4% 95%;
-    --primary-foreground: 210 4% 6%;
-    --secondary: 210 4% 18%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 210 4% 18%;
-    --muted-foreground: 0 0% 80%;
-    --accent: 210 4% 96%;
-    --accent-foreground: 0 0% 6%;
-    --border: 210 4% 18%;
-    --input: 210 4% 12%;
-    --ring: 210 4% 80%;
+    --background: 0 0% 100%; /* pure white */
+    --foreground: 220 13% 18%; /* dark gray */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 220 13% 18%; /* dark gray */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 220 13% 18%; /* dark gray */
+    --primary: 217 91% 60%; /* vibrant blue */
+    --primary-foreground: 0 0% 100%; /* white */
+    --secondary: 220 13% 96%; /* very light gray */
+    --secondary-foreground: 220 13% 18%; /* dark gray */
+    --muted: 220 13% 96%; /* very light gray */
+    --muted-foreground: 220 9% 46%; /* medium gray */
+    --accent: 217 91% 60%; /* vibrant blue */
+    --accent-foreground: 0 0% 100%; /* white */
+    --border: 220 13% 91%; /* light gray */
+    --input: 220 13% 96%; /* very light gray */
+    --ring: 217 91% 60%; /* vibrant blue */
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
@@ -62,6 +71,10 @@
   
   .bg-gradient-radial {
     background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+  
+  .animate-scroll {
+    animation: scroll 20s linear infinite;
   }
 }
 

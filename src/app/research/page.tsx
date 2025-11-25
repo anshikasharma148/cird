@@ -292,11 +292,11 @@ export default function ResearchPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e1b382' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
         }}></div>
         
@@ -312,14 +312,14 @@ export default function ResearchPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
                 Research & Development
               </Badge>
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
               Our <span className="text-white">Research</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
               Cutting-edge research and development across multiple technological domains, 
               driving innovation and creating practical solutions for industry challenges.
             </p>
@@ -328,19 +328,19 @@ export default function ResearchPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">14</div>
-                <div className="text-sm text-gray-400">Total Projects</div>
+                <div className="text-sm text-[#e1b382]">Total Projects</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">4</div>
-                <div className="text-sm text-gray-400">Completed Projects</div>
+                <div className="text-sm text-[#e1b382]">Completed Projects</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">11</div>
-                <div className="text-sm text-gray-400">Ongoing Projects</div>
+                <div className="text-sm text-[#e1b382]">Ongoing Projects</div>
               </div>
               <Link href="/patents" className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group">
-                <div className="text-3xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors">18</div>
-                <div className="text-sm text-gray-400 group-hover:text-blue-300 transition-colors">Patents Filed</div>
+                <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#e1b382] transition-colors">18</div>
+                <div className="text-sm text-[#e1b382] group-hover:text-white transition-colors">Patents Filed</div>
               </Link>
             </div>
           </motion.div>
@@ -348,7 +348,7 @@ export default function ResearchPage() {
       </section>
 
       {/* Broader Areas */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -356,10 +356,10 @@ export default function ResearchPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Broader <span className="text-white">Areas</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Broader <span className="text-[#2d545e]">Areas</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
               Our research spans across multiple domains, addressing critical challenges in industry and technology.
             </p>
           </motion.div>
@@ -376,17 +376,17 @@ export default function ResearchPage() {
                   whileHover={{ y: -5 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 group h-full shadow-lg hover:shadow-xl">
+                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 group h-full shadow-lg hover:shadow-xl">
                     <CardHeader>
                       <div className="flex items-center space-x-3 mb-4">
-                        <div className={`p-3 rounded-xl bg-blue-600 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                        <div className={`p-3 rounded-xl bg-[#2d545e] group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
                           <area.icon className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <Badge className="bg-blue-100 text-blue-900 border-blue-300 mb-2">
+                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666] mb-2">
                             {area.code}
                           </Badge>
-                          <CardTitle className="text-xl text-slate-900 group-hover:text-blue-700 transition-colors">
+                          <CardTitle className="text-xl text-[#2d545e] group-hover:text-[#12343b] transition-colors">
                             {area.title}
                           </CardTitle>
                         </div>
@@ -394,7 +394,7 @@ export default function ResearchPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between">
-                        <Badge className="bg-blue-100 text-blue-900 border-blue-300">
+                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
                           {area.status}
                         </Badge>
                       </div>
@@ -408,7 +408,7 @@ export default function ResearchPage() {
       </section>
 
       {/* Completed Projects */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -416,10 +416,10 @@ export default function ResearchPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Completed <span className="text-white">Projects</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Completed <span className="text-[#2d545e]">Projects</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
               Successfully completed research projects under the MoU between JUET and JPVL.
             </p>
           </motion.div>
@@ -436,28 +436,28 @@ export default function ResearchPage() {
                   whileHover={{ y: -5, scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-lg hover:shadow-xl">
                     <CardHeader>
                       <div className="flex items-center justify-between mb-4">
-                        <Badge className="bg-blue-100 text-blue-900 border-blue-300">
+                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
                           {project.id}
                         </Badge>
-                        <Badge className="bg-green-100 text-green-900 border-green-300 flex items-center">
-                          <CheckCircle className="w-4 h-4 mr-2" />
+                        <Badge className="bg-green-100 text-green-800 border-green-300 flex items-center">
+                          <CheckCircle className="w-4 h-4 mr-2 text-[#2d545e]" />
                           {project.status}
                         </Badge>
                       </div>
-                    <CardTitle className="text-xl text-slate-900 mb-4">
+                    <CardTitle className="text-xl text-[#2d545e] mb-4">
                       {project.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <h4 className="text-slate-900 font-semibold mb-3">Project Team:</h4>
+                      <h4 className="text-[#2d545e] font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
                         <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                          <span className="text-slate-700 text-sm">{member}</span>
+                          <div className="w-2 h-2 bg-[#2d545e] rounded-full mr-3"></div>
+                          <span className="text-gray-700 text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
@@ -471,7 +471,7 @@ export default function ResearchPage() {
       </section>
 
       {/* Ongoing Projects */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section className="py-20 bg-gradient-to-b from-[#e1b382] to-[#c89666]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -479,10 +479,10 @@ export default function ResearchPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Ongoing <span className="text-white">Projects</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Ongoing <span className="text-[#2d545e]">Projects</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
               Currently active research projects under the MoU between JUET and JPVL.
             </p>
           </motion.div>
@@ -499,28 +499,28 @@ export default function ResearchPage() {
                   whileHover={{ y: -5, scale: 1.02 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-lg hover:shadow-xl">
                     <CardHeader>
                       <div className="flex items-center justify-between mb-4">
-                        <Badge className="bg-blue-100 text-blue-900 border-blue-300">
+                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
                           {project.id}
                         </Badge>
-                        <Badge className="bg-amber-100 text-amber-900 border-amber-300 flex items-center">
-                          <Clock className="w-4 h-4 mr-2" />
+                        <Badge className="bg-amber-100 text-amber-800 border-amber-300 flex items-center">
+                          <Clock className="w-4 h-4 mr-2 text-[#2d545e]" />
                           {project.status}
                         </Badge>
                       </div>
-                    <CardTitle className="text-xl text-slate-900 mb-4">
+                    <CardTitle className="text-xl text-[#2d545e] mb-4">
                       {project.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <h4 className="text-slate-900 font-semibold mb-3">Project Team:</h4>
+                      <h4 className="text-[#2d545e] font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
                         <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
-                          <span className="text-slate-700 text-sm">{member}</span>
+                          <div className="w-2 h-2 bg-[#2d545e] rounded-full mr-3"></div>
+                          <span className="text-gray-700 text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
@@ -531,7 +531,7 @@ export default function ResearchPage() {
                           whileTap={{ scale: 0.98 }}
                         >
                           <Link href={project.link}>
-                            <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 border border-blue-500 shadow-lg shadow-blue-900/30">
+                            <Button className="w-full bg-[#2d545e] text-white hover:bg-[#12343b] border border-[#12343b] shadow-lg">
                               Know More
                               <ArrowRight className="w-4 h-4 ml-2" />
                             </Button>
@@ -549,7 +549,7 @@ export default function ResearchPage() {
       </section>
 
       {/* Patents Section */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section className="py-20 bg-gradient-to-b from-[#2d545e] to-[#12343b]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -560,7 +560,7 @@ export default function ResearchPage() {
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
               Patents <span className="text-white">Granted</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
               Intellectual property rights granted by IP India for our innovative research and development work.
             </p>
           </motion.div>
@@ -569,7 +569,7 @@ export default function ResearchPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl p-8 border border-white/10 shadow-xl shadow-black/20"
+            className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-[#e1b382]/30 shadow-xl"
           >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {patents.map((patent, index) => (
@@ -579,10 +579,10 @@ export default function ResearchPage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   whileHover={{ scale: 1.05, y: -2 }}
-                  className="flex items-center p-3 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10 hover:border-white/30 transition-all shadow-md hover:shadow-lg"
+                  className="flex items-center p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-[#e1b382]/20 hover:border-[#e1b382]/40 transition-all shadow-md hover:shadow-lg"
                 >
-                  <Award className="w-5 h-5 text-white mr-3 flex-shrink-0" />
-                  <span className="text-gray-300 text-sm">{patent}</span>
+                  <Award className="w-5 h-5 text-[#e1b382] mr-3 flex-shrink-0" />
+                  <span className="text-white text-sm">{patent}</span>
                 </motion.div>
               ))}
             </div>

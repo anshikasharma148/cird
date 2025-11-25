@@ -315,9 +315,9 @@ export default function TeamPage() {
   const nodalOfficers = teamMembers.filter(m => m.role === "nodal");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
@@ -335,14 +335,14 @@ export default function TeamPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
                 Our Team
               </Badge>
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Meet Our <span className="text-white">Team</span>
+              Meet Our <span className="text-[#e1b382]">Team</span>
             </h1>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
               Dedicated professionals driving innovation and research excellence at CIRD
             </p>
           </motion.div>
@@ -350,7 +350,7 @@ export default function TeamPage() {
       </section>
 
       {/* Coordination Committee Section */}
-      <section id="coordination" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="coordination" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -359,12 +359,12 @@ export default function TeamPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <Award className="w-8 h-8 text-white" />
-              <h2 className="text-4xl md:text-6xl font-bold text-white">
+              <Award className="w-8 h-8 text-[#2d545e]" />
+              <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
                 Coordination Committee
               </h2>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Leading CIRD's vision and strategic direction
             </p>
           </motion.div>
@@ -378,7 +378,7 @@ export default function TeamPage() {
       </section>
 
       {/* Technical Professional Consultant Section */}
-      <section id="technical" className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+      <section id="technical" className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -387,12 +387,12 @@ export default function TeamPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <GraduationCap className="w-8 h-8 text-white" />
-              <h2 className="text-4xl md:text-6xl font-bold text-white">
+              <GraduationCap className="w-8 h-8 text-[#2d545e]" />
+              <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
                 Technical Professional Consultant
               </h2>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Expert consultants supporting CIRD projects
             </p>
           </motion.div>
@@ -406,7 +406,7 @@ export default function TeamPage() {
       </section>
 
       {/* CDC Team Section */}
-      <section id="cdc" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="cdc" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -415,12 +415,12 @@ export default function TeamPage() {
             className="text-center mb-12"
           >
             <div className="flex items-center justify-center gap-3 mb-6">
-              <Users className="w-8 h-8 text-white" />
-              <h2 className="text-4xl md:text-6xl font-bold text-white">
+              <Users className="w-8 h-8 text-[#2d545e]" />
+              <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
                 Control Development Centre Team
               </h2>
             </div>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Software development and automation specialists
             </p>
           </motion.div>
@@ -435,7 +435,7 @@ export default function TeamPage() {
 
       {/* MTL Team Section */}
       {mtlTeam.length > 0 && (
-        <section id="mtl" className="py-20 bg-gradient-to-b from-slate-900 to-slate-800">
+        <section id="mtl" className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
           <div className="container mx-auto px-8 md:px-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -444,12 +444,12 @@ export default function TeamPage() {
               className="text-center mb-12"
             >
               <div className="flex items-center justify-center gap-3 mb-6">
-                <Users className="w-8 h-8 text-white" />
-                <h2 className="text-4xl md:text-6xl font-bold text-white">
+                <Users className="w-8 h-8 text-[#2d545e]" />
+                <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
                   Mechanical Testing Lab Team
                 </h2>
               </div>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              <p className="text-xl text-gray-700 max-w-3xl mx-auto">
                 Meet the talented professionals driving innovation and excellence at the Mechanical Testing Lab
               </p>
             </motion.div>
@@ -465,7 +465,7 @@ export default function TeamPage() {
 
       {/* Nodal Officers of JPVL Section */}
       {nodalOfficers.length > 0 && (
-        <section id="nodal" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+        <section id="nodal" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
           <div className="container mx-auto px-8 md:px-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -474,12 +474,12 @@ export default function TeamPage() {
               className="text-center mb-12"
             >
               <div className="flex items-center justify-center gap-3 mb-6">
-                <Building2 className="w-8 h-8 text-white" />
-                <h2 className="text-4xl md:text-6xl font-bold text-white">
+                <Building2 className="w-8 h-8 text-[#2d545e]" />
+                <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
                   Nodal Officers of JPVL
                 </h2>
               </div>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              <p className="text-xl text-gray-700 max-w-3xl mx-auto">
                 Key collaborators from JPVL supporting CIRD projects
               </p>
             </motion.div>
@@ -549,14 +549,14 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                "member";
 
   const style = {
-    border: "border-blue-500",
-    glow: "shadow-blue-500/50",
+    border: "border-[#c89666]",
+    glow: "shadow-[#e1b382]/50",
     badge: role === "coordinator" 
-      ? "bg-gradient-to-r from-blue-600 to-blue-700" 
+      ? "bg-gradient-to-r from-[#2d545e] to-[#12343b]" 
       : role === "co-coordinator"
-      ? "bg-gradient-to-r from-blue-500 to-blue-600"
-      : "bg-gradient-to-r from-blue-500 to-blue-600",
-    accent: "text-blue-600"
+      ? "bg-gradient-to-r from-[#2d545e] to-[#12343b]"
+      : "bg-gradient-to-r from-[#2d545e] to-[#12343b]",
+    accent: "text-[#2d545e]"
   };
 
   return (
@@ -571,16 +571,16 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
     >
       {/* Glow effect on hover */}
       <motion.div
-        className={`absolute -inset-1 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
+        className={`absolute -inset-1 bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666] rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
         animate={isHovered ? { scale: [1, 1.05, 1] } : {}}
         transition={{ duration: 2, repeat: Infinity }}
       />
 
-      <Card className={`relative bg-gradient-to-br from-blue-50 via-indigo-50/80 to-blue-100/60 border-2 ${style.border} hover:border-opacity-100 transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group backdrop-blur-sm`}>
+      <Card className={`relative bg-white border-2 ${style.border} hover:border-[#2d545e] transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group`}>
         {/* Subtle animated background pattern */}
         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233b82f6' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d545e' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat'
           }}></div>
         </div>
@@ -603,7 +603,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
             />
             
             {/* Middle ring */}
-            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-blue-50 to-blue-100`}></div>
+            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20`}></div>
             
             {/* Image container */}
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
@@ -630,8 +630,8 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                  <span className="text-blue-900 text-3xl font-bold">{initials}</span>
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20">
+                  <span className="text-[#2d545e] text-3xl font-bold">{initials}</span>
                 </div>
               )}
             </div>
@@ -639,7 +639,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
 
           {/* Name and Details - Compact - No animation delay */}
           <div className="px-2">
-            <CardTitle className="text-xl text-slate-900 mb-1.5 font-bold group-hover:text-blue-700 transition-colors leading-tight">
+            <CardTitle className="text-xl text-[#2d545e] mb-1.5 font-bold group-hover:text-[#12343b] transition-colors leading-tight">
               {member.name}
             </CardTitle>
             {member.designation && (
@@ -647,7 +647,7 @@ function TeamMemberCard({ member, index }: { member: TeamMember; index: number }
                 {member.designation}
               </p>
             )}
-            <p className="text-slate-600 text-xs leading-tight mb-3">{member.department}</p>
+            <p className="text-gray-600 text-xs leading-tight mb-3">{member.department}</p>
           </div>
         </CardHeader>
 

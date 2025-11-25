@@ -116,19 +116,19 @@ function ImageSlider({
 
   if (images.length === 0) {
     return (
-      <div className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20">
+      <div className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl">
         <div className="text-center py-12">
-          <ImageIcon className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-          <p className="text-slate-600">No images available</p>
+          <ImageIcon className="w-16 h-16 text-[#2d545e] mx-auto mb-4" />
+          <p className="text-gray-600">No images available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20">
-      <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
-        <ImageIcon className="w-6 h-6 text-blue-600" />
+    <div className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl">
+      <h3 className="text-2xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
+        <ImageIcon className="w-6 h-6 text-[#2d545e]" />
         {title}
       </h3>
       
@@ -138,10 +138,10 @@ function ImageSlider({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative aspect-video bg-gradient-to-br from-slate-100 via-blue-50/30 to-slate-100 rounded-2xl overflow-hidden border-2 border-blue-200/50 shadow-2xl backdrop-blur-sm group">
+        <div className="relative aspect-video bg-gradient-to-br from-[#e1b382]/20 via-[#c89666]/10 to-[#e1b382]/20 rounded-2xl overflow-hidden border-2 border-[#c89666]/50 shadow-2xl backdrop-blur-sm group">
           {/* Animated background gradient */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-cyan-600/5"
+            className="absolute inset-0 bg-gradient-to-r from-[#2d545e]/5 via-[#e1b382]/5 to-[#c89666]/5"
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
@@ -247,7 +247,7 @@ function ImageSlider({
                       {/* Image glow effect */}
                       {isActive && (
                         <motion.div
-                          className="absolute inset-0 bg-gradient-radial from-blue-500/10 via-transparent to-transparent pointer-events-none"
+                          className="absolute inset-0 bg-gradient-radial from-[#2d545e]/10 via-transparent to-transparent pointer-events-none"
                           animate={{
                             opacity: [0.2, 0.4, 0.2],
                           }}
@@ -260,11 +260,11 @@ function ImageSlider({
                       )}
                     </motion.div>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-slate-100">
+                    <div className="w-full h-full flex items-center justify-center bg-[#e1b382]/20">
                       <div className="text-center">
-                        <ImageIcon className="w-20 h-20 text-blue-400 mx-auto mb-4" />
-                        <p className="text-slate-900 text-lg">{item.name}</p>
-                        <p className="text-slate-600 text-sm mt-2">Image coming soon</p>
+                        <ImageIcon className="w-20 h-20 text-[#2d545e] mx-auto mb-4" />
+                        <p className="text-[#2d545e] text-lg">{item.name}</p>
+                        <p className="text-gray-600 text-sm mt-2">Image coming soon</p>
                       </div>
                     </div>
                   )}
@@ -276,7 +276,7 @@ function ImageSlider({
           {/* Progress Bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-30">
             <motion.div
-              className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500"
+              className="h-full bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666]"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1, ease: "linear" }}
@@ -327,14 +327,14 @@ function ImageSlider({
           {/* Enhanced Navigation Arrows */}
           <motion.button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-2xl border border-blue-500/50 group/arrow"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-2xl border border-[#c89666]/50 group/arrow"
             aria-label="Previous slide"
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.95 }}
           >
             <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/30 to-[#e1b382]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
               animate={{
                 scale: [1, 1.2, 1],
               }}
@@ -348,14 +348,14 @@ function ImageSlider({
           
           <motion.button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-2xl border border-blue-500/50 group/arrow"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-2xl border border-[#c89666]/50 group/arrow"
             aria-label="Next slide"
             whileHover={{ scale: 1.1, x: 5 }}
             whileTap={{ scale: 0.95 }}
           >
             <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/30 to-cyan-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#e1b382]/30 to-[#c89666]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
               animate={{
                 scale: [1, 1.2, 1],
               }}
@@ -370,7 +370,7 @@ function ImageSlider({
           {/* Play/Pause Button */}
           <motion.button
             onClick={() => setIsPaused(!isPaused)}
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-blue-600/90 backdrop-blur-xl text-white hover:bg-blue-700 transition-all flex items-center justify-center z-40 shadow-lg border border-blue-500/50"
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-lg border border-[#c89666]/50"
             aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
@@ -396,8 +396,8 @@ function ImageSlider({
                 onClick={() => goToSlide(index)}
                 className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                   index === currentSlide
-                    ? "border-blue-500 shadow-lg shadow-blue-500/50 scale-110"
-                    : "border-blue-200 hover:border-blue-400 opacity-60 hover:opacity-100"
+                    ? "border-[#2d545e] shadow-lg shadow-[#2d545e]/50 scale-110"
+                    : "border-[#c89666] hover:border-[#2d545e] opacity-60 hover:opacity-100"
                 }`}
                 whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -426,21 +426,21 @@ function ImageSlider({
                     />
                     {index === currentSlide && (
                       <motion.div
-                        className="absolute inset-0 bg-blue-500/30"
+                        className="absolute inset-0 bg-[#2d545e]/30"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                       />
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full bg-slate-200 flex items-center justify-center">
-                    <ImageIcon className="w-6 h-6 text-blue-400" />
+                  <div className="w-full h-full bg-[#e1b382]/20 flex items-center justify-center">
+                    <ImageIcon className="w-6 h-6 text-[#2d545e]" />
                   </div>
                 )}
                 {/* Active indicator */}
                 {index === currentSlide && (
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[#2d545e]"
                     layoutId="activeThumbnail"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
@@ -458,8 +458,8 @@ function ImageSlider({
               onClick={() => goToSlide(index)}
               className={`relative rounded-full transition-all ${
                 index === currentSlide
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 w-10 h-3"
-                  : "bg-blue-300 hover:bg-blue-400 w-3 h-3"
+                  ? "bg-gradient-to-r from-[#2d545e] to-[#e1b382] w-10 h-3"
+                  : "bg-[#c89666] hover:bg-[#2d545e] w-3 h-3"
               }`}
               aria-label={`Go to slide ${index + 1}`}
               whileHover={{ scale: 1.2 }}
@@ -557,7 +557,7 @@ export default function TrainingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-blue-950">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section - Image Only */}
       <section className="relative w-full h-[70vh] overflow-hidden">
         <Image
@@ -572,7 +572,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Hero Content Section - Below Image */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -585,22 +585,22 @@ export default function TrainingPage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 text-sm font-medium shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 text-sm font-medium shadow-lg">
                 Summer Industrial Training 2025
               </Badge>
             </motion.div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              Empowering the <span className="text-white">Innovators</span> of Tomorrow
+              Empowering the <span className="text-[#e1b382]">Innovators</span> of Tomorrow
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
               A structured, interdisciplinary training initiative focused on emerging and high-impact technological domains.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 text-gray-200">
-              <div className="flex items-center gap-2 bg-blue-500/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-blue-400/30 text-white">
+            <div className="flex flex-wrap justify-center gap-4 text-white/90">
+              <div className="flex items-center gap-2 bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-[#c89666]/30 text-white">
                 <Calendar className="w-5 h-5" />
                 <span>2nd June - 15th July 2025</span>
               </div>
-              <div className="flex items-center gap-2 bg-blue-500/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-blue-400/30 text-white">
+              <div className="flex items-center gap-2 bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-[#c89666]/30 text-white">
                 <Users className="w-5 h-5" />
                 <span>45 Days Intensive Program</span>
               </div>
@@ -610,18 +610,18 @@ export default function TrainingPage() {
       </section>
 
       {/* Overview Section */}
-      <section id="overview" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="overview" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-12"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-12"
           >
-            <p className="text-lg text-slate-700 leading-relaxed text-center max-w-4xl mx-auto">
+            <p className="text-lg text-gray-700 leading-relaxed text-center max-w-4xl mx-auto">
               The Control Development Centre (CDC), operating under the Centre for Industrial Research and Development (CIRD) at Jaypee University of Engineering and Technology, Guna (M.P.), is proud to lead the Summer Industrial Training 2025 — a structured, interdisciplinary training initiative focused on emerging and high-impact technological domains.
             </p>
-            <p className="text-lg text-slate-700 leading-relaxed text-center max-w-4xl mx-auto mt-6">
+            <p className="text-lg text-gray-700 leading-relaxed text-center max-w-4xl mx-auto mt-6">
               This initiative underscores a strong commitment to bridging academic potential with industrial proficiency, fostering the development of domain expertise through experiential learning, system-level understanding, and practical implementation.
             </p>
           </motion.div>
@@ -633,7 +633,7 @@ export default function TrainingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h3 className="text-2xl font-bold text-white mb-6">Industry Collaborations</h3>
+            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Industry Collaborations</h3>
             <div className="flex flex-wrap justify-center gap-4">
               {industryPartners.map((partner, index) => (
                 <motion.div
@@ -642,9 +642,9 @@ export default function TrainingPage() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.05 }}
-                  className="bg-white border-blue-200 px-6 py-3 rounded-lg hover:border-blue-400 transition-all shadow-md"
+                  className="bg-white border-2 border-[#c89666] px-6 py-3 rounded-lg hover:border-[#2d545e] transition-all shadow-md"
                 >
-                  <span className="text-slate-900 font-medium">{partner}</span>
+                  <span className="text-[#2d545e] font-medium">{partner}</span>
                 </motion.div>
               ))}
             </div>
@@ -653,7 +653,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Core Training Tracks */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -661,10 +661,10 @@ export default function TrainingPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Core <span className="text-white">Training Tracks</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Core <span className="text-[#12343b]">Training Tracks</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
               Comprehensive training across four key technological domains
             </p>
           </motion.div>
@@ -678,17 +678,17 @@ export default function TrainingPage() {
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
               >
-                <Card className="bg-white border-blue-200 hover:border-blue-400 transition-all duration-300 h-full shadow-lg hover:shadow-xl">
+                <Card className="bg-white border-2 border-[#c89666] hover:border-[#2d545e] transition-all duration-300 h-full shadow-lg hover:shadow-xl">
                   <CardHeader>
-                    <div className="p-4 rounded-xl bg-blue-600 mb-4 w-fit">
+                    <div className="p-4 rounded-xl bg-[#2d545e] mb-4 w-fit">
                       <track.icon className="w-8 h-8 text-white" />
                     </div>
-                    <CardTitle className="text-xl text-slate-900 mb-2">
+                    <CardTitle className="text-xl text-[#2d545e] mb-2">
                       {track.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-slate-700">
+                    <CardDescription className="text-gray-700">
                       {track.description}
                     </CardDescription>
                   </CardContent>
@@ -700,7 +700,7 @@ export default function TrainingPage() {
       </section>
 
       {/* AI Srijan FDP Section */}
-      <section id="ai-srijan" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="ai-srijan" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -713,14 +713,14 @@ export default function TrainingPage() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
                 AI Srijan - Faculty Development Programme
               </Badge>
             </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Advancing AI Excellence through <span className="text-white">Industry-Academia Collaboration</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Advancing AI Excellence through <span className="text-[#12343b]">Industry-Academia Collaboration</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
               A one-week Faculty Development Programme on Artificial Intelligence, Machine Learning, and Deep Learning under the prestigious Intel® Unnati Program
             </p>
           </motion.div>
@@ -730,29 +730,29 @@ export default function TrainingPage() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
           >
-            <h3 className="text-2xl font-bold text-slate-900 mb-6">Program Details</h3>
+            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Program Details</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <Calendar className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-slate-900 font-semibold">Date</p>
-                  <p className="text-slate-700">7th – 11th July 2025</p>
+                  <p className="text-[#2d545e] font-semibold">Date</p>
+                  <p className="text-gray-700">7th – 11th July 2025</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Building2 className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <Building2 className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-slate-900 font-semibold">Venue</p>
-                  <p className="text-slate-700">Control Development Center (CDC), CIRD, JUET Guna</p>
+                  <p className="text-[#2d545e] font-semibold">Venue</p>
+                  <p className="text-gray-700">Control Development Center (CDC), CIRD, JUET Guna</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
+                <Sparkles className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
                 <div>
-                  <p className="text-slate-900 font-semibold">In Association With</p>
-                  <p className="text-slate-700">Intel Corporation® | EDGATE TECHNOLOGIES PRIVATE LIMITED</p>
+                  <p className="text-[#2d545e] font-semibold">In Association With</p>
+                  <p className="text-gray-700">Intel Corporation® | EDGATE TECHNOLOGIES PRIVATE LIMITED</p>
                 </div>
               </div>
             </div>
@@ -762,21 +762,21 @@ export default function TrainingPage() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
           >
-            <h3 className="text-2xl font-bold text-slate-900 mb-6">Program Highlights</h3>
+            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Program Highlights</h3>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                <p className="text-slate-700">Hands-on sessions in Machine Learning and Deep Learning</p>
+                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
+                <p className="text-gray-700">Hands-on sessions in Machine Learning and Deep Learning</p>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                <p className="text-slate-700">Exposure to Intel's Unnati AI Lab tools and curriculum</p>
+                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
+                <p className="text-gray-700">Exposure to Intel's Unnati AI Lab tools and curriculum</p>
               </div>
               <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                <p className="text-slate-700">Real-world problem-solving and model deployment strategies</p>
+                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
+                <p className="text-gray-700">Real-world problem-solving and model deployment strategies</p>
               </div>
             </div>
           </motion.div>
@@ -794,7 +794,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Power Plant Visit Section */}
-      <section id="power-plant" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="power-plant" className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -807,14 +807,14 @@ export default function TrainingPage() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#2d545e] text-white border border-[#12343b] px-6 py-2 shadow-lg">
                 Industrial Visit
               </Badge>
             </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Visit to <span className="text-white">Jaypee Nigrie Super Thermal Power Plant</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Visit to <span className="text-[#12343b]">Jaypee Nigrie Super Thermal Power Plant</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
               A comprehensive one-week industrial visit to understand the operations and technologies of a super thermal power plant
             </p>
           </motion.div>
@@ -823,16 +823,16 @@ export default function TrainingPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 mb-8"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
           >
             <div className="flex items-start gap-3 mb-6">
-              <Building2 className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
+              <Building2 className="w-6 h-6 text-[#2d545e] mt-1 flex-shrink-0" />
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Jaypee Nigrie Super Thermal Power Plant</h3>
-                <p className="text-slate-600">Nigrie, Madhya Pradesh</p>
+                <h3 className="text-xl font-bold text-[#2d545e] mb-2">Jaypee Nigrie Super Thermal Power Plant</h3>
+                <p className="text-gray-600">Nigrie, Madhya Pradesh</p>
               </div>
             </div>
-            <p className="text-slate-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               All trainees participated in a one-week industrial visit to the Jaypee Nigrie Super Thermal Power Plant, gaining extensive knowledge about how a super thermal power plant operates, including its various systems, processes, and technologies. This hands-on experience provided invaluable insights into real-world industrial operations and power generation.
             </p>
           </motion.div>
@@ -849,7 +849,7 @@ export default function TrainingPage() {
       </section>
 
       {/* Closing Ceremony Section */}
-      <section id="closing" className="py-20 bg-gradient-to-b from-slate-900 to-blue-950">
+      <section id="closing" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
         <div className="container mx-auto px-8 md:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -862,14 +862,14 @@ export default function TrainingPage() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-6 bg-blue-600 text-white border border-blue-500 px-6 py-2 shadow-lg shadow-blue-900/30">
+              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
                 Closing Ceremony
               </Badge>
             </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Closing Ceremony of <span className="text-white">SIT-2025</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+              Closing Ceremony of <span className="text-[#12343b]">SIT-2025</span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-4xl mx-auto">
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
               A Celebration of Learning and Collaboration
             </p>
           </motion.div>
@@ -879,16 +879,16 @@ export default function TrainingPage() {
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
           >
             <div className="flex items-center gap-3 mb-6">
-              <Award className="w-8 h-8 text-blue-600" />
-              <h3 className="text-2xl font-bold text-slate-900">Recognition & Appreciation</h3>
+              <Award className="w-8 h-8 text-[#2d545e]" />
+              <h3 className="text-2xl font-bold text-[#2d545e]">Recognition & Appreciation</h3>
             </div>
-            <p className="text-slate-700 leading-relaxed mb-4">
+            <p className="text-gray-700 leading-relaxed mb-4">
               We were honored to present Mementoes to our distinguished guests, programme organisers, co-organisers, and esteemed resource persons as a token of our appreciation for their invaluable contributions.
             </p>
-            <p className="text-slate-700 leading-relaxed">
+            <p className="text-gray-700 leading-relaxed">
               Certificates of Participation were presented to all the interns for their dedication, hard work, and active engagement throughout the program.
             </p>
           </motion.div>
@@ -897,24 +897,24 @@ export default function TrainingPage() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20"
+            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
           >
             <div className="flex items-center gap-3 mb-6">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-              <h3 className="text-2xl font-bold text-slate-900">Program Leadership</h3>
+              <GraduationCap className="w-8 h-8 text-[#2d545e]" />
+              <h3 className="text-2xl font-bold text-[#2d545e]">Program Leadership</h3>
             </div>
             <div className="space-y-3">
               <div>
-                <p className="text-slate-900 font-semibold mb-1">Program Organiser</p>
-                <p className="text-slate-700">Dr. Dhananjay R. Mishra</p>
+                <p className="text-[#2d545e] font-semibold mb-1">Program Organiser</p>
+                <p className="text-gray-700">Dr. Dhananjay R. Mishra</p>
               </div>
               <div>
-                <p className="text-slate-900 font-semibold mb-1">Co-Organiser</p>
-                <p className="text-slate-700">Dr. Amit Kumar Srivastava</p>
+                <p className="text-[#2d545e] font-semibold mb-1">Co-Organiser</p>
+                <p className="text-gray-700">Dr. Amit Kumar Srivastava</p>
               </div>
-              <div className="pt-3 border-t border-blue-200">
-                <p className="text-slate-900 font-semibold mb-1">Hon'ble Vice Chancellor</p>
-                <p className="text-slate-700">Prof. D K Rai, JUET Guna</p>
+              <div className="pt-3 border-t border-[#c89666]">
+                <p className="text-[#2d545e] font-semibold mb-1">Hon'ble Vice Chancellor</p>
+                <p className="text-gray-700">Prof. D K Rai, JUET Guna</p>
               </div>
             </div>
           </motion.div>
@@ -924,12 +924,12 @@ export default function TrainingPage() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white border-blue-200 rounded-xl p-8 shadow-xl shadow-blue-900/20 text-center"
+          className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl text-center"
         >
-          <p className="text-lg text-slate-700 leading-relaxed max-w-3xl mx-auto mb-4">
+          <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-4">
             A heartfelt thank you to our mentors, whose continuous guidance shaped the learning journey of every participant, and to the program organisers for their tireless efforts in making SIT-2025 a memorable and impactful experience.
           </p>
-          <p className="text-lg text-slate-900 font-semibold leading-relaxed max-w-3xl mx-auto">
+          <p className="text-lg text-[#2d545e] font-semibold leading-relaxed max-w-3xl mx-auto">
             SIT-2025 was not just about skill development—it was about curiosity, teamwork, and the drive to innovate. As we close this chapter, we look forward to seeing our participants carry this learning spirit into their future endeavors.
           </p>
         </motion.div>

@@ -33,7 +33,7 @@ export default function CollaborationSlider() {
       subtitle: "Jaypee Power Ventures Limited",
       description: "Strategic partnership driving industrial research and development initiatives",
       image: "/assets/home/jpvl-logo.jpeg",
-      bgGradient: "from-blue-600 to-indigo-700"
+      bgGradient: "from-[#2d545e] to-[#12343b]"
     },
     {
       id: 2,
@@ -42,7 +42,7 @@ export default function CollaborationSlider() {
       subtitle: "Technology Innovation Partner",
       description: "Collaborating with Intel for cutting-edge AI and machine learning solutions",
       image: "/assets/home/intel.jpg",
-      bgGradient: "from-indigo-600 to-purple-700"
+      bgGradient: "from-[#2d545e] to-[#c89666]"
     },
     {
       id: 3,
@@ -51,7 +51,7 @@ export default function CollaborationSlider() {
       subtitle: "Industry-Academia Collaboration",
       description: "Partnering with EDGATE Technologies for advanced technological solutions",
       image: "/assets/home/edgate.jpeg",
-      bgGradient: "from-purple-600 to-pink-700"
+      bgGradient: "from-[#c89666] to-[#e1b382]"
     },
     {
       id: 4,
@@ -61,7 +61,7 @@ export default function CollaborationSlider() {
       beforeStatement: "Replacing natural sand with bottom ash in pavers and bricks",
       description: "Innovative research in sustainable construction materials and practices",
       image: "/assets/home/paver.png",
-      bgGradient: "from-blue-700 to-cyan-700"
+      bgGradient: "from-[#12343b] to-[#2d545e]"
     }
   ];
 
@@ -130,10 +130,10 @@ export default function CollaborationSlider() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative aspect-video bg-gradient-to-br rounded-2xl overflow-hidden border-2 border-blue-300/50 shadow-2xl backdrop-blur-sm group">
+      <div className="relative aspect-video bg-gradient-to-br rounded-2xl overflow-hidden border-2 border-gray-200 shadow-xl backdrop-blur-sm group">
         {/* Animated background gradient */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10"
+          className="absolute inset-0 bg-gradient-to-r from-[#e1b382]/30 via-[#c89666]/20 to-[#e1b382]/30"
           animate={{
             backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
           }}
@@ -197,7 +197,7 @@ export default function CollaborationSlider() {
                         transition={{ duration: 0.5 }}
                         className="mb-6 md:mb-8 flex justify-center"
                       >
-                        <div className="relative w-80 h-52 md:w-[500px] md:h-[320px] lg:w-[600px] lg:h-[380px] bg-white/10 backdrop-blur-sm rounded-xl p-4 md:p-6 flex items-center justify-center border border-white/20 shadow-lg">
+                        <div className="relative w-80 h-52 md:w-[500px] md:h-[320px] lg:w-[600px] lg:h-[380px] bg-white/90 backdrop-blur-sm rounded-xl p-4 md:p-6 flex items-center justify-center border border-gray-200 shadow-lg">
                           <Image
                             src={slide.image}
                             alt={slide.title}
@@ -230,7 +230,7 @@ export default function CollaborationSlider() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.05 }}
-                        className="text-lg md:text-xl text-blue-200 mb-3 font-medium"
+                        className="text-lg md:text-xl text-[#e1b382] mb-3 font-medium"
                       >
                         {slide.beforeStatement}
                       </motion.p>
@@ -241,7 +241,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 md:mb-4"
+                      className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4"
                     >
                       {slide.title}
                     </motion.h3>
@@ -250,7 +250,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.1 }}
-                      className="text-xl md:text-2xl lg:text-3xl text-blue-100 mb-4 md:mb-6"
+                      className="text-xl md:text-2xl lg:text-3xl text-[#e1b382] mb-4 md:mb-6"
                     >
                       {slide.subtitle}
                     </motion.p>
@@ -259,7 +259,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="text-base md:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto"
+                      className="text-base md:text-lg lg:text-xl text-gray-700 max-w-2xl mx-auto"
                     >
                       {slide.description}
                     </motion.p>
@@ -286,9 +286,9 @@ export default function CollaborationSlider() {
         </div>
 
         {/* Progress Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-30">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 z-30">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500"
+            className="h-full bg-gradient-to-r from-[#2d545e] via-[#12343b] to-[#2d545e]"
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.1, ease: "linear" }}
@@ -301,9 +301,9 @@ export default function CollaborationSlider() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md rounded-lg px-4 py-2 z-30 pointer-events-none"
+          className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md rounded-lg px-4 py-2 z-30 pointer-events-none border border-gray-200 shadow-lg"
         >
-          <div className="text-white text-sm font-semibold">
+          <div className="text-gray-900 text-sm font-semibold">
             {String(currentSlide + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
           </div>
         </motion.div>
@@ -311,14 +311,14 @@ export default function CollaborationSlider() {
         {/* Enhanced Navigation Arrows */}
         <motion.button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 transition-all flex items-center justify-center z-40 shadow-2xl border border-white/30 group/arrow"
+          className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
           aria-label="Previous slide"
           whileHover={{ scale: 1.1, x: -5 }}
           whileTap={{ scale: 0.95 }}
         >
           <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500/30 to-purple-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
             animate={{
               scale: [1, 1.2, 1],
             }}
@@ -332,14 +332,14 @@ export default function CollaborationSlider() {
         
         <motion.button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 transition-all flex items-center justify-center z-40 shadow-2xl border border-white/30 group/arrow"
+          className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
           aria-label="Next slide"
           whileHover={{ scale: 1.1, x: 5 }}
           whileTap={{ scale: 0.95 }}
         >
           <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
           <motion.div
-            className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-500/30 to-cyan-500/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+            className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
             animate={{
               scale: [1, 1.2, 1],
             }}
@@ -354,7 +354,7 @@ export default function CollaborationSlider() {
         {/* Play/Pause Button */}
         <motion.button
           onClick={() => setIsPaused(!isPaused)}
-          className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/20 backdrop-blur-xl text-white hover:bg-white/30 transition-all flex items-center justify-center z-40 shadow-lg border border-white/30"
+          className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200"
           aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
@@ -380,8 +380,8 @@ export default function CollaborationSlider() {
               onClick={() => goToSlide(index)}
               className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                 index === currentSlide
-                  ? "border-blue-400 shadow-lg shadow-blue-500/50 scale-110"
-                  : "border-blue-200 hover:border-blue-400 opacity-60 hover:opacity-100"
+                  ? "border-[#2d545e] shadow-lg shadow-[#2d545e]/30 scale-110"
+                  : "border-[#c89666] hover:border-[#2d545e] opacity-60 hover:opacity-100"
               }`}
               whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -402,7 +402,7 @@ export default function CollaborationSlider() {
                   </div>
                   {index === currentSlide && (
                     <motion.div
-                      className="absolute inset-0 bg-blue-500/30"
+                      className="absolute inset-0 bg-[#2d545e]/30"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                     />
@@ -420,7 +420,7 @@ export default function CollaborationSlider() {
               {/* Active indicator */}
               {index === currentSlide && (
                 <motion.div
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-blue-400"
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-[#2d545e]"
                   layoutId="activeThumbnail"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
@@ -438,8 +438,8 @@ export default function CollaborationSlider() {
             onClick={() => goToSlide(index)}
             className={`relative rounded-full transition-all ${
               index === currentSlide
-                ? "bg-gradient-to-r from-blue-500 to-purple-500 w-10 h-3"
-                : "bg-blue-300 hover:bg-blue-400 w-3 h-3"
+                ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] w-10 h-3"
+                : "bg-[#c89666] hover:bg-[#2d545e] w-3 h-3"
             }`}
             aria-label={`Go to slide ${index + 1}`}
             whileHover={{ scale: 1.2 }}
