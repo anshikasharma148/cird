@@ -47,7 +47,7 @@ const teamMemberData: Record<string, any> = {
   },
   "amit-srivastava": {
     name: "Dr. Amit Kumar Srivastava",
-    designation: "Coordinator of CIRD",
+    designation: "Co-coordinator of CDC",
     department: "Assistant Professor (SG), Computer Science and Engineering, JUET, Guna",
     image: "/assets/team/amit-srivastava.jpg", // Correct
     bio: "Dr. Amit Kumar Srivastava is an Assistant Professor (SG) in the Department of Computer Science and Engineering at Jaypee University of Engineering and Technology (JUET), Guna. With over 12 years of academic experience, he specializes in Artificial Intelligence, Machine Learning, and Computational Intelligence.",
@@ -71,7 +71,7 @@ const teamMemberData: Record<string, any> = {
       { id: "BA09/PP/A", title: "Automatic Reservoir Monitoring and Control System (ARMAC) for VHPHEP", status: "ongoing" },
       { id: "BA09/PP/B", title: "Automatic Reservoir Monitoring and Control System (ARMAC) for Bina", status: "ongoing" }
     ],
-    cirdRole: "As Coordinator of CIRD, Dr. Srivastava leads automation and intelligent systems projects, focusing on early warning systems, weather monitoring, and industrial control systems. He provides development support in industrial automation using Siemens products and conducts training workshops on Python Programming, Machine Learning, and Artificial Intelligence."
+    cirdRole: "As Co-coordinator of CDC, Dr. Srivastava leads automation and intelligent systems projects, focusing on early warning systems, weather monitoring, and industrial control systems. He provides development support in industrial automation using Siemens products and conducts training workshops on Python Programming, Machine Learning, and Artificial Intelligence."
   },
   "pankaj-dumka": {
     name: "Dr. Pankaj Dumka",

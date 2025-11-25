@@ -25,7 +25,7 @@ const teamMembers: TeamMember[] = [
   {
     id: "dhananjay-mishra",
     name: "Dr. Dhananjay R. Mishra",
-    designation: "Member",
+    designation: "Coordinator of CDC",
     department: "Associate Professor, MECH, JUET, Guna",
     role: "coordination",
     slug: "dhananjay-mishra",
@@ -34,7 +34,7 @@ const teamMembers: TeamMember[] = [
   {
     id: "amit-srivastava",
     name: "Dr. Amit Kumar Srivastava",
-    designation: "Member",
+    designation: "Co-coordinator of CDC",
     department: "Assistant Professor (SG), CSE, JUET, Guna",
     role: "coordination",
     slug: "amit-srivastava",

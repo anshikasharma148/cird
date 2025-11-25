@@ -178,25 +178,47 @@ export default function CDCPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800">
-      {/* Hero Section */}
+      {/* Hero Section with Fade-in Slider */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Background Image */}
+        {/* Fade-in Background Image Slider */}
         <div className="absolute inset-0 z-0">
-          <Image
-            src="/assets/entities/cdc/cdc.jpg"
-            alt="CDC - Control Development Centre"
-            fill
-            className="object-cover"
-            sizes="100vw"
-            priority
-            loading="eager"
-          />
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/70 to-black/80"></div>
+          {cdcRooms.map((room, index) => {
+            const isActive = index === currentSlide;
+            return (
+              <motion.div
+                key={`header-${index}-${room.name}`}
+                className="absolute inset-0 w-full h-full"
+                initial={false}
+                animate={{
+                  opacity: isActive ? 1 : 0,
+                }}
+                transition={{
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }}
+                style={{
+                  zIndex: isActive ? 1 : 0,
+                }}
+              >
+                <Image
+                  src={room.image}
+                  alt={room.name}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority={index === 0}
+                  quality={90}
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+              </motion.div>
+            );
+          })}
+          {/* Light Overlay - Just enough for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
         </div>
         
         {/* Content */}
-        <div className="container mx-auto px-8 md:px-16 relative z-10 py-20">
+        <div className="container mx-auto px-8 md:px-16 relative z-20 py-20">
           <Link href="/entities">
             <Button variant="ghost" className="mb-6 text-white hover:text-gray-300 bg-white/10 backdrop-blur-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -219,10 +241,10 @@ export default function CDCPage() {
                 Control Development Centre
               </Badge>
             </motion.div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               CDC - Control Development Centre
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-200 mb-8 leading-relaxed drop-shadow-md">
               Advanced Control Systems Research
             </p>
           </motion.div>
