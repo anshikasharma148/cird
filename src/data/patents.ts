@@ -118,7 +118,7 @@ export const patents: Patent[] = [
   },
   {
     id: "10",
-    designNumber: "420940-001",
+    designNumber: "420914-001",
     title: "Lateral Force Resistance Interlocking Brick",
     description: "Design registration for lateral force resistance interlocking brick system",
     registrationDate: "22/06/2024",

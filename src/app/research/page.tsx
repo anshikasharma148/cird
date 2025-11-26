@@ -22,6 +22,7 @@ import {
   Award
 } from "lucide-react";
 import Link from "next/link";
+import { patents as patentsData } from "@/data/patents";
 
 export default function ResearchPage() {
   const broaderAreas = [
@@ -290,6 +291,41 @@ export default function ResearchPage() {
     "Interlocking Block (420915-001)",
     "N1", "N2", "N3"
   ];
+
+  // Function to extract design number from patent string and find matching patent
+  const getPatentLink = (patentString: string): string | null => {
+    // Skip placeholder items
+    if (patentString === "N1" || patentString === "N2" || patentString === "N3") {
+      return null;
+    }
+    
+    // Extract design number from string like "Title (420914-001)"
+    const match = patentString.match(/\((\d+-\d+)\)/);
+    if (!match) return null;
+    
+    const designNumber = match[1];
+    // Check if patent exists in patents data by design number
+    const patent = patentsData.find(p => p.designNumber === designNumber);
+    if (patent) {
+      // Link to patents page with search query to filter to this patent
+      return `/patents?search=${encodeURIComponent(designNumber)}`;
+    }
+    
+    // If not found by design number, try to match by title
+    const titleMatch = patentString.match(/^([^(]+)/);
+    if (titleMatch) {
+      const title = titleMatch[1].trim();
+      const patentByTitle = patentsData.find(p => 
+        p.title.toLowerCase().includes(title.toLowerCase()) || 
+        title.toLowerCase().includes(p.title.toLowerCase())
+      );
+      if (patentByTitle) {
+        return `/patents?search=${encodeURIComponent(patentByTitle.designNumber)}`;
+      }
+    }
+    
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
@@ -572,19 +608,38 @@ export default function ResearchPage() {
             className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-[#e1b382]/30 shadow-xl"
           >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {patents.map((patent, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  className="flex items-center p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-[#e1b382]/20 hover:border-[#e1b382]/40 transition-all shadow-md hover:shadow-lg"
-                >
-                  <Award className="w-5 h-5 text-[#e1b382] mr-3 flex-shrink-0" />
-                  <span className="text-white text-sm">{patent}</span>
-                </motion.div>
-              ))}
+              {patents.map((patent, index) => {
+                const patentLink = getPatentLink(patent);
+                const isLinkable = patentLink !== null;
+                
+                const content = (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    whileHover={isLinkable ? { scale: 1.05, y: -2 } : {}}
+                    className={`flex items-center p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-[#e1b382]/20 transition-all shadow-md ${
+                      isLinkable 
+                        ? 'hover:border-[#e1b382]/60 hover:bg-white/15 cursor-pointer hover:shadow-lg' 
+                        : ''
+                    }`}
+                  >
+                    <Award className="w-5 h-5 text-[#e1b382] mr-3 flex-shrink-0" />
+                    <span className="text-white text-sm">{patent}</span>
+                  </motion.div>
+                );
+
+                if (isLinkable && patentLink) {
+                  return (
+                    <Link key={index} href={patentLink}>
+                      {content}
+                    </Link>
+                  );
+                }
+                
+                return content;
+              })}
             </div>
           </motion.div>
         </div>

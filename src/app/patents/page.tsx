@@ -1,15 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, FileText, Calendar, Building2, Hash, Award, Search, Filter } from "lucide-react";
 import { patents, Patent } from "@/data/patents";
 import Link from "next/link";
 
-export default function PatentsPage() {
+function PatentsPageContent() {
+  const searchParams = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterClass, setFilterClass] = useState<string>("all");
+
+  // Initialize search query from URL parameter
+  useEffect(() => {
+    const searchParam = searchParams.get("search");
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [searchParams]);
 
   const uniqueClasses = Array.from(new Set(patents.map(p => p.class)));
 
@@ -244,6 +254,21 @@ export default function PatentsPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function PatentsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40 py-20 px-4 md:px-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2d545e] mx-auto mb-4"></div>
+          <p className="text-[#2d545e]">Loading patents...</p>
+        </div>
+      </div>
+    }>
+      <PatentsPageContent />
+    </Suspense>
   );
 }
 
