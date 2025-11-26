@@ -23,45 +23,45 @@ import Link from "next/link";
 
 export function AboutSection() {
   return (
-    <section className="py-20 bg-gradient-to-b from-[#e1b382]/30 to-[#e1b382]/20 relative overflow-hidden">
+    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#e1b382]/30 to-[#e1b382]/20 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232563eb' fill-opacity='0.02'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E")`,
         backgroundRepeat: 'repeat'
       }}></div>
       
-      <div className="container mx-auto px-8 md:px-16 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-4 bg-[#2d545e] text-white border border-[#12343b] px-6 py-2 shadow-lg">
+              <Badge className="mb-3 sm:mb-4 bg-[#2d545e] text-white border border-[#12343b] px-4 sm:px-6 py-1.5 sm:py-2 shadow-lg text-xs sm:text-sm">
                 About CIRD
               </Badge>
             </motion.div>
-          <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 px-4">
             Centre for Industrial Research and Development
           </h2>
-          <p className="text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed px-4">
             An Industry–Academia interface established at Jaypee University of Engineering and Technology (JUET), Guna.
           </p>
         </motion.div>
 
-        <div className="mb-12">
+        <div className="mb-8 sm:mb-10 lg:mb-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white backdrop-blur-md rounded-xl p-8 border border-[#c89666] shadow-lg"
+            className="bg-white backdrop-blur-md rounded-xl p-5 sm:p-6 lg:p-8 border border-[#c89666] shadow-lg"
           >
-            <p className="text-lg text-[#2d545e] leading-relaxed">
+            <p className="text-sm sm:text-base lg:text-lg text-[#2d545e] leading-relaxed">
               The Centre for Industrial Research and Development (CIRD) is an Industry–Academia interface 
               established by the Jaypee Universities at Jaypee University of Engineering and Technology (JUET), Guna. 
               The centre aims to facilitate research translation, technology development, intellectual property (IPR) management, 
@@ -70,28 +70,28 @@ export function AboutSection() {
           </motion.div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h3 className="text-3xl font-bold text-[#2d545e] mb-6">Innovation & Entrepreneurship</h3>
-            <p className="text-lg text-[#2d545e] mb-6 leading-relaxed">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#2d545e] mb-4 sm:mb-5 lg:mb-6">Innovation & Entrepreneurship</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 leading-relaxed">
               CIRD has adopted several programs to enrich the entrepreneurial ecosystem and technology 
               commercialization efforts at the Institute.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+            <div className="flex flex-wrap gap-2 sm:gap-3">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Innovation
               </Badge>
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Entrepreneurship
               </Badge>
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Commercialization
               </Badge>
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Technology Transfer
               </Badge>
             </div>
@@ -101,21 +101,21 @@ export function AboutSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white backdrop-blur-md rounded-xl p-8 border border-[#c89666] shadow-lg"
+            className="bg-white backdrop-blur-md rounded-xl p-5 sm:p-6 lg:p-8 border border-[#c89666] shadow-lg"
           >
-            <h3 className="text-3xl font-bold text-[#2d545e] mb-6">R&D Partnership</h3>
-            <p className="text-lg text-[#2d545e] leading-relaxed">
+            <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#2d545e] mb-4 sm:mb-5 lg:mb-6">R&D Partnership</h3>
+            <p className="text-sm sm:text-base lg:text-lg text-[#2d545e] leading-relaxed">
               Projects addressing technologies at the core and aims at the development of proprietary knowledge 
               in a process, product, software, designs, specific/generic algorithm etc.
             </p>
-            <div className="flex flex-wrap gap-3 mt-4">
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+            <div className="flex flex-wrap gap-2 sm:gap-3 mt-3 sm:mt-4">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Research
               </Badge>
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Development
               </Badge>
-              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666]">
+              <Badge variant="secondary" className="bg-[#e1b382] text-[#2d545e] border-[#c89666] text-xs sm:text-sm">
                 Partnership
               </Badge>
             </div>
@@ -128,40 +128,40 @@ export function AboutSection() {
 
 export function XBracketProject() {
   return (
-    <section className="py-20 bg-gradient-to-b from-[#e1b382]/20 to-[#e1b382]/10 relative overflow-hidden">
+    <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#e1b382]/20 to-[#e1b382]/10 relative overflow-hidden">
       {/* Animated background elements */}
         <div className="absolute inset-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
       </div>
 
-      <div className="container mx-auto px-8 md:px-16 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-10 sm:mb-12 lg:mb-16"
         >
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <Badge className="mb-4 bg-[#c89666] text-white border border-[#2d545e] px-6 py-2 shadow-lg">
+              <Badge className="mb-3 sm:mb-4 bg-[#c89666] text-white border border-[#2d545e] px-4 sm:px-6 py-1.5 sm:py-2 shadow-lg text-xs sm:text-sm">
                 🏆 Featured Project
               </Badge>
             </motion.div>
-          <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 px-4">
             X-BRACKET <span className="text-[#12343b]">POST</span>
           </h2>
-          <p className="text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg lg:text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed px-4">
             A groundbreaking collaboration between CIRD and Jaiprakash Power Ventures Limited (JPVL) 
             that resulted in a patented equipment design, showcasing engineering excellence and 
             intellectual property innovation.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8">
           {[
             {
               title: "Industry Partnership",
@@ -191,18 +191,18 @@ export function XBracketProject() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
             >
-              <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 hover:shadow-xl shadow-md">
+              <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 hover:shadow-xl shadow-md h-full">
                 <CardHeader>
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className={`p-2 rounded-lg bg-[#2d545e]`}>
-                      <card.icon className="w-6 h-6 text-white" />
+                  <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+                    <div className={`p-2 rounded-lg bg-[#2d545e] flex-shrink-0`}>
+                      <card.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                     </div>
-                    <CardTitle className="text-xl text-[#2d545e]">{card.title}</CardTitle>
+                    <CardTitle className="text-base sm:text-lg lg:text-xl text-[#2d545e]">{card.title}</CardTitle>
                   </div>
-                  <CardDescription className="text-[#2d545e]">{card.description}</CardDescription>
+                  <CardDescription className="text-sm sm:text-base text-[#2d545e]">{card.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-[#2d545e] leading-relaxed">{card.content}</p>
+                  <p className="text-sm sm:text-base text-[#2d545e] leading-relaxed">{card.content}</p>
                 </CardContent>
               </Card>
             </motion.div>

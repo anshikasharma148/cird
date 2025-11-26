@@ -40,18 +40,18 @@ export function Navigation() {
               : "border-b border-[#c89666]/20 bg-[#e1b382]/90 backdrop-blur-md supports-backdrop-filter:bg-[#e1b382]/90 shadow-sm"
           }`}
         >
-          <div className="container mx-auto px-4 sm:px-8 md:px-16 flex h-16 items-center justify-between">
-            <div className="flex flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2 group">
-                <div className="text-left">
-                  <div className="font-bold text-sm sm:text-lg md:text-xl text-[#2d545e]">
+          <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16 flex h-14 sm:h-16 items-center justify-between">
+            <div className="flex flex-shrink-0 min-w-0">
+              <Link href="/" className="flex items-center space-x-1 sm:space-x-2 group">
+                <div className="text-left min-w-0">
+                  <div className="font-bold text-base sm:text-lg md:text-xl lg:text-xl text-[#2d545e] whitespace-nowrap">
                     <span className="font-bold">CIRD</span>
                   </div>
-                  <div className="text-xs sm:text-sm text-[#2d545e] hidden xs:block">CIRD - JUET, Guna</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-[#2d545e] hidden sm:block whitespace-nowrap">CIRD - JUET, Guna</div>
                 </div>
               </Link>
             </div>
-            <NavigationMenu className="hidden md:block flex-1">
+            <NavigationMenu className="hidden lg:block flex-1">
               <NavigationMenuList className="flex flex-wrap justify-end gap-0.5 md:gap-1">
                 <NavigationMenuItem>
                   <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e] data-[active]:bg-[#2d545e] data-[active]:text-white">
@@ -411,207 +411,208 @@ export function Navigation() {
               </NavigationMenuList>
             </NavigationMenu>
             
-            {/* Mobile Menu Button */}
+            {/* Mobile/Tablet Menu Button */}
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden text-[#2d545e] hover:bg-[#e1b382] flex-shrink-0 ml-2"
+              className="lg:hidden text-[#2d545e] hover:bg-[#2d545e] hover:text-white flex-shrink-0 ml-2 p-2 min-w-[40px] h-10"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              {isMobileMenuOpen ? <X size={22} className="sm:w-6 sm:h-6" /> : <Menu size={22} className="sm:w-6 sm:h-6" />}
             </Button>
           </div>
           
-          {/* Mobile Menu */}
+          {/* Mobile/Tablet Menu */}
           {isMobileMenuOpen && (
             <div
-              className="md:hidden border-t border-[#c89666]/40 bg-[#e1b382]/98 backdrop-blur-md transition-all duration-300 max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
+              className="lg:hidden border-t border-[#c89666]/40 bg-[#e1b382]/98 backdrop-blur-md transition-all duration-300 max-h-[calc(100vh-3.5rem)] sm:max-h-[calc(100vh-4rem)] overflow-y-auto shadow-lg"
             >
-              <div className="px-4 py-4 space-y-2">
+              <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-1 sm:space-y-2">
                 <Link 
                   href="/" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Home
                 </Link>
                 <Link 
                   href="/about" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   About
                 </Link>
-                <div className="px-4 py-2 text-[#2d545e] font-semibold">
+                <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Research
                 </div>
                 <Link 
                   href="/research" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Research Projects
                 </Link>
                 <Link 
                   href="/projects/ba01-pp-b" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA01/PP/B - Problems and Remedies
                 </Link>
                 <Link 
                   href="/projects/ba01-pp-c" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA01/PP/C - Bottom Ash in Pavers
                 </Link>
                 <Link 
                   href="/projects/ba03-pp-b" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA03/PP/B - CHP Monitoring
                 </Link>
                 <Link 
                   href="/projects/ba07-pp-a" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA07/PP/A - Early Warning System
                 </Link>
                 <Link 
                   href="/projects/ba07-pp-b" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA07/PP/B - Weather Station
                 </Link>
-                <div className="px-4 py-2 text-[#2d545e] font-semibold">
+                <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Entities
                 </div>
                 <Link 
                   href="/entities" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Entities
                 </Link>
                 <Link 
                   href="/entities/cdc" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   CDC - Control Development Centre
                 </Link>
                 <Link 
                   href="/entities/mtl" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   MTL - Mechanical Testing Lab
                 </Link>
-                <div className="px-4 py-2 text-[#2d545e] font-semibold">
+                <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Training
                 </div>
                 <Link 
                   href="/training" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Training Programs
                 </Link>
                 <Link 
                   href="/training#overview" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Program Overview
                 </Link>
                 <Link 
                   href="/training#ai-srijan" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   AI Srijan FDP
                 </Link>
                 <Link 
                   href="/training#power-plant" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Power Plant Visit
                 </Link>
                 <Link 
                   href="/training#closing" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Closing Ceremony
                 </Link>
-                <div className="px-4 py-2 text-[#2d545e] font-semibold">
+                <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Team
                 </div>
                 <Link 
                   href="/team" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Team Members
                 </Link>
                 <Link 
                   href="/team#coordination" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Coordination Committee
                 </Link>
                 <Link 
                   href="/team#technical" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Technical Consultants
                 </Link>
                 <Link 
                   href="/team#cdc" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   CDC Team
                 </Link>
                 <Link 
                   href="/team#mtl" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   MTL Team
                 </Link>
                 <Link 
                   href="/team#nodal" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-8 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Nodal Officers
                 </Link>
                 <Link 
                   href="/patents" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Patents
                 </Link>
                 <Link 
                   href="/mou" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   MoU
                 </Link>
                 <Link 
                   href="/contact" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Contact
                 </Link>
@@ -619,7 +620,7 @@ export function Navigation() {
                   href="http://115.242.156.230:3000" 
                   target="_blank" 
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block px-4 py-2 text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
+                  className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Hydrology
                 </Link>

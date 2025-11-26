@@ -15,22 +15,22 @@ export default function Home() {
       <HeroSection />
 
       {/* Collaboration & Partnerships Showcase - At the top */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/30 to-[#e1b382]/20 relative z-10">
-        <div className="container mx-auto px-8 md:px-16">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#e1b382]/30 to-[#e1b382]/20 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
+            className="text-center mb-8 sm:mb-10 lg:mb-12"
           >
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <Handshake className="w-8 h-8 text-[#2d545e]" />
-              <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e]">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5 lg:mb-6">
+              <Handshake className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-[#2d545e]" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-[#2d545e]">
                 Collaborations & Partnerships
               </h2>
             </div>
-            <p className="text-xl text-[#2d545e] max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg lg:text-xl text-[#2d545e] max-w-3xl mx-auto px-4">
               Building strong industry-academia partnerships for innovation
             </p>
           </motion.div>
@@ -46,74 +46,74 @@ export default function Home() {
       <XBracketProject />
       
       {/* CIRD Entities - Simple Version */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/20 to-[#e1b382]/10 relative overflow-hidden">
-        <div className="container mx-auto px-8 md:px-16 relative z-10">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
+      <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-b from-[#e1b382]/20 to-[#e1b382]/10 relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
+          <div className="text-center mb-10 sm:mb-12 lg:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 px-4">
               CIRD <span className="text-[#12343b]">Entities</span>
             </h2>
-            <p className="text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-[#2d545e] max-w-4xl mx-auto leading-relaxed px-4">
               Our specialized divisions working on cutting-edge research and development across 
               multiple technological domains.
             </p>
             
             {/* Project Statistics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mt-6 sm:mt-7 lg:mt-8 max-w-4xl mx-auto px-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#2d545e] mb-2">14</div>
-                <div className="text-sm text-[#2d545e]">Total Projects</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#2d545e] mb-1 sm:mb-2">14</div>
+                <div className="text-xs sm:text-sm text-[#2d545e]">Total Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#2d545e] mb-2">4</div>
-                <div className="text-sm text-[#2d545e]">Completed Projects</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#2d545e] mb-1 sm:mb-2">4</div>
+                <div className="text-xs sm:text-sm text-[#2d545e]">Completed Projects</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-[#2d545e] mb-2">11</div>
-                <div className="text-sm text-[#2d545e]">Ongoing Projects</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#2d545e] mb-1 sm:mb-2">11</div>
+                <div className="text-xs sm:text-sm text-[#2d545e]">Ongoing Projects</div>
               </div>
               <Link href="/patents" className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group">
-                <div className="text-3xl font-bold text-[#2d545e] mb-2 group-hover:text-[#12343b] transition-colors">18</div>
-                <div className="text-sm text-[#2d545e] group-hover:text-[#12343b] transition-colors">Patents Filed</div>
+                <div className="text-2xl sm:text-3xl font-bold text-[#2d545e] mb-1 sm:mb-2 group-hover:text-[#12343b] transition-colors">18</div>
+                <div className="text-xs sm:text-sm text-[#2d545e] group-hover:text-[#12343b] transition-colors">Patents Filed</div>
               </Link>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 lg:gap-8">
             {/* CDC Card */}
             <Link href="/entities/cdc" className="block">
-              <div className="bg-white border border-[#c89666] rounded-lg p-8 hover:border-[#2d545e] hover:shadow-xl transition-all duration-300 shadow-md cursor-pointer h-full">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-xl bg-[#2d545e]">
-                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white border border-[#c89666] rounded-lg p-5 sm:p-6 lg:p-8 hover:border-[#2d545e] hover:shadow-xl transition-all duration-300 shadow-md cursor-pointer h-full">
+                <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                  <div className="p-2 sm:p-3 rounded-xl bg-[#2d545e] flex-shrink-0">
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-2xl text-[#2d545e]">CDC - Control Development Centre</h3>
-                    <p className="text-[#2d545e] text-lg">Advanced Control Systems Research</p>
+                  <div className="min-w-0">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl text-[#2d545e] font-bold">CDC - Control Development Centre</h3>
+                    <p className="text-[#2d545e] text-sm sm:text-base lg:text-lg">Advanced Control Systems Research</p>
                   </div>
                 </div>
-                <p className="text-[#2d545e] mb-6 leading-relaxed">
+                <p className="text-sm sm:text-base text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 leading-relaxed">
                   The Control Development Centre focuses on developing sophisticated control systems 
                   and automation solutions for industrial applications.
                 </p>
-                <div className="space-y-3">
-                  <h4 className="text-[#2d545e] font-semibold mb-3">Key Focus Areas:</h4>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Software Development & Programming</span>
+                <div className="space-y-2 sm:space-y-3">
+                  <h4 className="text-[#2d545e] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Key Focus Areas:</h4>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Software Development & Programming</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Robotics Development & Automation</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Robotics Development & Automation</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">VLSI Design & Microelectronics</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">VLSI Design & Microelectronics</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Artificial Intelligence & Machine Learning</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Artificial Intelligence & Machine Learning</span>
                   </div>
                 </div>
               </div>
@@ -121,39 +121,39 @@ export default function Home() {
 
             {/* MTL Card */}
             <Link href="/entities/mtl" className="block">
-              <div className="bg-white border border-[#c89666] rounded-lg p-8 hover:border-[#2d545e] hover:shadow-xl transition-all duration-300 shadow-md cursor-pointer h-full">
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-xl bg-[#2d545e]">
-                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <div className="bg-white border border-[#c89666] rounded-lg p-5 sm:p-6 lg:p-8 hover:border-[#2d545e] hover:shadow-xl transition-all duration-300 shadow-md cursor-pointer h-full">
+                <div className="flex items-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                  <div className="p-2 sm:p-3 rounded-xl bg-[#2d545e] flex-shrink-0">
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-2xl text-[#2d545e]">MTL Lab (Mechanical Testing Lab)</h3>
-                    <p className="text-[#2d545e] text-lg">Specialized Research Laboratory</p>
+                  <div className="min-w-0">
+                    <h3 className="text-lg sm:text-xl lg:text-2xl text-[#2d545e] font-bold">MTL Lab (Mechanical Testing Lab)</h3>
+                    <p className="text-[#2d545e] text-sm sm:text-base lg:text-lg">Specialized Research Laboratory</p>
                   </div>
                 </div>
-                <p className="text-[#2d545e] mb-6 leading-relaxed">
+                <p className="text-sm sm:text-base text-[#2d545e] mb-4 sm:mb-5 lg:mb-6 leading-relaxed">
                   The MTL Lab (Mechanical Testing Lab) is a specialized research facility dedicated to advanced technological 
                   research and development.
                 </p>
-                <div className="space-y-3">
-                  <h4 className="text-[#2d545e] font-semibold mb-3">Key Focus Areas:</h4>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Advanced Materials Research</span>
+                <div className="space-y-2 sm:space-y-3">
+                  <h4 className="text-[#2d545e] font-semibold mb-2 sm:mb-3 text-sm sm:text-base">Key Focus Areas:</h4>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Advanced Materials Research</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Technology Innovation</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Technology Innovation</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Laboratory Testing & Analysis</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Laboratory Testing & Analysis</span>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                    <span className="text-[#2d545e]">Research & Development</span>
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="w-2 h-2 bg-[#2d545e] rounded-full flex-shrink-0"></div>
+                    <span className="text-xs sm:text-sm text-[#2d545e]">Research & Development</span>
                   </div>
                 </div>
               </div>

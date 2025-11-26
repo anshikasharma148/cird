@@ -130,7 +130,7 @@ export default function CollaborationSlider() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative aspect-video bg-gradient-to-br rounded-2xl overflow-hidden border-2 border-gray-200 shadow-xl backdrop-blur-sm group">
+      <div className="relative aspect-video bg-gradient-to-br rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 sm:border-2 shadow-xl backdrop-blur-sm group min-h-[350px] sm:min-h-[450px] md:min-h-[550px] lg:min-h-[600px]">
         {/* Animated background gradient */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-[#e1b382]/30 via-[#c89666]/20 to-[#e1b382]/30"
@@ -183,11 +183,11 @@ export default function CollaborationSlider() {
                 
                 {/* Content */}
                 <motion.div 
-                  className="relative z-10 w-full h-full flex items-center justify-center p-8 md:p-12"
+                  className="relative z-10 w-full h-full flex items-center justify-center p-4 sm:p-5 md:p-6 lg:p-8 xl:p-12"
                   whileHover={isActive ? { scale: 1.01 } : {}}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className="text-center max-w-5xl mx-auto">
+                  <div className="text-center max-w-5xl mx-auto px-3 sm:px-4 w-full">
                     {/* Image Display - Medium Size */}
                     {slide.image && !imageErrors[slide.id] ? (
                       <motion.div
@@ -195,16 +195,18 @@ export default function CollaborationSlider() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5 }}
-                        className="mb-6 md:mb-8 flex justify-center"
+                        className="mb-4 sm:mb-5 md:mb-6 lg:mb-8 flex justify-center"
                       >
-                        <div className="relative w-80 h-52 md:w-[500px] md:h-[320px] lg:w-[600px] lg:h-[380px] bg-white/90 backdrop-blur-sm rounded-xl p-4 md:p-6 flex items-center justify-center border border-gray-200 shadow-lg">
+                        <div className="relative w-full max-w-[260px] h-[160px] sm:max-w-[320px] sm:h-[200px] md:max-w-[480px] md:h-[280px] lg:max-w-[580px] lg:h-[340px] xl:max-w-[650px] xl:h-[380px] bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 flex items-center justify-center border border-gray-200 shadow-lg mx-auto">
                           <Image
                             src={slide.image}
                             alt={slide.title}
-                            width={600}
+                            width={650}
                             height={380}
-                            className="object-contain max-w-full max-h-full drop-shadow-2xl"
+                            className="object-contain w-full h-full"
+                            style={{ objectFit: 'contain' }}
                             priority={index === 0}
+                            sizes="(max-width: 640px) 260px, (max-width: 768px) 320px, (max-width: 1024px) 480px, 580px"
                             {...(index !== 0 && { loading: isActive || isNext || isPrev ? "eager" : "lazy" })}
                             onError={() => {
                               setImageErrors(prev => ({ ...prev, [slide.id]: true }));
@@ -215,9 +217,9 @@ export default function CollaborationSlider() {
                     ) : (
                       /* Icon fallback if no image */
                       slide.icon && (
-                        <div className="mb-8 flex justify-center">
-                          <div className="w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                            <slide.icon className="w-16 h-16 text-white" />
+                        <div className="mb-6 sm:mb-8 flex justify-center">
+                          <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                            <slide.icon className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                           </div>
                         </div>
                       )
@@ -230,7 +232,7 @@ export default function CollaborationSlider() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.05 }}
-                        className="text-lg md:text-xl text-[#e1b382] mb-3 font-medium"
+                        className="text-sm sm:text-base md:text-lg lg:text-xl text-[#e1b382] mb-2 sm:mb-3 font-medium px-2"
                       >
                         {slide.beforeStatement}
                       </motion.p>
@@ -241,7 +243,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
-                      className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 md:mb-4"
+                      className="text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-1.5 sm:mb-2 md:mb-3 lg:mb-4 px-2"
                     >
                       {slide.title}
                     </motion.h3>
@@ -250,7 +252,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.1 }}
-                      className="text-xl md:text-2xl lg:text-3xl text-[#e1b382] mb-4 md:mb-6"
+                      className="text-sm sm:text-base md:text-lg lg:text-2xl xl:text-3xl text-[#e1b382] mb-2 sm:mb-3 md:mb-4 lg:mb-6 px-2"
                     >
                       {slide.subtitle}
                     </motion.p>
@@ -259,7 +261,7 @@ export default function CollaborationSlider() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: 0.2 }}
-                      className="text-base md:text-lg lg:text-xl text-gray-700 max-w-2xl mx-auto"
+                      className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-2xl mx-auto px-2 hidden sm:block"
                     >
                       {slide.description}
                     </motion.p>
@@ -301,9 +303,9 @@ export default function CollaborationSlider() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md rounded-lg px-4 py-2 z-30 pointer-events-none border border-gray-200 shadow-lg"
+          className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 bg-white/90 backdrop-blur-md rounded-lg px-2 sm:px-3 lg:px-4 py-1.5 sm:py-2 z-30 pointer-events-none border border-gray-200 shadow-lg"
         >
-          <div className="text-gray-900 text-sm font-semibold">
+          <div className="text-gray-900 text-xs sm:text-sm font-semibold">
             {String(currentSlide + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
           </div>
         </motion.div>
@@ -311,12 +313,12 @@ export default function CollaborationSlider() {
         {/* Enhanced Navigation Arrows */}
         <motion.button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
+          className="absolute left-1 sm:left-2 md:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full bg-white/95 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
           aria-label="Previous slide"
           whileHover={{ scale: 1.1, x: -5 }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
+          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 group-hover/arrow:scale-110 transition-transform" />
           <motion.div
             className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
             animate={{
@@ -332,12 +334,12 @@ export default function CollaborationSlider() {
         
         <motion.button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
+          className="absolute right-1 sm:right-2 md:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full bg-white/95 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200 group/arrow"
           aria-label="Next slide"
           whileHover={{ scale: 1.1, x: 5 }}
           whileTap={{ scale: 0.95 }}
         >
-          <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
+          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-7 lg:h-7 group-hover/arrow:scale-110 transition-transform" />
           <motion.div
             className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
             animate={{
@@ -354,17 +356,17 @@ export default function CollaborationSlider() {
         {/* Play/Pause Button */}
         <motion.button
           onClick={() => setIsPaused(!isPaused)}
-          className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/90 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200"
+          className="absolute top-1.5 sm:top-2 md:top-4 right-1.5 sm:right-2 md:right-4 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12 rounded-full bg-white/95 backdrop-blur-xl text-gray-900 hover:bg-white transition-all flex items-center justify-center z-40 shadow-lg border border-gray-200"
           aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
         >
           {isPaused ? (
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z"/>
             </svg>
           ) : (
-            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" fill="currentColor" viewBox="0 0 24 24">
               <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
             </svg>
           )}
@@ -372,13 +374,13 @@ export default function CollaborationSlider() {
       </div>
 
       {/* Thumbnail Navigation */}
-      <div className="mt-8">
-        <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide px-2 justify-center">
+      <div className="mt-4 sm:mt-6 lg:mt-8">
+        <div className="flex gap-2 sm:gap-3 overflow-x-auto pb-4 scrollbar-hide px-2 justify-center">
           {slides.map((slide, index) => (
             <motion.button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
+              className={`relative flex-shrink-0 w-20 h-14 sm:w-24 sm:h-16 md:w-28 md:h-18 lg:w-32 lg:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                 index === currentSlide
                   ? "border-[#2d545e] shadow-lg shadow-[#2d545e]/30 scale-110"
                   : "border-[#c89666] hover:border-[#2d545e] opacity-60 hover:opacity-100"
@@ -431,15 +433,15 @@ export default function CollaborationSlider() {
       </div>
 
       {/* Enhanced Slide Indicators */}
-      <div className="flex justify-center gap-2 mt-6 flex-wrap">
+      <div className="flex justify-center gap-1.5 sm:gap-2 mt-4 sm:mt-5 lg:mt-6 flex-wrap">
         {slides.map((_, index) => (
           <motion.button
             key={index}
             onClick={() => goToSlide(index)}
             className={`relative rounded-full transition-all ${
               index === currentSlide
-                ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] w-10 h-3"
-                : "bg-[#c89666] hover:bg-[#2d545e] w-3 h-3"
+                ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] w-8 h-2.5 sm:w-10 sm:h-3"
+                : "bg-[#c89666] hover:bg-[#2d545e] w-2.5 h-2.5 sm:w-3 sm:h-3"
             }`}
             aria-label={`Go to slide ${index + 1}`}
             whileHover={{ scale: 1.2 }}
