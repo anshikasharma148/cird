@@ -12,7 +12,7 @@ export default function BA07PPBPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
+      <section className="pt-28 pb-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
         <div className="container mx-auto px-8 md:px-16 relative z-10">
           <Link href="/research">
             <Button variant="ghost" className="mb-6 text-white hover:text-white/90">

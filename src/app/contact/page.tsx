@@ -62,7 +62,7 @@ export default function ContactPage() {
   const isSuccess = msg && !msg.startsWith("Error:");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40 py-20 px-4 md:px-6 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40 pt-28 pb-20 px-4 md:px-6 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div

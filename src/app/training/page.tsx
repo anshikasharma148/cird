@@ -559,7 +559,7 @@ export default function TrainingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section - Image Only */}
-      <section className="relative w-full h-[70vh] overflow-hidden">
+      <section className="relative w-full h-[70vh] overflow-hidden pt-20">
         <Image
           src="/assets/training/sit2025.jpeg"
           alt="Summer Industrial Training 2025"

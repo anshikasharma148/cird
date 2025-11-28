@@ -85,7 +85,7 @@ export default function BA03PPBPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
       {/* Hero Section with Header Image (img3) */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-20">
         {/* Background Image - using img3 */}
         <div className="absolute inset-0 z-0">
           <Image
