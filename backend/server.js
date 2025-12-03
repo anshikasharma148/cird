@@ -154,10 +154,31 @@ io.on("connection", (socket) => {
       }
     }
 
+    // Restore agent's active rooms from existing activeRooms
+    const existingActiveRoomIds = [];
+    const activeChatsData = [];
+    
+    // Find all rooms that belong to this agent
+    state.activeRooms.forEach((room, roomId) => {
+      if (room.agentId === agentId) {
+        existingActiveRoomIds.push(roomId);
+        // Join the new socket to existing rooms
+        socket.join(roomId);
+        
+        // Prepare chat data to send to agent
+        activeChatsData.push({
+          roomId: roomId,
+          userId: room.userId,
+          messages: room.messages || [],
+          startedAt: room.createdAt || Date.now(),
+        });
+      }
+    });
+
     state.connectedAgents.set(agentId, {
       socketId: socket.id,
       connectedAt: Date.now(),
-      activeRoomIds: [], // Array to track multiple active chats
+      activeRoomIds: existingActiveRoomIds, // Restore existing active chats
     });
     state.connectedUsers.set(socket.id, {
       userId: agentId,
@@ -166,7 +187,13 @@ io.on("connection", (socket) => {
     });
     socket.data.agentId = agentId;
     socket.data.type = "agent";
-    console.log(`👨‍💼 Agent connected: ${agentId} (socket: ${socket.id})`);
+    console.log(`👨‍💼 Agent connected: ${agentId} (socket: ${socket.id}), restored ${existingActiveRoomIds.length} active chat(s)`);
+
+    // Send active chats to agent so they can restore their UI
+    if (activeChatsData.length > 0) {
+      console.log(`📤 Sending ${activeChatsData.length} active chat(s) to agent ${agentId}`);
+      socket.emit("active_chats_restored", { chats: activeChatsData });
+    }
 
     // Notify agent of waiting users (agents can handle multiple chats)
     const agentData = state.connectedAgents.get(agentId);
@@ -776,21 +803,27 @@ io.on("connection", (socket) => {
       const agentId = socket.data.agentId;
       const agentData = state.connectedAgents.get(agentId);
       
-      if (agentData?.currentRoomId) {
-        const room = state.activeRooms.get(agentData.currentRoomId);
-        if (room) {
-          // Notify user
-          io.to(agentData.currentRoomId).emit("agent_disconnected", {
-            message: "The agent has disconnected. You may continue chatting with SARATHI.",
-          });
-          state.roomMapping.delete(room.userId);
-          state.activeRooms.delete(agentData.currentRoomId);
-        }
+      // When agent disconnects, keep the rooms active so they can be restored on reconnect
+      // Only notify users that agent is temporarily disconnected, but don't delete rooms
+      if (agentData?.activeRoomIds && agentData.activeRoomIds.length > 0) {
+        agentData.activeRoomIds.forEach(roomId => {
+          const room = state.activeRooms.get(roomId);
+          if (room) {
+            // Notify user that agent disconnected (but room stays active for reconnection)
+            io.to(roomId).emit("agent_disconnected", {
+              message: "The Margadarshak has temporarily disconnected. They will reconnect shortly.",
+            });
+          }
+        });
       }
 
+      // Remove agent from connected agents, but keep rooms active
       state.connectedAgents.delete(agentId);
       state.connectedUsers.delete(socket.id);
-      console.log(`👨‍💼 Agent disconnected: ${agentId}`);
+      console.log(`👨‍💼 Agent disconnected: ${agentId} (rooms preserved for reconnection)`);
+      
+      // Broadcast agent status update
+      broadcastAgentStatus();
     }
   });
 });

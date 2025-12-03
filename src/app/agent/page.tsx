@@ -260,6 +260,28 @@ export default function AgentDashboard() {
       setWaitingUsers(users);
     });
 
+    // Restore active chats when agent reconnects
+    socketInstance.on("active_chats_restored", (data: { chats: Array<{ roomId: string; userId: string; messages: ChatMessage[]; startedAt: number }> }) => {
+      console.log("🔄 Restoring active chats:", data.chats);
+      if (data.chats && data.chats.length > 0) {
+        const restoredChats: ActiveChat[] = data.chats.map(chat => ({
+          roomId: chat.roomId,
+          userId: chat.userId,
+          messages: chat.messages,
+          startedAt: chat.startedAt,
+        }));
+        
+        setActiveChats(restoredChats);
+        
+        // Select the first chat if no chat is selected
+        if (!selectedChatId && restoredChats.length > 0) {
+          setSelectedChatId(restoredChats[0].roomId);
+        }
+        
+        console.log(`✅ Restored ${restoredChats.length} active chat(s)`);
+      }
+    });
+
     socketInstance.on("new_user_waiting", (data: { userId: string; waitingSince: number }) => {
       console.log("🆕 New user waiting:", data);
       // Agents can handle multiple chats, so always add to waiting list
