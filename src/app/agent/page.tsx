@@ -307,8 +307,8 @@ export default function AgentDashboard() {
       setSelectedChatId(data.roomId);
       
       // Reset scroll state for new chat (will be handled by selectedChatId useEffect)
-      shouldAutoScrollRef.current = true;
       userScrolledUpRef.current = false;
+      isUserScrollingRef.current = false;
       
       setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
       
