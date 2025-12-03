@@ -89,13 +89,13 @@ export default function AgentDashboard() {
       if (saved) {
         try {
           const authData = JSON.parse(saved);
-          return authData.agentId || "agent1";
+          return authData.agentId || "margadarshak1";
         } catch {
-          return "agent1";
+          return "margadarshak1";
         }
       }
     }
-    return "agent1";
+    return "margadarshak1";
   });
   const [socket, setSocket] = useState<Socket | null>(null);
   const [agentStatuses, setAgentStatuses] = useState<AgentStatus[]>([]);
@@ -620,14 +620,14 @@ export default function AgentDashboard() {
             <div className="w-16 h-16 bg-[#2d545e] rounded-full flex items-center justify-center mx-auto mb-4">
               <Users size={32} className="text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-[#2d545e] mb-2">Agent Dashboard</h1>
+            <h1 className="text-2xl font-bold text-[#2d545e] mb-2">Margadarshak Dashboard</h1>
             <p className="text-gray-600">Enter your PIN to access</p>
           </div>
 
           <form onSubmit={handlePinSubmit} className="space-y-4">
             <div>
               <label htmlFor="agentId" className="block text-sm font-medium text-gray-700 mb-2">
-                Agent ID
+                Margadarshak ID
               </label>
               <select
                 id="agentId"
@@ -635,10 +635,10 @@ export default function AgentDashboard() {
                 onChange={(e) => setSelectedAgentId(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-[#c89666] rounded-xl focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none transition-all bg-white"
               >
-                <option value="agent1">Agent 1</option>
-                <option value="agent2">Agent 2</option>
-                <option value="agent3">Agent 3</option>
-                <option value="agent4">Agent 4</option>
+                <option value="margadarshak1">Margadarshak 1</option>
+                <option value="margadarshak2">Margadarshak 2</option>
+                <option value="margadarshak3">Margadarshak 3</option>
+                <option value="margadarshak4">Margadarshak 4</option>
               </select>
             </div>
             <div>
@@ -686,7 +686,7 @@ export default function AgentDashboard() {
               <Users size={20} className="text-[#2d545e]" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Agent Dashboard</h1>
+              <h1 className="text-xl font-bold">Margadarshak Dashboard</h1>
               <p className="text-sm text-white/80">
                 {isConnecting ? "Connecting..." : `${selectedAgentId.toUpperCase()} - Live Support`}
               </p>

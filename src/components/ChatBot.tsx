@@ -426,7 +426,7 @@ export default function ChatBot() {
         {
           id: uid("system_"),
           sender: "system",
-          text: "You are now connected to a human agent. How can we help you?",
+          text: "You are now connected to a Margadarshak. How can we help you?",
           time: Date.now(),
         },
       ]);
@@ -623,7 +623,7 @@ export default function ChatBot() {
         {
           id: uid("system_"),
           sender: "system",
-          text: data.message || "The agent has disconnected. You may continue chatting with SARATHI.",
+          text: data.message || "The Margadarshak has disconnected. You may continue chatting with SARATHI.",
           time: Date.now(),
         },
       ]);
@@ -1032,7 +1032,7 @@ export default function ChatBot() {
       {
         id: uid("system_"),
         sender: "system",
-        text: "You have ended the chat with the agent. You may continue chatting with SARATHI.",
+        text: "You have ended the chat with the Margadarshak. You may continue chatting with SARATHI.",
         time: Date.now(),
       },
     ]);
@@ -1230,8 +1230,8 @@ export default function ChatBot() {
                     <h2 className="text-lg font-semibold">SARATHI</h2>
                     <p className="text-xs text-white/80 opacity-90">
                       {chatMode === "bot" && "Research • Projects • Patents"}
-                      {chatMode === "human_waiting" && "Connecting to agent..."}
-                      {chatMode === "human_connected" && "Live Agent • Real-time Chat"}
+                      {chatMode === "human_waiting" && "Connecting to Margadarshak..."}
+                      {chatMode === "human_connected" && "Live Margadarshak • Real-time Chat"}
                     </p>
                   </div>
                 </div>
@@ -1243,7 +1243,7 @@ export default function ChatBot() {
                       whileTap={{ scale: 0.95 }}
                       onClick={endChatWithAgent}
                       className="p-2 text-red-300 hover:bg-red-500/20 rounded-xl transition-colors"
-                      title="End Chat with Agent"
+                      title="End Chat with Margadarshak"
                     >
                       <PhoneOff size={18} />
                     </motion.button>
@@ -1531,7 +1531,7 @@ export default function ChatBot() {
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
                             className="w-2 h-2 bg-green-500 rounded-full"
                           />
-                          <span className="text-xs text-gray-600 ml-2">Agent is typing...</span>
+                          <span className="text-xs text-gray-600 ml-2">Margadarshak is typing...</span>
                         </div>
                       </div>
                     </div>
@@ -1550,8 +1550,8 @@ export default function ChatBot() {
                         <Loader2 size={16} className="text-blue-600 animate-spin" />
                         <span className="text-sm text-blue-700">
                           {queuePosition
-                            ? `Waiting for agent... (Position: ${queuePosition})`
-                            : "Connecting to agent..."}
+                            ? `Waiting for Margadarshak... (Position: ${queuePosition})`
+                            : "Connecting to Margadarshak..."}
                         </span>
                       </div>
                     </div>
@@ -1571,7 +1571,7 @@ export default function ChatBot() {
                     className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                   >
                     <Users size={16} />
-                    <span className="text-sm font-medium">Connect to Human Agent</span>
+                    <span className="text-sm font-medium">Connect to Margadarshak</span>
                   </motion.button>
                 </div>
               )}
@@ -1621,8 +1621,8 @@ export default function ChatBot() {
                       chatMode === "bot"
                         ? "Ask about research, projects, patents..."
                         : chatMode === "human_waiting"
-                        ? "Waiting for agent..."
-                        : "Type your message to the agent..."
+                        ? "Waiting for Margadarshak..."
+                        : "Type your message to the Margadarshak..."
                     }
                     disabled={isStreaming || chatMode === "human_waiting"}
                     className="flex-1 px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"

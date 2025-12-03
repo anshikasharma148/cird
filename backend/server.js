@@ -49,8 +49,8 @@ const state = {
   activeRooms: new Map(),
 };
 
-// ✅ Valid agent IDs
-const VALID_AGENT_IDS = ["agent1", "agent2", "agent3", "agent4"];
+// ✅ Valid margadarshak IDs
+const VALID_AGENT_IDS = ["margadarshak1", "margadarshak2", "margadarshak3", "margadarshak4"];
 
 // ✅ Helper: Find first available agent (agents can handle multiple chats)
 const findFreeAgent = () => {
@@ -131,7 +131,7 @@ io.on("connection", (socket) => {
     
     // Validate agent ID
     if (!agentId || !VALID_AGENT_IDS.includes(agentId)) {
-      socket.emit("agent_connect_error", { message: "Invalid agent ID. Must be agent1, agent2, agent3, or agent4." });
+      socket.emit("agent_connect_error", { message: "Invalid Margadarshak ID. Must be margadarshak1, margadarshak2, margadarshak3, or margadarshak4." });
       console.error(`❌ Invalid agent ID: ${agentId}`);
       return;
     }
@@ -143,7 +143,7 @@ io.on("connection", (socket) => {
       const oldSocket = io.sockets.sockets.get(existingAgent.socketId);
       if (oldSocket && oldSocket.connected) {
         // Agent is already logged in, reject this connection
-        socket.emit("agent_connect_error", { message: `Agent ${agentId} is already Live. Please use a different agent ID or wait for the current session to end.` });
+        socket.emit("agent_connect_error", { message: `Margadarshak ${agentId} is already Live. Please use a different Margadarshak ID or wait for the current session to end.` });
         console.log(`❌ Agent ${agentId} is already connected (socket: ${existingAgent.socketId}). Rejecting new connection from socket: ${socket.id}`);
         return;
       } else {
