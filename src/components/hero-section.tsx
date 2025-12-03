@@ -601,7 +601,7 @@ export default function HeroSection() {
                   className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium border border-[#c89666]"
                 >
                   <Shield size={16} />
-                  <span>Agent Dashboard</span>
+                  <span>Margadarshak Dashboard</span>
                 </Link>
                 <div className="border-t border-[#c89666]/40 my-2"></div>
                 <Link 
