@@ -155,12 +155,13 @@ export default function AgentDashboard() {
     lastMessageCountRef.current = currentMessageCount;
 
     // Only auto-scroll if:
-    // 1. User hasn't manually scrolled up, OR
-    // 2. User is currently near the bottom
-    if (isNewMessage && (!userScrolledUpRef.current || isNearBottom())) {
+    // 1. It's a new message, AND
+    // 2. User hasn't manually scrolled up (userScrolledUpRef is false), AND
+    // 3. User is currently near the bottom
+    if (isNewMessage && !userScrolledUpRef.current && isNearBottom()) {
       // Small delay to ensure DOM is updated with new message
       setTimeout(() => {
-        if (messagesEndRef.current && shouldAutoScrollRef.current) {
+        if (messagesEndRef.current) {
           messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, 50);
