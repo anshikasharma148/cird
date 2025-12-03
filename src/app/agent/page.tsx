@@ -118,20 +118,27 @@ export default function AgentDashboard() {
   const selectedChat = activeChats.find(chat => chat.roomId === selectedChatId);
   
   // Check if user is near bottom of scroll container
-  const isNearBottom = () => {
+  const isNearBottom = useCallback(() => {
     if (!messagesContainerRef.current) return true;
     const container = messagesContainerRef.current;
     const threshold = 150; // pixels from bottom
     const distanceFromBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
     return distanceFromBottom < threshold;
-  };
+  }, []);
 
   // Handle scroll events to track if user manually scrolled up
   const handleScroll = useCallback(() => {
     const nearBottom = isNearBottom();
-    userScrolledUpRef.current = !nearBottom;
-    shouldAutoScrollRef.current = nearBottom;
-  }, []);
+    // Only update userScrolledUpRef if user is clearly scrolled up (not just slightly)
+    if (!nearBottom) {
+      userScrolledUpRef.current = true;
+      shouldAutoScrollRef.current = false;
+    } else {
+      // If user scrolls back to bottom, allow auto-scroll again
+      userScrolledUpRef.current = false;
+      shouldAutoScrollRef.current = true;
+    }
+  }, [isNearBottom]);
 
   // Reset scroll behavior when switching chats
   useEffect(() => {
@@ -157,16 +164,20 @@ export default function AgentDashboard() {
     // Only auto-scroll if:
     // 1. It's a new message, AND
     // 2. User hasn't manually scrolled up (userScrolledUpRef is false), AND
-    // 3. User is currently near the bottom
-    if (isNewMessage && !userScrolledUpRef.current && isNearBottom()) {
-      // Small delay to ensure DOM is updated with new message
-      setTimeout(() => {
-        if (messagesEndRef.current) {
-          messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 50);
+    // 3. User is currently near the bottom (double-check)
+    if (isNewMessage && !userScrolledUpRef.current) {
+      // Double-check if still near bottom before scrolling
+      const nearBottom = isNearBottom();
+      if (nearBottom && messagesEndRef.current) {
+        // Small delay to ensure DOM is updated with new message
+        setTimeout(() => {
+          if (messagesEndRef.current && !userScrolledUpRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 50);
+      }
     }
-  }, [selectedChat?.messages, selectedChat]);
+  }, [selectedChat?.messages, selectedChat, isNearBottom]);
 
   // ✅ Mark user messages as read when agent views them
   useEffect(() => {
