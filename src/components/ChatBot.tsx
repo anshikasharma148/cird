@@ -15,18 +15,27 @@ import {
   User,
   Filter,
   Square,
+  Users,
+  Loader2,
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
+import { io, Socket } from "socket.io-client";
 
 /* ----------------------- Types ----------------------- */
+type ChatMode = "bot" | "human_waiting" | "human_connected";
+
 type Message = {
   id: string;
-  sender: "user" | "bot" | "system";
+  sender: "user" | "bot" | "system" | "agent";
   text: string;
   time: number;
+  readBy?: {
+    user: boolean;
+    agent: boolean;
+  };
   meta?: { 
     confidence?: number; 
     faqId?: string;
@@ -227,10 +236,31 @@ export default function ChatBot() {
   const [chatbotImageError, setChatbotImageError] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
 
+  // ✅ Human Agent Chat State
+  const [chatMode, setChatMode] = useState<ChatMode>("bot");
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [userId] = useState(() => `user_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`);
+  const [queuePosition, setQueuePosition] = useState<number | null>(null);
+  const [agentTyping, setAgentTyping] = useState(false);
+  const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+
+  // Update refs when state changes
+  useEffect(() => {
+    chatModeRef.current = chatMode;
+  }, [chatMode]);
+
+  useEffect(() => {
+    currentRoomIdRef.current = currentRoomId;
+  }, [currentRoomId]);
+
   const containerRef = useRef<HTMLDivElement | null>(null);
   const endRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const chatModeRef = useRef<ChatMode>("bot");
+  const currentRoomIdRef = useRef<string | null>(null);
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
@@ -300,6 +330,354 @@ export default function ChatBot() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  // ✅ Mark agent messages as read when they appear (for user)
+  useEffect(() => {
+    if (chatMode !== "human_connected" || !socket || !currentRoomId) return;
+
+    // Find unread agent messages
+    const unreadAgentMessages = messages.filter(
+      (m) => m.sender === "agent" && m.readBy && !m.readBy.user
+    );
+
+    // Mark them as read after a delay
+    unreadAgentMessages.forEach((msg) => {
+      setTimeout(() => {
+        if (socket && currentRoomId && chatModeRef.current === "human_connected") {
+          socket.emit("message_read", {
+            messageId: msg.id,
+            roomId: currentRoomId,
+          });
+        }
+      }, 1000);
+    });
+  }, [messages, chatMode, socket, currentRoomId]);
+
+  /* ---------------- Socket.io Connection & Event Handlers ---------------- */
+  useEffect(() => {
+    if (!open) return; // Only connect when chat is open
+
+    const baseURL =
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
+        ? "https://cird.onrender.com"
+        : "http://localhost:5000");
+
+    console.log("🔌 Initializing Socket.io connection to:", baseURL);
+    const socketInstance = io(baseURL, {
+      transports: ["websocket", "polling"],
+      query: { userId },
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
+    });
+
+    socketInstance.on("connect", () => {
+      console.log("✅ Socket.io connected:", socketInstance.id);
+      setSocketConnected(true);
+      socketInstance.emit("user_connect", { userId });
+      
+      // If we're in human_connected mode, rejoin the room
+      if (chatMode === "human_connected" && currentRoomId) {
+        console.log("🔄 Rejoining room after reconnection:", currentRoomId);
+        socketInstance.emit("user_connect", { userId, roomId: currentRoomId });
+      }
+    });
+
+    socketInstance.on("disconnect", () => {
+      console.log("❌ Socket.io disconnected");
+      setSocketConnected(false);
+    });
+
+    socketInstance.on("connect_error", (error) => {
+      console.error("❌ Socket.io connection error:", error);
+      setSocketConnected(false);
+    });
+
+    socketInstance.on("queue_position", (data: { position: number; total: number }) => {
+      setQueuePosition(data.position);
+      console.log(`⏳ Queue position: ${data.position}/${data.total}`);
+    });
+
+    socketInstance.on("agent_connected", (data: { roomId: string; agentId?: string }) => {
+      console.log("✅ Agent connected, room:", data.roomId);
+      
+      // Update both state and refs immediately
+      setChatMode("human_connected");
+      setCurrentRoomId(data.roomId);
+      chatModeRef.current = "human_connected";
+      currentRoomIdRef.current = data.roomId;
+      
+      setQueuePosition(null);
+      setAgentTyping(false); // Clear any typing indicator
+      
+      // Stop any ongoing AI streaming
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      setIsStreaming(false);
+      setIsTyping(false);
+      setIsGeneratingAnswer(false);
+
+      // Add system message
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid("system_"),
+          sender: "system",
+          text: "You are now connected to a human agent. How can we help you?",
+          time: Date.now(),
+        },
+      ]);
+      
+      // Verify socket is in the room and test connection
+      console.log("🔍 Verifying socket room membership for room:", data.roomId);
+      console.log("🔍 Socket connected:", socketInstance.connected);
+      console.log("🔍 Socket ID:", socketInstance.id);
+      console.log("🔍 Chat mode set to:", chatModeRef.current);
+      console.log("🔍 Room ID set to:", currentRoomIdRef.current);
+      
+      // Ensure we're listening for messages
+      console.log("✅ Ready to receive agent messages in room:", data.roomId);
+    });
+
+    socketInstance.on("agent_not_available", () => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid("system_"),
+          sender: "system",
+          text: "No agents are currently available. Please try again later or continue chatting with SARATHI.",
+          time: Date.now(),
+        },
+      ]);
+      setChatMode("bot");
+      setQueuePosition(null);
+    });
+
+    socketInstance.on("new_message", (data: { id?: string; sender: string; text: string; timestamp: number; roomId?: string; readBy?: { user: boolean; agent: boolean } }) => {
+      // Use refs to get current values (not stale closure values)
+      const currentMode = chatModeRef.current;
+      const currentRoom = currentRoomIdRef.current;
+      
+      console.log("📨 Received new_message event:", { 
+        sender: data.sender, 
+        text: data.text.substring(0, 50), 
+        roomId: data.roomId, 
+        currentRoomId: currentRoom, 
+        chatMode: currentMode 
+      });
+      
+      // Process agent messages
+      if (data.sender === "agent") {
+        // Check if we have a roomId match (more reliable than mode check)
+        const roomMatches = !data.roomId || !currentRoom || data.roomId === currentRoom;
+        const isHumanMode = currentMode === "human_connected" || currentMode === "human_waiting";
+        
+        if (!roomMatches && !isHumanMode) {
+          console.log("⚠️ Ignoring agent message - no room match and not in human mode");
+          return;
+        }
+        
+        // If we have a roomId match, process the message even if mode isn't set yet
+        if (roomMatches || isHumanMode) {
+          console.log("✅ Processing agent message:", data.text);
+          
+          // Clear typing indicator immediately when message arrives
+          if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+            typingTimeoutRef.current = null;
+          }
+          setAgentTyping(false);
+          
+          // If we're not in human_connected mode but have a room, switch to it
+          if (currentMode !== "human_connected" && data.roomId) {
+            console.log("🔄 Switching to human_connected mode");
+            setChatMode("human_connected");
+            setCurrentRoomId(data.roomId);
+          }
+          
+          setMessages((prev) => {
+            // Check if message already exists (prevent duplicates)
+            const messageExists = prev.some(
+              (msg) => msg.text === data.text && Math.abs(msg.time - data.timestamp) < 1000 && msg.sender === "agent"
+            );
+            if (messageExists) {
+              console.log("⚠️ Duplicate agent message detected, skipping");
+              return prev;
+            }
+            
+            console.log("✅ Adding agent message to chat");
+            const newMessage: Message = {
+              id: data.id || uid("agent_"),
+              sender: "agent",
+              text: data.text,
+              time: data.timestamp,
+              readBy: data.readBy || { user: false, agent: true },
+            };
+            
+            // Mark as read after a delay (when user sees it)
+            if (socketInstance && currentRoomId && !newMessage.readBy?.user) {
+              setTimeout(() => {
+                if (socketInstance && currentRoomId && chatModeRef.current === "human_connected") {
+                  socketInstance.emit("message_read", {
+                    messageId: newMessage.id,
+                    roomId: currentRoomId,
+                  });
+                }
+              }, 1000);
+            }
+            
+            return [...prev, newMessage];
+          });
+        } else {
+          console.log("⚠️ Ignoring agent message - conditions not met");
+        }
+      } else if (data.sender === "user") {
+        // Handle user's own messages from server (to sync IDs and readBy status)
+        setMessages((prev) => {
+          // Find the most recent user message that matches (likely the one just sent)
+          const matchingIndex = prev.findLastIndex(
+            (msg) => msg.text === data.text && Math.abs(msg.time - data.timestamp) < 2000 && msg.sender === "user"
+          );
+          
+          if (matchingIndex !== -1) {
+            // Update existing message with server's ID and readBy status
+            const updated = [...prev];
+            updated[matchingIndex] = {
+              ...updated[matchingIndex],
+              id: data.id || updated[matchingIndex].id,
+              readBy: data.readBy || updated[matchingIndex].readBy || { user: true, agent: false },
+            };
+            console.log("✅ Updated user message ID:", updated[matchingIndex].id, "readBy:", updated[matchingIndex].readBy);
+            return updated;
+          }
+          return prev;
+        });
+      } else {
+        console.log("⚠️ Ignoring non-agent/user message:", { sender: data.sender });
+      }
+    });
+
+    socketInstance.on("agent_typing", (data?: { agentId?: string; roomId?: string }) => {
+      // Use refs to get current values
+      const currentMode = chatModeRef.current;
+      const currentRoom = currentRoomIdRef.current;
+      
+      console.log("⌨️ Agent typing indicator received:", data, "chatMode:", currentMode);
+      
+      // Show typing indicator if we're in human_connected mode or if roomId matches
+      const shouldShow = currentMode === "human_connected" || 
+                        currentMode === "human_waiting" ||
+                        (data?.roomId && currentRoom && data.roomId === currentRoom);
+      
+      if (shouldShow) {
+        console.log("✅ Showing agent typing indicator");
+        
+        // Clear any existing timeout first
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = null;
+        }
+        
+        // Show typing indicator immediately
+        setAgentTyping(true);
+      } else {
+        console.log("⚠️ Not showing typing indicator, conditions not met");
+      }
+    });
+
+    socketInstance.on("agent_stopped_typing", (data?: { agentId?: string; roomId?: string }) => {
+      // Use refs to get current values
+      const currentMode = chatModeRef.current;
+      const currentRoom = currentRoomIdRef.current;
+      
+      console.log("⌨️ Agent stopped typing indicator received:", data);
+      
+      // Clear typing indicator if we're in the right mode/room
+      const shouldClear = currentMode === "human_connected" || 
+                         currentMode === "human_waiting" ||
+                         (data?.roomId && currentRoom && data.roomId === currentRoom);
+      
+      if (shouldClear) {
+        console.log("✅ Clearing agent typing indicator");
+        
+        // Clear timeout
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+          typingTimeoutRef.current = null;
+        }
+        
+        // Clear typing indicator
+        setAgentTyping(false);
+      }
+    });
+
+    socketInstance.on("agent_disconnected", (data: { message?: string }) => {
+      setChatMode("bot");
+      setCurrentRoomId(null);
+      setAgentTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid("system_"),
+          sender: "system",
+          text: data.message || "The agent has disconnected. You may continue chatting with SARATHI.",
+          time: Date.now(),
+        },
+      ]);
+    });
+
+    // ✅ Handle read receipt updates
+    socketInstance.on("message_read_update", (data: { messageId: string; readBy: { user: boolean; agent: boolean }; roomId?: string }) => {
+      const currentRoom = currentRoomIdRef.current;
+      
+      // Only process if room matches
+      if (data.roomId && currentRoom && data.roomId !== currentRoom) {
+        return;
+      }
+      
+      console.log("✅ Message read update received:", data);
+      
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === data.messageId
+            ? { ...msg, readBy: data.readBy }
+            : msg
+        )
+      );
+    });
+
+    setSocket(socketInstance);
+
+    return () => {
+      // Only disconnect when chat is closed, not on every render
+      if (!open) {
+        socketInstance.disconnect();
+        setSocket(null);
+        setSocketConnected(false);
+      }
+    };
+  }, [open, userId]);
+
+  /* ---------------- Human Handoff Detection ---------------- */
+  const detectHumanHandoff = (text: string): boolean => {
+    const lowerText = text.toLowerCase();
+    const triggers = [
+      "connect to a human",
+      "talk to support",
+      "need agent",
+      "human please",
+      "speak to agent",
+      "human agent",
+      "live agent",
+      "real person",
+      "talk to person",
+      "human support",
+    ];
+    return triggers.some((trigger) => lowerText.includes(trigger));
+  };
+
   /* ---------------- Enhanced Suggestions logic ---------------- */
   const askedSet = useMemo(() => {
     const safeMessages = Array.isArray(messages) ? messages : [];
@@ -353,6 +731,104 @@ export default function ChatBot() {
     const cleaned = raw.trim();
     if (!cleaned) return;
 
+    // ✅ Handle human chat mode
+    if (chatMode === "human_connected" && socket && currentRoomId && socketConnected) {
+      const messageText = cleaned;
+      const timestamp = Date.now();
+      
+      // Send via Socket.io first (server will broadcast to room)
+      socket.emit("user_message", {
+        message: messageText,
+        roomId: currentRoomId,
+      });
+
+      // Emit typing indicator
+      socket.emit("user_typing", { roomId: currentRoomId });
+
+      // Add to local state immediately (will also be received via new_message, but adding for better UX)
+      const userMsg: Message = {
+        id: uid("user_"),
+        sender: "user",
+        text: messageText,
+        time: timestamp,
+        readBy: { user: true, agent: false },
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+
+      // Clear typing indicator after delay
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      typingTimeoutRef.current = setTimeout(() => {
+        // Typing indicator cleared
+      }, 3000);
+
+      return;
+    }
+
+    // ✅ Check for human handoff request
+    if (detectHumanHandoff(cleaned)) {
+      // Cancel any existing stream
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+      setIsStreaming(false);
+      setIsTyping(false);
+      setIsGeneratingAnswer(false);
+
+      // Add user message
+      const userMsg: Message = {
+        id: uid("user_"),
+        sender: "user",
+        text: cleaned,
+        time: Date.now(),
+      };
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+
+      // Switch to human waiting mode
+      setChatMode("human_waiting");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid("system_"),
+          sender: "system",
+          text: "Connecting you to a human agent...",
+          time: Date.now(),
+        },
+      ]);
+
+      // Request agent via Socket.io - wait for connection if needed
+      if (socket && socketConnected) {
+        console.log("📤 Emitting user_request_agent for userId:", userId);
+        socket.emit("user_request_agent");
+      } else if (socket && !socketConnected) {
+        // Wait for connection
+        console.log("⏳ Waiting for socket connection...");
+        socket.once("connect", () => {
+          console.log("✅ Socket connected, emitting user_request_agent");
+          socket.emit("user_request_agent");
+        });
+      } else {
+        console.error("❌ Socket not available");
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: uid("system_"),
+            sender: "system",
+            text: "Connection error. Please try again.",
+            time: Date.now(),
+          },
+        ]);
+        setChatMode("bot");
+      }
+
+      return;
+    }
+
+    // ✅ Normal bot mode - continue with AI streaming
     // Cancel any existing stream
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -402,7 +878,7 @@ export default function ChatBot() {
     setIsGeneratingAnswer(false);
     abortControllerRef.current = null;
     refreshSuggestions(activeTag); // Refresh suggestions only once after response is generated
-  }, [activeTag, refreshSuggestions]);
+  }, [activeTag, refreshSuggestions, chatMode, socket, currentRoomId]);
 
   /* --------------- Enhanced Regenerate ---------------- */
   const regenerateAnswer = async (botMessageId: string) => {
@@ -479,7 +955,60 @@ export default function ChatBot() {
     setInput("");
     setMessageReactions({});
     setSuggestionsUpdated(false); // Reset suggestions update flag
+    setChatMode("bot");
+    setQueuePosition(null);
+    setCurrentRoomId(null);
+    setAgentTyping(false);
   }
+
+  /* ---------------- Request Human Agent ---------------- */
+  const requestHumanAgent = useCallback(() => {
+    // Cancel any ongoing streaming
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
+    setIsStreaming(false);
+    setIsTyping(false);
+    setIsGeneratingAnswer(false);
+
+    // Switch to human waiting mode
+    setChatMode("human_waiting");
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: uid("system_"),
+        sender: "system",
+        text: "Connecting you to a human agent...",
+        time: Date.now(),
+      },
+    ]);
+
+    // Request agent via Socket.io - wait for connection if needed
+    if (socket && socketConnected) {
+      console.log("📤 Emitting user_request_agent for userId:", userId);
+      socket.emit("user_request_agent");
+    } else if (socket && !socketConnected) {
+      // Wait for connection
+      console.log("⏳ Waiting for socket connection...");
+      socket.once("connect", () => {
+        console.log("✅ Socket connected, emitting user_request_agent");
+        socket.emit("user_request_agent");
+      });
+    } else {
+      console.error("❌ Socket not available");
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: uid("system_"),
+          sender: "system",
+          text: "Connection error. Please try again.",
+          time: Date.now(),
+        },
+      ]);
+      setChatMode("bot");
+    }
+  }, [socket, socketConnected, userId]);
 
   /* ---------------- Enhanced Export ------------------ */
   function exportChat() {
@@ -672,7 +1201,9 @@ export default function ChatBot() {
                   <div>
                     <h2 className="text-lg font-semibold">SARATHI</h2>
                     <p className="text-xs text-white/80 opacity-90">
-                      Research • Projects • Patents
+                      {chatMode === "bot" && "Research • Projects • Patents"}
+                      {chatMode === "human_waiting" && "Connecting to agent..."}
+                      {chatMode === "human_connected" && "Live Agent • Real-time Chat"}
                     </p>
                   </div>
                 </div>
@@ -771,15 +1302,25 @@ export default function ChatBot() {
                     className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
-                      {m.sender === "bot" && (
-                        <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
-                          <Bot size={12} className="text-white" />
+                      {(m.sender === "bot" || m.sender === "agent") && (
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                          m.sender === "agent" ? "bg-green-500" : "bg-[#2d545e]"
+                        }`}>
+                          {m.sender === "agent" ? (
+                            <Users size={12} className="text-white" />
+                          ) : (
+                            <Bot size={12} className="text-white" />
+                          )}
                         </div>
                       )}
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm shadow-sm backdrop-blur-sm ${
                           m.sender === "user"
                             ? "bg-[#2d545e] text-white rounded-br-md"
+                            : m.sender === "agent"
+                            ? "bg-green-50 border border-green-200 text-[#2d545e] rounded-bl-md"
+                            : m.sender === "system"
+                            ? "bg-blue-50 border border-blue-200 text-blue-700 rounded-lg"
                             : "bg-white border border-[#c89666] text-[#2d545e] rounded-bl-md"
                         }`}
                       >
@@ -813,6 +1354,25 @@ export default function ChatBot() {
                           </span>
                           
                           <div className="flex items-center gap-3">
+                            {/* Read Receipt Ticks - Only on USER's sent messages in human chat */}
+                            {chatMode === "human_connected" && m.sender === "user" && (
+                              <div className="flex items-center gap-0.5">
+                                {/* For user's own messages, show if agent has read */}
+                                <svg
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 16 15"
+                                  fill="none"
+                                  className={m.readBy?.agent ? "text-blue-500" : "text-gray-400"}
+                                >
+                                  <path
+                                    d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.175a.366.366 0 0 0-.063-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.175a.365.365 0 0 0-.063-.51z"
+                                    fill="currentColor"
+                                  />
+                                </svg>
+                              </div>
+                            )}
+
                             {m.meta?.confidence && (
                               <span className={`px-2 py-1 rounded-full ${
                                 m.meta.confidence > 0.7 ? "bg-green-100 text-green-700" :
@@ -823,7 +1383,7 @@ export default function ChatBot() {
                               </span>
                             )}
                             
-                            {m.sender === "bot" && (
+                            {m.sender === "bot" && chatMode === "bot" && (
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={() => regenerateAnswer(m.id)}
@@ -869,7 +1429,7 @@ export default function ChatBot() {
                 ))}
 
                 {/* Enhanced Typing Indicator */}
-                {isTyping && !isGeneratingAnswer && (
+                {isTyping && !isGeneratingAnswer && chatMode === "bot" && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -902,11 +1462,82 @@ export default function ChatBot() {
                     </div>
                   </motion.div>
                 )}
+
+                {/* Agent Typing Indicator */}
+                {agentTyping && chatMode === "human_connected" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-start"
+                  >
+                    <div className="flex items-start gap-2 max-w-[85%]">
+                      <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 mt-1">
+                        <Users size={12} className="text-white" />
+                      </div>
+                      <div className="bg-white border border-[#c89666] px-4 py-3 rounded-2xl rounded-bl-md">
+                        <div className="flex items-center gap-2">
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                            className="w-2 h-2 bg-green-500 rounded-full"
+                          />
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                            className="w-2 h-2 bg-green-500 rounded-full"
+                          />
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                            className="w-2 h-2 bg-green-500 rounded-full"
+                          />
+                          <span className="text-xs text-gray-600 ml-2">Agent is typing...</span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Waiting for Agent Indicator */}
+                {chatMode === "human_waiting" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-center"
+                  >
+                    <div className="bg-blue-50 border border-blue-200 px-4 py-3 rounded-2xl">
+                      <div className="flex items-center gap-2">
+                        <Loader2 size={16} className="text-blue-600 animate-spin" />
+                        <span className="text-sm text-blue-700">
+                          {queuePosition
+                            ? `Waiting for agent... (Position: ${queuePosition})`
+                            : "Connecting to agent..."}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 <div ref={endRef} />
               </div>
 
-              {/* Enhanced Suggestions - Now more compact */}
-              {suggestions.length > 0 && (
+              {/* Connect to Human Agent Button - Only in bot mode */}
+              {chatMode === "bot" && (
+                <div className="border-t border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm px-4 py-3">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={requestHumanAgent}
+                    disabled={!socket}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl hover:from-green-600 hover:to-green-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                  >
+                    <Users size={16} />
+                    <span className="text-sm font-medium">Connect to Human Agent</span>
+                  </motion.button>
+                </div>
+              )}
+
+              {/* Enhanced Suggestions - Now more compact - Hidden in human mode */}
+              {suggestions.length > 0 && chatMode === "bot" && (
                 <div className="border-t border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2">
                   <div className="flex items-center gap-2 mb-2">
                     <Sparkles size={12} className="text-[#2d545e]" />
@@ -941,16 +1572,22 @@ export default function ChatBot() {
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && !e.shiftKey) {
                         e.preventDefault();
-                        if (!isStreaming) {
+                        if (chatMode === "human_connected" || (!isStreaming && chatMode === "bot")) {
                           sendMessage(input);
                         }
                       }
                     }}
-                    placeholder="Ask about research, projects, patents..."
-                    disabled={isStreaming}
+                    placeholder={
+                      chatMode === "bot"
+                        ? "Ask about research, projects, patents..."
+                        : chatMode === "human_waiting"
+                        ? "Waiting for agent..."
+                        : "Type your message to the agent..."
+                    }
+                    disabled={isStreaming || chatMode === "human_waiting"}
                     className="flex-1 px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   />
-                  {isStreaming ? (
+                  {chatMode === "bot" && isStreaming ? (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -965,7 +1602,7 @@ export default function ChatBot() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => sendMessage(input)}
-                      disabled={!input.trim()}
+                      disabled={!input.trim() || chatMode === "human_waiting" || (chatMode === "bot" && isStreaming)}
                       className="p-3 bg-[#2d545e] text-white rounded-xl hover:bg-[#12343b] transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
                     >
                       <Send size={18} />

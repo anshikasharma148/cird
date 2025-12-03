@@ -1,0 +1,693 @@
+"use client";
+
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { io, Socket } from "socket.io-client";
+import {
+  Users,
+  MessageCircle,
+  X,
+  Send,
+  LogOut,
+  Loader2,
+  User as UserIcon,
+  Clock,
+} from "lucide-react";
+
+/* ----------------------- Types ----------------------- */
+type WaitingUser = {
+  userId: string;
+  waitingSince: number;
+};
+
+type ChatMessage = {
+  id: string;
+  sender: "agent" | "user";
+  text: string;
+  timestamp: number;
+  readBy?: {
+    user: boolean;
+    agent: boolean;
+  };
+};
+
+type ActiveChat = {
+  userId: string;
+  roomId: string;
+  messages: ChatMessage[];
+  startedAt: number;
+};
+
+/* --------------------- Constants ------------------------ */
+const AGENT_PIN = process.env.NEXT_PUBLIC_AGENT_PIN || "1234"; // Default PIN for development
+
+/* --------------------- Helpers ------------------------ */
+const formatTime = (ts: number) =>
+  new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+const formatWaitingTime = (since: number) => {
+  const seconds = Math.floor((Date.now() - since) / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}m ${seconds % 60}s`;
+};
+
+const uid = (prefix = "") =>
+  `${prefix}${Math.random().toString(36).slice(2, 9)}${Date.now().toString(36).slice(-4)}`;
+
+export default function AgentDashboard() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pin, setPin] = useState("");
+  const [pinError, setPinError] = useState("");
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [agentId] = useState(() => `agent_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`);
+  const [waitingUsers, setWaitingUsers] = useState<WaitingUser[]>([]);
+  const [activeChat, setActiveChat] = useState<ActiveChat | null>(null);
+  const [messageInput, setMessageInput] = useState("");
+  const [userTyping, setUserTyping] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const agentTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  /* ---------------- Scroll to bottom ---------------- */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [activeChat?.messages, userTyping]);
+
+  // ✅ Mark user messages as read when agent views them
+  useEffect(() => {
+    if (!activeChat || !socket) return;
+
+    // Find unread user messages
+    const unreadUserMessages = activeChat.messages.filter(
+      (msg) => msg.sender === "user" && msg.readBy && !msg.readBy.agent
+    );
+
+    // Mark them as read after a delay
+    unreadUserMessages.forEach((msg) => {
+      setTimeout(() => {
+        if (socket && activeChat.roomId) {
+          socket.emit("message_read", {
+            messageId: msg.id,
+            roomId: activeChat.roomId,
+          });
+        }
+      }, 500);
+    });
+  }, [activeChat?.messages, socket, activeChat?.roomId]);
+
+  /* ---------------- Socket.io Connection ---------------- */
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const baseURL =
+      process.env.NEXT_PUBLIC_API_BASE_URL ||
+      (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
+        ? "https://cird.onrender.com"
+        : "http://localhost:5000");
+
+    setIsConnecting(true);
+    const socketInstance = io(baseURL, {
+      transports: ["websocket", "polling"],
+      query: { agentId },
+    });
+
+    socketInstance.on("connect", () => {
+      console.log("✅ Agent socket connected:", socketInstance.id);
+      socketInstance.emit("agent_connect", { agentId });
+      setIsConnecting(false);
+    });
+
+    socketInstance.on("disconnect", () => {
+      console.log("❌ Agent socket disconnected");
+      setIsConnecting(false);
+    });
+
+    socketInstance.on("connect_error", (error) => {
+      console.error("❌ Agent socket connection error:", error);
+      setIsConnecting(false);
+    });
+
+    socketInstance.on("waiting_users", (users: WaitingUser[]) => {
+      console.log("👥 Waiting users:", users);
+      setWaitingUsers(users);
+    });
+
+    socketInstance.on("new_user_waiting", (data: { userId: string; waitingSince: number }) => {
+      console.log("🆕 New user waiting:", data);
+      setWaitingUsers((prev) => {
+        if (prev.some((u) => u.userId === data.userId)) return prev;
+        return [...prev, { userId: data.userId, waitingSince: data.waitingSince }];
+      });
+    });
+
+    socketInstance.on("user_left_queue", (data: { userId: string }) => {
+      console.log("👋 User left queue:", data.userId);
+      setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
+    });
+
+    socketInstance.on("user_taken", (data: { userId: string }) => {
+      console.log("✅ User taken by another agent:", data.userId);
+      setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
+    });
+
+    socketInstance.on("chat_started", (data: { roomId: string; userId: string }) => {
+      console.log("💬 Chat started:", data);
+      setActiveChat({
+        userId: data.userId,
+        roomId: data.roomId,
+        messages: [
+          {
+            id: uid("system_"),
+            sender: "agent",
+            text: `Chat started with user ${data.userId.slice(0, 12)}...`,
+            timestamp: Date.now(),
+          },
+        ],
+        startedAt: Date.now(),
+      });
+      setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
+    });
+
+    socketInstance.on("new_message", (data: { id?: string; sender: string; text: string; timestamp: number; roomId?: string; readBy?: { user: boolean; agent: boolean } }) => {
+      // Handle both user and agent messages
+      if (data.sender === "user" || data.sender === "agent") {
+        setActiveChat((prev) => {
+          // Only process if we have an active chat
+          if (!prev) return null;
+          
+          // If roomId is provided, verify it matches the active chat
+          if (data.roomId && data.roomId !== prev.roomId) {
+            console.log(`⚠️ Message roomId mismatch: ${data.roomId} !== ${prev.roomId}`);
+            return prev;
+          }
+
+          // Check if message already exists (prevent duplicates)
+          const messageExists = prev.messages.some(
+            (msg) => msg.text === data.text && Math.abs(msg.timestamp - data.timestamp) < 1000
+          );
+          if (messageExists) {
+            console.log("⚠️ Duplicate message detected, skipping");
+            return prev;
+          }
+          
+          console.log(`📨 Received message from ${data.sender} in room ${data.roomId || prev.roomId}`);
+          
+          // Mark user messages as read by agent when received
+          const readBy = data.readBy || { user: data.sender === "user", agent: data.sender === "agent" };
+          if (data.sender === "user") {
+            readBy.agent = true; // Agent reads user messages immediately
+            // Notify server
+            if (socketInstance && prev.roomId) {
+              socketInstance.emit("message_read", {
+                messageId: data.id || uid("msg_"),
+                roomId: prev.roomId,
+              });
+            }
+          }
+          
+          return {
+            ...prev,
+            messages: [
+              ...prev.messages,
+              {
+                id: data.id || uid("msg_"),
+                sender: data.sender as "agent" | "user",
+                text: data.text,
+                timestamp: data.timestamp,
+                readBy: readBy,
+              },
+            ],
+          };
+        });
+      }
+    });
+
+    socketInstance.on("message_read_update", (data: { messageId: string; readBy: { user: boolean; agent: boolean }; roomId?: string }) => {
+      if (!activeChat) return;
+      
+      if (data.roomId && data.roomId !== activeChat.roomId) {
+        return;
+      }
+      
+      console.log("✅ Message read update received:", data);
+      
+      setActiveChat((prev) => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          messages: prev.messages.map((msg) =>
+            msg.id === data.messageId
+              ? { ...msg, readBy: data.readBy }
+              : msg
+          ),
+        };
+      });
+    });
+
+    socketInstance.on("user_typing", (data: { userId: string }) => {
+      if (activeChat && data.userId === activeChat.userId) {
+        setUserTyping(true);
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+        typingTimeoutRef.current = setTimeout(() => {
+          setUserTyping(false);
+        }, 3000);
+      }
+    });
+
+    socketInstance.on("user_disconnected", (data: { roomId: string; userId: string }) => {
+      if (activeChat && activeChat.roomId === data.roomId) {
+        setActiveChat((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            messages: [
+              ...prev.messages,
+              {
+                id: uid("system_"),
+                sender: "user",
+                text: "User has disconnected.",
+                timestamp: Date.now(),
+              },
+            ],
+          };
+        });
+      }
+    });
+
+    setSocket(socketInstance);
+
+    return () => {
+      socketInstance.disconnect();
+      setSocket(null);
+    };
+  }, [isAuthenticated, agentId]); // Removed activeChat from dependencies to prevent reconnection
+
+  /* ---------------- PIN Authentication ---------------- */
+  const handlePinSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (pin === AGENT_PIN) {
+      setIsAuthenticated(true);
+      setPinError("");
+    } else {
+      setPinError("Invalid PIN. Please try again.");
+      setPin("");
+    }
+  };
+
+  /* ---------------- Join User Chat ---------------- */
+  const joinUserChat = useCallback(
+    (userId: string) => {
+      if (!socket) return;
+      socket.emit("agent_join", { userId });
+    },
+    [socket]
+  );
+
+  /* ---------------- Handle Agent Typing ---------------- */
+  const handleAgentTyping = useCallback(() => {
+    if (!socket || !activeChat) return;
+
+    // Clear any existing stop typing timeout
+    if (agentTypingTimeoutRef.current) {
+      clearTimeout(agentTypingTimeoutRef.current);
+    }
+
+    // Send typing indicator
+    socket.emit("agent_typing", { roomId: activeChat.roomId });
+
+    // Set timeout to send stop typing after 2 seconds of inactivity
+    agentTypingTimeoutRef.current = setTimeout(() => {
+      if (socket && activeChat) {
+        socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+      }
+      agentTypingTimeoutRef.current = null;
+    }, 2000);
+  }, [socket, activeChat]);
+
+  /* ---------------- Send Message ---------------- */
+  const sendMessage = useCallback(() => {
+    if (!socket || !activeChat || !messageInput.trim()) return;
+
+    const messageText = messageInput.trim();
+    const timestamp = Date.now();
+    const messageId = uid("msg_");
+
+    // Clear typing indicator timeout
+    if (agentTypingTimeoutRef.current) {
+      clearTimeout(agentTypingTimeoutRef.current);
+      agentTypingTimeoutRef.current = null;
+    }
+
+    // Send stop typing indicator
+    socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+
+    // Send via Socket.io first (server will broadcast to room)
+    socket.emit("agent_message", {
+      message: messageText,
+      roomId: activeChat.roomId,
+    });
+
+    // Add to local state (will also be received via new_message event, but adding immediately for better UX)
+    setActiveChat((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        messages: [
+          ...prev.messages,
+          {
+            id: messageId,
+            sender: "agent",
+            text: messageText,
+            timestamp: timestamp,
+            readBy: { user: false, agent: true },
+          },
+        ],
+      };
+    });
+
+    setMessageInput("");
+  }, [socket, activeChat, messageInput]);
+
+  /* ---------------- End Chat ---------------- */
+  const endChat = useCallback(() => {
+    if (!socket || !activeChat) return;
+
+    socket.emit("agent_disconnect_chat", { roomId: activeChat.roomId });
+    setActiveChat(null);
+    setUserTyping(false);
+  }, [socket, activeChat]);
+
+  /* ---------------- Logout ---------------- */
+  const handleLogout = () => {
+    if (socket) {
+      socket.disconnect();
+      setSocket(null);
+    }
+    setIsAuthenticated(false);
+    setActiveChat(null);
+    setWaitingUsers([]);
+    setPin("");
+  };
+
+  /* ---------------- Render ---------------- */
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
+        >
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 bg-[#2d545e] rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users size={32} className="text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-[#2d545e] mb-2">Agent Dashboard</h1>
+            <p className="text-gray-600">Enter your PIN to access</p>
+          </div>
+
+          <form onSubmit={handlePinSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
+                PIN
+              </label>
+              <input
+                id="pin"
+                type="password"
+                value={pin}
+                onChange={(e) => {
+                  setPin(e.target.value);
+                  setPinError("");
+                }}
+                placeholder="Enter PIN"
+                className="w-full px-4 py-3 border-2 border-[#c89666] rounded-xl focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none transition-all"
+                autoFocus
+              />
+              {pinError && (
+                <p className="mt-2 text-sm text-red-600">{pinError}</p>
+              )}
+            </div>
+
+            <motion.button
+              type="submit"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-[#2d545e] text-white py-3 rounded-xl font-medium hover:bg-[#12343b] transition-colors"
+            >
+              Login
+            </motion.button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#e1b382] rounded-full flex items-center justify-center">
+              <Users size={20} className="text-[#2d545e]" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">Agent Dashboard</h1>
+              <p className="text-sm text-white/80">
+                {isConnecting ? "Connecting..." : "Live Support"}
+              </p>
+            </div>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500 hover:bg-red-600 rounded-xl transition-colors"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </motion.button>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Waiting Users Panel */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-xl shadow-md p-4 h-[calc(100vh-120px)] flex flex-col">
+            <h2 className="text-lg font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
+              <Clock size={20} />
+              Waiting Users ({waitingUsers.length})
+            </h2>
+
+            <div className="flex-1 overflow-y-auto space-y-2">
+              {waitingUsers.length === 0 ? (
+                <div className="text-center text-gray-500 py-8">
+                  <MessageCircle size={48} className="mx-auto mb-2 opacity-50" />
+                  <p>No users waiting</p>
+                </div>
+              ) : (
+                waitingUsers.map((user) => (
+                  <motion.div
+                    key={user.userId}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <UserIcon size={16} className="text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700">
+                          {user.userId.slice(0, 12)}...
+                        </span>
+                      </div>
+                      <span className="text-xs text-gray-500">
+                        {formatWaitingTime(user.waitingSince)}
+                      </span>
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => joinUserChat(user.userId)}
+                      disabled={!!activeChat}
+                      className="w-full bg-[#2d545e] text-white text-sm py-2 rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Join Chat
+                    </motion.button>
+                  </motion.div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Active Chat Panel */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-xl shadow-md h-[calc(100vh-120px)] flex flex-col">
+            {activeChat ? (
+              <>
+                {/* Chat Header */}
+                <div className="border-b border-gray-200 p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                      <UserIcon size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-800">
+                        Chat with {activeChat.userId.slice(0, 12)}...
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        Started {formatTime(activeChat.startedAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={endChat}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                  >
+                    End Chat
+                  </motion.button>
+                </div>
+
+                {/* Messages */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                  {activeChat.messages.map((msg) => (
+                    <motion.div
+                      key={msg.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`flex ${msg.sender === "agent" ? "justify-end" : "justify-start"}`}
+                    >
+                      <div
+                        className={`max-w-[70%] px-4 py-2 rounded-lg ${
+                          msg.sender === "agent"
+                            ? "bg-[#2d545e] text-white rounded-br-sm"
+                            : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
+                        }`}
+                      >
+                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                        <div className="flex items-center justify-between mt-1 gap-2">
+                          <p className={`text-xs opacity-70 ${msg.sender === "agent" ? "text-white/70" : "text-gray-500"}`}>
+                            {formatTime(msg.timestamp)}
+                          </p>
+                          {/* Read Receipt Ticks - Only on AGENT's sent messages */}
+                          {msg.sender === "agent" && (
+                            <div className="flex items-center">
+                              {/* For agent's own messages, show if user has read */}
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 15"
+                                fill="none"
+                                className={msg.readBy?.user ? "text-blue-300" : "text-white/40"}
+                              >
+                                <path
+                                  d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.175a.366.366 0 0 0-.063-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.175a.365.365 0 0 0-.063-.51z"
+                                  fill="currentColor"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+
+                  {/* User Typing Indicator */}
+                  {userTyping && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex justify-start"
+                    >
+                      <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg rounded-bl-sm">
+                        <div className="flex items-center gap-1">
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0 }}
+                            className="w-2 h-2 bg-gray-400 rounded-full"
+                          />
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
+                            className="w-2 h-2 bg-gray-400 rounded-full"
+                          />
+                          <motion.div
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
+                            className="w-2 h-2 bg-gray-400 rounded-full"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+
+                {/* Input */}
+                <div className="border-t border-gray-200 p-4">
+                  <div className="flex gap-2">
+                    <input
+                      value={messageInput}
+                      onChange={(e) => {
+                        setMessageInput(e.target.value);
+                        // Send typing indicator when agent types
+                        if (e.target.value.trim()) {
+                          handleAgentTyping();
+                        } else {
+                          // Clear typing if input is empty
+                          if (agentTypingTimeoutRef.current) {
+                            clearTimeout(agentTypingTimeoutRef.current);
+                            agentTypingTimeoutRef.current = null;
+                          }
+                          if (socket && activeChat) {
+                            socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+                          }
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          sendMessage();
+                        }
+                      }}
+                      placeholder="Type your message..."
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none"
+                    />
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={sendMessage}
+                      disabled={!messageInput.trim()}
+                      className="px-6 py-2 bg-[#2d545e] text-white rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Send size={18} />
+                    </motion.button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center text-center text-gray-500">
+                <div>
+                  <MessageCircle size={64} className="mx-auto mb-4 opacity-50" />
+                  <p className="text-lg">No active chat</p>
+                  <p className="text-sm mt-2">
+                    Select a user from the waiting list to start chatting
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

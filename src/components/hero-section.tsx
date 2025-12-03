@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MapPin, Mail, Linkedin, Menu, X } from "lucide-react";
+import { ArrowRight, MapPin, Mail, Linkedin, Menu, X, Shield } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
@@ -149,6 +149,18 @@ export default function HeroSection() {
     <section className="relative w-full bg-white">
       {/* Fixed Header and Navigation Container */}
       <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-[#e1b382] z-50 shadow-sm">
+        {/* Agent Dashboard Link - Upper Right Corner */}
+        <div className="absolute top-2 right-2 sm:top-3 sm:right-4 z-50">
+          <Link
+            href="/agent"
+            className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[#2d545e] hover:text-white hover:bg-[#2d545e] rounded-md transition-all duration-200 border border-[#c89666] hover:border-[#2d545e] shadow-sm hover:shadow-md"
+            title="Agent Dashboard"
+          >
+            <Shield size={14} className="sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Agent</span>
+          </Link>
+        </div>
+        
         {/* Header Section with Logo and Full Form */}
         <div className="border-b border-[#c89666]">
           <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16 py-3 sm:py-4">
@@ -583,6 +595,15 @@ export default function HeroSection() {
               className="lg:hidden border-t border-[#c89666]/40 bg-[#e1b382]/98 backdrop-blur-md transition-all duration-300 max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-9rem)] overflow-y-auto shadow-lg"
             >
               <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-1 sm:space-y-2">
+                <Link 
+                  href="/agent" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium border border-[#c89666]"
+                >
+                  <Shield size={16} />
+                  <span>Agent Dashboard</span>
+                </Link>
+                <div className="border-t border-[#c89666]/40 my-2"></div>
                 <Link 
                   href="/" 
                   onClick={() => setIsMobileMenuOpen(false)}

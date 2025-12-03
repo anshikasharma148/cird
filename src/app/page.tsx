@@ -5,7 +5,7 @@ import HeroSection from "@/components/hero-section";
 import { AboutSection, XBracketProject } from "@/components/research-sections";
 import CollaborationSlider from "@/components/collaboration-slider";
 import { motion } from "framer-motion";
-import { Handshake } from "lucide-react";
+import { Handshake, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function Home() {
@@ -157,6 +157,21 @@ export default function Home() {
                   </div>
                 </div>
               </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Admin Dashboard Link */}
+      <section className="py-8 bg-gradient-to-b from-[#e1b382]/10 to-transparent">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
+          <div className="flex justify-center">
+            <Link
+              href="/agent"
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm text-[#2d545e] hover:text-[#12343b] transition-colors border border-[#c89666] rounded-lg hover:border-[#2d545e] hover:bg-[#e1b382]/20"
+            >
+              <Shield size={16} />
+              <span>Agent Dashboard</span>
             </Link>
           </div>
         </div>
