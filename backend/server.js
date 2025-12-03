@@ -41,12 +41,45 @@ const state = {
   connectedUsers: new Map(),
   // Array of userIds waiting for an agent
   waitingQueue: [],
-  // Map: agentId -> { socketId, currentRoomId?, connectedAt }
+  // Map: agentId -> { socketId, currentRoomId?, connectedAt, isBusy: boolean }
   connectedAgents: new Map(),
   // Map: userId -> roomId (private room for user-agent chat)
   roomMapping: new Map(),
   // Map: roomId -> { userId, agentId, messages: [], createdAt }
   activeRooms: new Map(),
+};
+
+// ✅ Valid agent IDs
+const VALID_AGENT_IDS = ["agent1", "agent2", "agent3", "agent4"];
+
+// ✅ Helper: Find first free agent
+const findFreeAgent = () => {
+  for (const agentId of VALID_AGENT_IDS) {
+    const agentData = state.connectedAgents.get(agentId);
+    if (agentData && !agentData.isBusy) {
+      return agentId;
+    }
+  }
+  return null;
+};
+
+// ✅ Helper: Broadcast agent status to all agents
+const broadcastAgentStatus = () => {
+  const agentStatuses = VALID_AGENT_IDS.map(agentId => {
+    const agentData = state.connectedAgents.get(agentId);
+    return {
+      agentId,
+      isConnected: !!agentData,
+      isBusy: agentData?.isBusy || false,
+    };
+  });
+
+  state.connectedAgents.forEach((agentData, agentId) => {
+    const agentSocket = io.sockets.sockets.get(agentData.socketId);
+    if (agentSocket) {
+      agentSocket.emit("agent_status_update", { agents: agentStatuses });
+    }
+  });
 };
 
 // ✅ Helper: Generate unique room ID
@@ -76,10 +109,29 @@ io.on("connection", (socket) => {
 
   // ✅ Agent connects (from agent dashboard)
   socket.on("agent_connect", (data) => {
-    const agentId = data.agentId || socket.id;
+    const agentId = data.agentId;
+    
+    // Validate agent ID
+    if (!agentId || !VALID_AGENT_IDS.includes(agentId)) {
+      socket.emit("agent_connect_error", { message: "Invalid agent ID. Must be agent1, agent2, agent3, or agent4." });
+      console.error(`❌ Invalid agent ID: ${agentId}`);
+      return;
+    }
+
+    // Check if agent is already connected
+    const existingAgent = state.connectedAgents.get(agentId);
+    if (existingAgent) {
+      // Disconnect old socket if exists
+      const oldSocket = io.sockets.sockets.get(existingAgent.socketId);
+      if (oldSocket) {
+        oldSocket.disconnect();
+      }
+    }
+
     state.connectedAgents.set(agentId, {
       socketId: socket.id,
       connectedAt: Date.now(),
+      isBusy: false, // Agent starts as free
     });
     state.connectedUsers.set(socket.id, {
       userId: agentId,
@@ -90,15 +142,23 @@ io.on("connection", (socket) => {
     socket.data.type = "agent";
     console.log(`👨‍💼 Agent connected: ${agentId} (socket: ${socket.id})`);
 
-    // Notify agent of waiting users
-    socket.emit("waiting_users", state.waitingQueue.map((uid) => {
-      const userSocket = Array.from(state.connectedUsers.entries())
-        .find(([_, data]) => data.userId === uid && data.type === "user")?.[0];
-      return {
-        userId: uid,
-        waitingSince: state.connectedUsers.get(userSocket)?.connectedAt || Date.now(),
-      };
-    }));
+    // Notify agent of waiting users (only if agent is free)
+    const agentData = state.connectedAgents.get(agentId);
+    if (agentData && !agentData.isBusy) {
+      socket.emit("waiting_users", state.waitingQueue.map((uid) => {
+        const userSocket = Array.from(state.connectedUsers.entries())
+          .find(([_, data]) => data.userId === uid && data.type === "user")?.[0];
+        return {
+          userId: uid,
+          waitingSince: state.connectedUsers.get(userSocket)?.connectedAt || Date.now(),
+        };
+      }));
+    } else {
+      socket.emit("waiting_users", []);
+    }
+
+    // Notify all agents about updated agent status
+    broadcastAgentStatus();
   });
 
   // ✅ User requests human agent
@@ -132,34 +192,96 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // Add to waiting queue
+    // Try to find a free agent and auto-assign
+    const freeAgentId = findFreeAgent();
+    if (freeAgentId) {
+      console.log(`✅ Found free agent: ${freeAgentId}, auto-assigning to user ${userId}`);
+      const freeAgentData = state.connectedAgents.get(freeAgentId);
+      const freeAgentSocket = io.sockets.sockets.get(freeAgentData.socketId);
+      
+      if (freeAgentSocket) {
+        // Auto-assign the chat to the free agent
+        const roomId = generateRoomId(userId);
+        
+        // Create room
+        state.activeRooms.set(roomId, {
+          userId,
+          agentId: freeAgentId,
+          messages: [],
+          createdAt: Date.now(),
+        });
+
+        // Mark agent as busy
+        freeAgentData.isBusy = true;
+        freeAgentData.currentRoomId = roomId;
+        state.connectedAgents.set(freeAgentId, freeAgentData);
+
+        // Join both sockets to room
+        socket.join(roomId);
+        freeAgentSocket.join(roomId);
+
+        // Update room mapping
+        state.roomMapping.set(userId, roomId);
+
+        // Notify user
+        socket.emit("agent_connected", { roomId, agentId: freeAgentId });
+
+        // Notify agent
+        freeAgentSocket.emit("chat_started", {
+          userId,
+          roomId,
+          autoAssigned: true,
+        });
+
+        // Notify other agents that user was taken
+        state.connectedAgents.forEach((otherAgentData, otherAgentId) => {
+          if (otherAgentId !== freeAgentId) {
+            const otherAgentSocket = io.sockets.sockets.get(otherAgentData.socketId);
+            if (otherAgentSocket) {
+              otherAgentSocket.emit("user_taken", { userId });
+            }
+          }
+        });
+
+        // Broadcast agent status update
+        broadcastAgentStatus();
+
+        console.log(`✅ Auto-assigned user ${userId} to agent ${freeAgentId} (room: ${roomId})`);
+        return;
+      }
+    }
+
+    // No free agent available, add to waiting queue
     state.waitingQueue.push(userId);
     console.log(`⏳ User ${userId} added to waiting queue (position: ${state.waitingQueue.length})`);
     console.log(`📊 Current queue:`, state.waitingQueue);
-    console.log(`📊 Available agents: ${state.connectedAgents.size}`);
+    console.log(`📊 Available free agents: ${Array.from(state.connectedAgents.values()).filter(a => !a.isBusy).length}`);
 
     socket.emit("queue_position", {
       position: state.waitingQueue.length,
       total: state.waitingQueue.length,
     });
 
-    // Notify all agents
-    if (state.connectedAgents.size === 0) {
-      console.log(`⚠️ No agents connected to notify about waiting user`);
-    } else {
-      console.log(`📢 Notifying ${state.connectedAgents.size} agent(s) about waiting user`);
-      state.connectedAgents.forEach((agentData, agentId) => {
+    // Notify only free agents about waiting user
+    let notifiedCount = 0;
+    state.connectedAgents.forEach((agentData, agentId) => {
+      if (!agentData.isBusy) {
         const agentSocket = io.sockets.sockets.get(agentData.socketId);
         if (agentSocket) {
-          console.log(`📤 Sending new_user_waiting to agent: ${agentId} (socket: ${agentData.socketId})`);
+          console.log(`📤 Sending new_user_waiting to free agent: ${agentId}`);
           agentSocket.emit("new_user_waiting", {
             userId,
             waitingSince: userData.connectedAt,
           });
-        } else {
-          console.error(`❌ Agent socket not found for agentId: ${agentId}`);
+          notifiedCount++;
         }
-      });
+      }
+    });
+
+    if (notifiedCount === 0) {
+      console.log(`⚠️ No free agents available to notify about waiting user`);
+    } else {
+      console.log(`📢 Notified ${notifiedCount} free agent(s) about waiting user`);
     }
   });
 
@@ -169,6 +291,12 @@ io.on("connection", (socket) => {
     const agentData = state.connectedAgents.get(socket.data.agentId);
     if (!agentData) {
       socket.emit("error", { message: "Agent not authenticated" });
+      return;
+    }
+
+    // Check if agent is already busy
+    if (agentData.isBusy && agentData.currentRoomId) {
+      socket.emit("error", { message: "You are already in a chat. Please end the current chat first." });
       return;
     }
 
@@ -201,6 +329,8 @@ io.on("connection", (socket) => {
     // Join room
     socket.join(roomId);
     agentData.currentRoomId = roomId;
+    agentData.isBusy = true; // Mark agent as busy
+    state.connectedAgents.set(socket.data.agentId, agentData);
 
     // Find user socket and join them to room
     const userSocketEntry = Array.from(state.connectedUsers.entries())
@@ -263,6 +393,9 @@ io.on("connection", (socket) => {
         }
       }
     });
+
+    // Broadcast agent status update
+    broadcastAgentStatus();
 
     console.log(`✅ Agent ${socket.data.agentId} joined chat with user ${userId} (room: ${roomId})`);
   });
@@ -543,6 +676,8 @@ io.on("connection", (socket) => {
       state.roomMapping.delete(room.userId);
       state.activeRooms.delete(actualRoomId);
       agentData.currentRoomId = null;
+      agentData.isBusy = false; // Mark agent as free
+      state.connectedAgents.set(socket.data.agentId, agentData);
 
       // Remove user from room
       const userSocketEntry = Array.from(state.connectedUsers.entries())
@@ -553,6 +688,30 @@ io.on("connection", (socket) => {
         if (userSocket) {
           userSocket.leave(actualRoomId);
           userSocket.data.roomId = null;
+        }
+      }
+
+      // Broadcast agent status update
+      broadcastAgentStatus();
+
+      // Notify free agents about any waiting users
+      if (state.waitingQueue.length > 0) {
+        const waitingUserId = state.waitingQueue[0];
+        const waitingUserData = Array.from(state.connectedUsers.values())
+          .find(u => u.userId === waitingUserId && u.type === "user");
+        
+        if (waitingUserData) {
+          state.connectedAgents.forEach((otherAgentData, otherAgentId) => {
+            if (!otherAgentData.isBusy) {
+              const otherAgentSocket = io.sockets.sockets.get(otherAgentData.socketId);
+              if (otherAgentSocket) {
+                otherAgentSocket.emit("new_user_waiting", {
+                  userId: waitingUserId,
+                  waitingSince: waitingUserData.connectedAt,
+                });
+              }
+            }
+          });
         }
       }
 

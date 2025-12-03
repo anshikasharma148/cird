@@ -55,12 +55,19 @@ const formatWaitingTime = (since: number) => {
 const uid = (prefix = "") =>
   `${prefix}${Math.random().toString(36).slice(2, 9)}${Date.now().toString(36).slice(-4)}`;
 
+type AgentStatus = {
+  agentId: string;
+  isConnected: boolean;
+  isBusy: boolean;
+};
+
 export default function AgentDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
+  const [selectedAgentId, setSelectedAgentId] = useState<string>("agent1");
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [agentId] = useState(() => `agent_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`);
+  const [agentStatuses, setAgentStatuses] = useState<AgentStatus[]>([]);
   const [waitingUsers, setWaitingUsers] = useState<WaitingUser[]>([]);
   const [activeChat, setActiveChat] = useState<ActiveChat | null>(null);
   const [messageInput, setMessageInput] = useState("");
@@ -111,13 +118,24 @@ export default function AgentDashboard() {
     setIsConnecting(true);
     const socketInstance = io(baseURL, {
       transports: ["websocket", "polling"],
-      query: { agentId },
+      query: { agentId: selectedAgentId },
     });
 
     socketInstance.on("connect", () => {
       console.log("✅ Agent socket connected:", socketInstance.id);
-      socketInstance.emit("agent_connect", { agentId });
+      socketInstance.emit("agent_connect", { agentId: selectedAgentId });
       setIsConnecting(false);
+    });
+
+    socketInstance.on("agent_connect_error", (data: { message: string }) => {
+      console.error("❌ Agent connect error:", data.message);
+      setPinError(data.message);
+      setIsConnecting(false);
+    });
+
+    socketInstance.on("agent_status_update", (data: { agents: AgentStatus[] }) => {
+      console.log("📊 Agent status update:", data.agents);
+      setAgentStatuses(data.agents);
     });
 
     socketInstance.on("disconnect", () => {
@@ -137,10 +155,14 @@ export default function AgentDashboard() {
 
     socketInstance.on("new_user_waiting", (data: { userId: string; waitingSince: number }) => {
       console.log("🆕 New user waiting:", data);
-      setWaitingUsers((prev) => {
-        if (prev.some((u) => u.userId === data.userId)) return prev;
-        return [...prev, { userId: data.userId, waitingSince: data.waitingSince }];
-      });
+      // Only add to waiting list if agent is free
+      const currentAgentStatus = agentStatuses.find(a => a.agentId === selectedAgentId);
+      if (!currentAgentStatus || !currentAgentStatus.isBusy) {
+        setWaitingUsers((prev) => {
+          if (prev.some((u) => u.userId === data.userId)) return prev;
+          return [...prev, { userId: data.userId, waitingSince: data.waitingSince }];
+        });
+      }
     });
 
     socketInstance.on("user_left_queue", (data: { userId: string }) => {
@@ -153,7 +175,7 @@ export default function AgentDashboard() {
       setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
     });
 
-    socketInstance.on("chat_started", (data: { roomId: string; userId: string }) => {
+    socketInstance.on("chat_started", (data: { roomId: string; userId: string; autoAssigned?: boolean }) => {
       console.log("💬 Chat started:", data);
       setActiveChat({
         userId: data.userId,
@@ -162,13 +184,18 @@ export default function AgentDashboard() {
           {
             id: uid("system_"),
             sender: "agent",
-            text: `Chat started with user ${data.userId.slice(0, 12)}...`,
+            text: `Chat started with user ${data.userId.slice(0, 12)}...${data.autoAssigned ? " (Auto-assigned)" : ""}`,
             timestamp: Date.now(),
           },
         ],
         startedAt: Date.now(),
       });
       setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
+      
+      // Update agent status locally
+      setAgentStatuses(prev => prev.map(a => 
+        a.agentId === selectedAgentId ? { ...a, isBusy: true } : a
+      ));
     });
 
     socketInstance.on("new_message", (data: { id?: string; sender: string; text: string; timestamp: number; roomId?: string; readBy?: { user: boolean; agent: boolean } }) => {
@@ -285,7 +312,7 @@ export default function AgentDashboard() {
       socketInstance.disconnect();
       setSocket(null);
     };
-  }, [isAuthenticated, agentId]); // Removed activeChat from dependencies to prevent reconnection
+  }, [isAuthenticated, selectedAgentId]); // Reconnect when agent ID changes
 
   /* ---------------- PIN Authentication ---------------- */
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -380,7 +407,12 @@ export default function AgentDashboard() {
     socket.emit("agent_disconnect_chat", { roomId: activeChat.roomId });
     setActiveChat(null);
     setUserTyping(false);
-  }, [socket, activeChat]);
+    
+    // Update agent status locally
+    setAgentStatuses(prev => prev.map(a => 
+      a.agentId === selectedAgentId ? { ...a, isBusy: false } : a
+    ));
+  }, [socket, activeChat, selectedAgentId]);
 
   /* ---------------- Logout ---------------- */
   const handleLogout = () => {
@@ -397,7 +429,7 @@ export default function AgentDashboard() {
   /* ---------------- Render ---------------- */
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center p-4 pt-28">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -412,6 +444,22 @@ export default function AgentDashboard() {
           </div>
 
           <form onSubmit={handlePinSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="agentId" className="block text-sm font-medium text-gray-700 mb-2">
+                Agent ID
+              </label>
+              <select
+                id="agentId"
+                value={selectedAgentId}
+                onChange={(e) => setSelectedAgentId(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-[#c89666] rounded-xl focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none transition-all bg-white"
+              >
+                <option value="agent1">Agent 1</option>
+                <option value="agent2">Agent 2</option>
+                <option value="agent3">Agent 3</option>
+                <option value="agent4">Agent 4</option>
+              </select>
+            </div>
             <div>
               <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
                 PIN
@@ -448,7 +496,7 @@ export default function AgentDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-28">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -459,8 +507,26 @@ export default function AgentDashboard() {
             <div>
               <h1 className="text-xl font-bold">Agent Dashboard</h1>
               <p className="text-sm text-white/80">
-                {isConnecting ? "Connecting..." : "Live Support"}
+                {isConnecting ? "Connecting..." : `${selectedAgentId.toUpperCase()} - Live Support`}
               </p>
+              {agentStatuses.length > 0 && (
+                <div className="flex gap-2 mt-1 flex-wrap">
+                  {agentStatuses.map((status) => (
+                    <span
+                      key={status.agentId}
+                      className={`text-xs px-2 py-0.5 rounded ${
+                        status.agentId === selectedAgentId
+                          ? status.isBusy
+                            ? "bg-red-500"
+                            : "bg-green-500"
+                          : "bg-white/20"
+                      }`}
+                    >
+                      {status.agentId}: {status.isBusy ? "Busy" : "Free"}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           <motion.button
