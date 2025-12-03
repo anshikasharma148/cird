@@ -221,10 +221,10 @@ io.on("connection", (socket) => {
     // Try to find a free agent and auto-assign
     const freeAgentId = findFreeAgent();
     if (freeAgentId) {
+      const freeAgentData = state.connectedAgents.get(freeAgentId);
       const liveAgentsCount = state.connectedAgents.size;
       const agentActiveChats = freeAgentData.activeRoomIds?.length || 0;
       console.log(`✅ Found agent: ${freeAgentId}, auto-assigning to user ${userId} (${liveAgentsCount} live agent(s), agent has ${agentActiveChats} active chat(s))`);
-      const freeAgentData = state.connectedAgents.get(freeAgentId);
       const freeAgentSocket = io.sockets.sockets.get(freeAgentData.socketId);
       
       if (freeAgentSocket) {
