@@ -218,70 +218,8 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // Try to find a free agent and auto-assign
-    const freeAgentId = findFreeAgent();
-    if (freeAgentId) {
-      const freeAgentData = state.connectedAgents.get(freeAgentId);
-      const liveAgentsCount = state.connectedAgents.size;
-      const agentActiveChats = freeAgentData.activeRoomIds?.length || 0;
-      console.log(`✅ Found agent: ${freeAgentId}, auto-assigning to user ${userId} (${liveAgentsCount} live agent(s), agent has ${agentActiveChats} active chat(s))`);
-      const freeAgentSocket = io.sockets.sockets.get(freeAgentData.socketId);
-      
-      if (freeAgentSocket) {
-        // Auto-assign the chat to the free agent
-        const roomId = generateRoomId(userId);
-        
-        // Create room
-        state.activeRooms.set(roomId, {
-          userId,
-          agentId: freeAgentId,
-          messages: [],
-          createdAt: Date.now(),
-        });
-
-        // Add room to agent's active rooms
-        if (!freeAgentData.activeRoomIds) {
-          freeAgentData.activeRoomIds = [];
-        }
-        freeAgentData.activeRoomIds.push(roomId);
-        state.connectedAgents.set(freeAgentId, freeAgentData);
-
-        // Join both sockets to room
-        socket.join(roomId);
-        freeAgentSocket.join(roomId);
-
-        // Update room mapping
-        state.roomMapping.set(userId, roomId);
-
-        // Notify user
-        socket.emit("agent_connected", { roomId, agentId: freeAgentId });
-
-        // Notify agent
-        freeAgentSocket.emit("chat_started", {
-          userId,
-          roomId,
-          autoAssigned: true,
-        });
-
-        // Notify other agents that user was taken
-        state.connectedAgents.forEach((otherAgentData, otherAgentId) => {
-          if (otherAgentId !== freeAgentId) {
-            const otherAgentSocket = io.sockets.sockets.get(otherAgentData.socketId);
-            if (otherAgentSocket) {
-              otherAgentSocket.emit("user_taken", { userId });
-            }
-          }
-        });
-
-        // Broadcast agent status update
-        broadcastAgentStatus();
-
-        console.log(`✅ Auto-assigned user ${userId} to agent ${freeAgentId} (room: ${roomId})`);
-        return;
-      }
-    }
-
-    // No free agent available, add to waiting queue
+    // Always add to waiting queue - no auto-assignment
+    // Margadarshaks will manually pick up chats from the waiting list
     state.waitingQueue.push(userId);
     console.log(`⏳ User ${userId} added to waiting queue (position: ${state.waitingQueue.length})`);
     console.log(`📊 Current queue:`, state.waitingQueue);
