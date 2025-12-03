@@ -107,13 +107,42 @@ export default function AgentDashboard() {
   const [isConnecting, setIsConnecting] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const agentTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const shouldAutoScrollRef = useRef(true);
 
   /* ---------------- Scroll to bottom ---------------- */
   const selectedChat = activeChats.find(chat => chat.roomId === selectedChatId);
+  
+  // Check if user is near bottom of scroll container
+  const isNearBottom = () => {
+    if (!messagesContainerRef.current) return true;
+    const container = messagesContainerRef.current;
+    const threshold = 100; // pixels from bottom
+    return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+  };
+
+  // Handle scroll events to track if user manually scrolled up
+  const handleScroll = () => {
+    shouldAutoScrollRef.current = isNearBottom();
+  };
+
+  // Reset scroll behavior when switching chats
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    shouldAutoScrollRef.current = true;
+    // Small delay to ensure DOM is updated
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }, [selectedChatId]);
+
+  useEffect(() => {
+    // Only auto-scroll if user is near bottom or if it's a new message from the agent
+    if (shouldAutoScrollRef.current || isNearBottom()) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      shouldAutoScrollRef.current = true;
+    }
   }, [selectedChat?.messages, userTyping]);
 
   // ✅ Mark user messages as read when agent views them
@@ -246,6 +275,9 @@ export default function AgentDashboard() {
       
       // Select the new chat
       setSelectedChatId(data.roomId);
+      
+      // Force auto-scroll when a new chat starts
+      shouldAutoScrollRef.current = true;
       
       setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
       
@@ -485,6 +517,8 @@ export default function AgentDashboard() {
       return updated;
     });
 
+    // Force auto-scroll when agent sends a message
+    shouldAutoScrollRef.current = true;
     setMessageInput("");
   }, [socket, selectedChatId, messageInput]);
 
@@ -773,7 +807,11 @@ export default function AgentDashboard() {
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                    <div 
+                      ref={messagesContainerRef}
+                      onScroll={handleScroll}
+                      className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
+                    >
                       {selectedChat.messages.map((msg) => (
                     <motion.div
                       key={msg.id}
