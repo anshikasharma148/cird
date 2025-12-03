@@ -17,6 +17,7 @@ import {
   Square,
   Users,
   Loader2,
+  PhoneOff,
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
@@ -1010,6 +1011,33 @@ export default function ChatBot() {
     }
   }, [socket, socketConnected, userId]);
 
+  /* ---------------- End Chat with Agent ---------------- */
+  const endChatWithAgent = useCallback(() => {
+    if (chatMode !== "human_connected" || !socket || !currentRoomId) return;
+
+    // Emit user disconnect event
+    socket.emit("user_disconnect_chat", { roomId: currentRoomId });
+
+    // Switch back to bot mode
+    setChatMode("bot");
+    setCurrentRoomId(null);
+    chatModeRef.current = "bot";
+    currentRoomIdRef.current = null;
+    setAgentTyping(false);
+    setQueuePosition(null);
+
+    // Add system message
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: uid("system_"),
+        sender: "system",
+        text: "You have ended the chat with the agent. You may continue chatting with SARATHI.",
+        time: Date.now(),
+      },
+    ]);
+  }, [chatMode, socket, currentRoomId]);
+
   /* ---------------- Enhanced Export ------------------ */
   function exportChat() {
     const safeMessages = Array.isArray(messages) ? messages : DEFAULT_MESSAGES;
@@ -1208,6 +1236,18 @@ export default function ChatBot() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* End Chat Button - Only in human_connected mode */}
+                  {chatMode === "human_connected" && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={endChatWithAgent}
+                      className="p-2 text-red-300 hover:bg-red-500/20 rounded-xl transition-colors"
+                      title="End Chat with Agent"
+                    >
+                      <PhoneOff size={18} />
+                    </motion.button>
+                  )}
                   <motion.button 
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}

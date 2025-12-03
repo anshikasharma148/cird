@@ -41,7 +41,7 @@ const state = {
   connectedUsers: new Map(),
   // Array of userIds waiting for an agent
   waitingQueue: [],
-  // Map: agentId -> { socketId, currentRoomId?, connectedAt, isBusy: boolean }
+  // Map: agentId -> { socketId, activeRoomIds: [], connectedAt }
   connectedAgents: new Map(),
   // Map: userId -> roomId (private room for user-agent chat)
   roomMapping: new Map(),
@@ -52,14 +52,30 @@ const state = {
 // ✅ Valid agent IDs
 const VALID_AGENT_IDS = ["agent1", "agent2", "agent3", "agent4"];
 
-// ✅ Helper: Find first free agent
+// ✅ Helper: Find first available agent (agents can handle multiple chats)
 const findFreeAgent = () => {
-  for (const agentId of VALID_AGENT_IDS) {
+  // Get all connected (live) agents
+  const liveAgents = VALID_AGENT_IDS.filter(agentId => {
     const agentData = state.connectedAgents.get(agentId);
-    if (agentData && !agentData.isBusy) {
-      return agentId;
-    }
+    return agentData; // Any connected agent can take chats
+  });
+
+  // If only one agent is live, return that agent
+  if (liveAgents.length === 1) {
+    return liveAgents[0];
   }
+
+  // If multiple agents are live, return the one with least active chats (load balancing)
+  if (liveAgents.length > 1) {
+    return liveAgents.reduce((leastBusy, agentId) => {
+      const leastBusyData = state.connectedAgents.get(leastBusy);
+      const currentData = state.connectedAgents.get(agentId);
+      const leastBusyCount = leastBusyData?.activeRoomIds?.length || 0;
+      const currentCount = currentData?.activeRoomIds?.length || 0;
+      return currentCount < leastBusyCount ? agentId : leastBusy;
+    });
+  }
+
   return null;
 };
 
@@ -67,10 +83,12 @@ const findFreeAgent = () => {
 const broadcastAgentStatus = () => {
   const agentStatuses = VALID_AGENT_IDS.map(agentId => {
     const agentData = state.connectedAgents.get(agentId);
+    const activeChatsCount = agentData?.activeRoomIds?.length || 0;
     return {
       agentId,
       isConnected: !!agentData,
-      isBusy: agentData?.isBusy || false,
+      activeChatsCount: activeChatsCount,
+      isBusy: activeChatsCount > 0, // Busy if has any active chats
     };
   });
 
@@ -121,17 +139,25 @@ io.on("connection", (socket) => {
     // Check if agent is already connected
     const existingAgent = state.connectedAgents.get(agentId);
     if (existingAgent) {
-      // Disconnect old socket if exists
+      // Check if the existing socket is still connected
       const oldSocket = io.sockets.sockets.get(existingAgent.socketId);
-      if (oldSocket) {
-        oldSocket.disconnect();
+      if (oldSocket && oldSocket.connected) {
+        // Agent is already logged in, reject this connection
+        socket.emit("agent_connect_error", { message: `Agent ${agentId} is already Live. Please use a different agent ID or wait for the current session to end.` });
+        console.log(`❌ Agent ${agentId} is already connected (socket: ${existingAgent.socketId}). Rejecting new connection from socket: ${socket.id}`);
+        return;
+      } else {
+        // Old socket is disconnected, clean up and allow new connection
+        console.log(`🧹 Cleaning up stale connection for agent ${agentId}`);
+        state.connectedAgents.delete(agentId);
+        state.connectedUsers.delete(existingAgent.socketId);
       }
     }
 
     state.connectedAgents.set(agentId, {
       socketId: socket.id,
       connectedAt: Date.now(),
-      isBusy: false, // Agent starts as free
+      activeRoomIds: [], // Array to track multiple active chats
     });
     state.connectedUsers.set(socket.id, {
       userId: agentId,
@@ -142,9 +168,9 @@ io.on("connection", (socket) => {
     socket.data.type = "agent";
     console.log(`👨‍💼 Agent connected: ${agentId} (socket: ${socket.id})`);
 
-    // Notify agent of waiting users (only if agent is free)
+    // Notify agent of waiting users (agents can handle multiple chats)
     const agentData = state.connectedAgents.get(agentId);
-    if (agentData && !agentData.isBusy) {
+    if (agentData) {
       socket.emit("waiting_users", state.waitingQueue.map((uid) => {
         const userSocket = Array.from(state.connectedUsers.entries())
           .find(([_, data]) => data.userId === uid && data.type === "user")?.[0];
@@ -195,7 +221,9 @@ io.on("connection", (socket) => {
     // Try to find a free agent and auto-assign
     const freeAgentId = findFreeAgent();
     if (freeAgentId) {
-      console.log(`✅ Found free agent: ${freeAgentId}, auto-assigning to user ${userId}`);
+      const liveAgentsCount = state.connectedAgents.size;
+      const agentActiveChats = freeAgentData.activeRoomIds?.length || 0;
+      console.log(`✅ Found agent: ${freeAgentId}, auto-assigning to user ${userId} (${liveAgentsCount} live agent(s), agent has ${agentActiveChats} active chat(s))`);
       const freeAgentData = state.connectedAgents.get(freeAgentId);
       const freeAgentSocket = io.sockets.sockets.get(freeAgentData.socketId);
       
@@ -211,9 +239,11 @@ io.on("connection", (socket) => {
           createdAt: Date.now(),
         });
 
-        // Mark agent as busy
-        freeAgentData.isBusy = true;
-        freeAgentData.currentRoomId = roomId;
+        // Add room to agent's active rooms
+        if (!freeAgentData.activeRoomIds) {
+          freeAgentData.activeRoomIds = [];
+        }
+        freeAgentData.activeRoomIds.push(roomId);
         state.connectedAgents.set(freeAgentId, freeAgentData);
 
         // Join both sockets to room
@@ -255,33 +285,31 @@ io.on("connection", (socket) => {
     state.waitingQueue.push(userId);
     console.log(`⏳ User ${userId} added to waiting queue (position: ${state.waitingQueue.length})`);
     console.log(`📊 Current queue:`, state.waitingQueue);
-    console.log(`📊 Available free agents: ${Array.from(state.connectedAgents.values()).filter(a => !a.isBusy).length}`);
+    console.log(`📊 Available live agents: ${state.connectedAgents.size}`);
 
     socket.emit("queue_position", {
       position: state.waitingQueue.length,
       total: state.waitingQueue.length,
     });
 
-    // Notify only free agents about waiting user
+    // Notify all live agents about waiting user (agents can handle multiple chats)
     let notifiedCount = 0;
     state.connectedAgents.forEach((agentData, agentId) => {
-      if (!agentData.isBusy) {
-        const agentSocket = io.sockets.sockets.get(agentData.socketId);
-        if (agentSocket) {
-          console.log(`📤 Sending new_user_waiting to free agent: ${agentId}`);
-          agentSocket.emit("new_user_waiting", {
-            userId,
-            waitingSince: userData.connectedAt,
-          });
-          notifiedCount++;
-        }
+      const agentSocket = io.sockets.sockets.get(agentData.socketId);
+      if (agentSocket) {
+        console.log(`📤 Sending new_user_waiting to agent: ${agentId}`);
+        agentSocket.emit("new_user_waiting", {
+          userId,
+          waitingSince: userData.connectedAt,
+        });
+        notifiedCount++;
       }
     });
 
     if (notifiedCount === 0) {
-      console.log(`⚠️ No free agents available to notify about waiting user`);
+      console.log(`⚠️ No live agents available to notify about waiting user`);
     } else {
-      console.log(`📢 Notified ${notifiedCount} free agent(s) about waiting user`);
+      console.log(`📢 Notified ${notifiedCount} live agent(s) about waiting user`);
     }
   });
 
@@ -294,11 +322,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // Check if agent is already busy
-    if (agentData.isBusy && agentData.currentRoomId) {
-      socket.emit("error", { message: "You are already in a chat. Please end the current chat first." });
-      return;
-    }
+    // Agents can handle multiple chats, so no need to check if busy
 
     // Remove from waiting queue
     const queueIndex = state.waitingQueue.indexOf(userId);
@@ -328,8 +352,13 @@ io.on("connection", (socket) => {
 
     // Join room
     socket.join(roomId);
-    agentData.currentRoomId = roomId;
-    agentData.isBusy = true; // Mark agent as busy
+    // Add room to agent's active rooms
+    if (!agentData.activeRoomIds) {
+      agentData.activeRoomIds = [];
+    }
+    if (!agentData.activeRoomIds.includes(roomId)) {
+      agentData.activeRoomIds.push(roomId);
+    }
     state.connectedAgents.set(socket.data.agentId, agentData);
 
     // Find user socket and join them to room
@@ -461,11 +490,13 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const actualRoomId = roomId || agentData.currentRoomId;
-    if (!actualRoomId) {
-      console.error(`❌ No roomId found for agent: ${socket.data.agentId}`);
+    // roomId must be provided for agent messages (agents can have multiple chats)
+    if (!roomId) {
+      console.error(`❌ No roomId provided for agent message from agent: ${socket.data.agentId}`);
+      socket.emit("error", { message: "Room ID is required for sending messages." });
       return;
     }
+    const actualRoomId = roomId;
 
     const room = state.activeRooms.get(actualRoomId);
     if (!room) {
@@ -565,12 +596,13 @@ io.on("connection", (socket) => {
     const agentData = state.connectedAgents.get(socket.data.agentId);
     if (!agentData) return;
 
-    const actualRoomId = roomId || agentData.currentRoomId;
-    if (actualRoomId) {
-      const room = state.activeRooms.get(actualRoomId);
-      if (!room) return;
+    // roomId must be provided for typing indicator
+    if (!roomId) return;
+    const actualRoomId = roomId;
+    const room = state.activeRooms.get(actualRoomId);
+    if (!room) return;
 
-      console.log(`⌨️ Agent typing in room ${actualRoomId}`);
+    console.log(`⌨️ Agent typing in room ${actualRoomId}`);
       
       // Find user socket and emit directly
       const userSocketEntry = Array.from(state.connectedUsers.entries())
@@ -587,7 +619,6 @@ io.on("connection", (socket) => {
       
       // Also emit to room (for any other sockets)
       socket.to(actualRoomId).emit("agent_typing", { agentId: socket.data.agentId, roomId: actualRoomId });
-    }
   });
 
   socket.on("agent_stopped_typing", (data) => {
@@ -595,12 +626,13 @@ io.on("connection", (socket) => {
     const agentData = state.connectedAgents.get(socket.data.agentId);
     if (!agentData) return;
 
-    const actualRoomId = roomId || agentData.currentRoomId;
-    if (actualRoomId) {
-      const room = state.activeRooms.get(actualRoomId);
-      if (!room) return;
+    // roomId must be provided for typing indicator
+    if (!roomId) return;
+    const actualRoomId = roomId;
+    const room = state.activeRooms.get(actualRoomId);
+    if (!room) return;
 
-      console.log(`⌨️ Agent stopped typing in room ${actualRoomId}`);
+    console.log(`⌨️ Agent stopped typing in room ${actualRoomId}`);
       
       // Find user socket and emit directly
       const userSocketEntry = Array.from(state.connectedUsers.entries())
@@ -617,7 +649,6 @@ io.on("connection", (socket) => {
       
       // Also emit to room
       socket.to(actualRoomId).emit("agent_stopped_typing", { agentId: socket.data.agentId, roomId: actualRoomId });
-    }
   });
 
   // ✅ Mark message as read
@@ -662,8 +693,11 @@ io.on("connection", (socket) => {
     const agentData = state.connectedAgents.get(socket.data.agentId);
     if (!agentData) return;
 
-    const actualRoomId = roomId || agentData.currentRoomId;
-    if (!actualRoomId) return;
+    if (!roomId) {
+      console.error(`❌ No roomId provided for agent_disconnect_chat from agent: ${socket.data.agentId}`);
+      return;
+    }
+    const actualRoomId = roomId;
 
     const room = state.activeRooms.get(actualRoomId);
     if (room) {
@@ -675,8 +709,11 @@ io.on("connection", (socket) => {
       // Clean up
       state.roomMapping.delete(room.userId);
       state.activeRooms.delete(actualRoomId);
-      agentData.currentRoomId = null;
-      agentData.isBusy = false; // Mark agent as free
+      
+      // Remove room from agent's active rooms
+      if (agentData.activeRoomIds) {
+        agentData.activeRoomIds = agentData.activeRoomIds.filter(id => id !== actualRoomId);
+      }
       state.connectedAgents.set(socket.data.agentId, agentData);
 
       // Remove user from room
@@ -694,7 +731,7 @@ io.on("connection", (socket) => {
       // Broadcast agent status update
       broadcastAgentStatus();
 
-      // Notify free agents about any waiting users
+      // Notify all live agents about any waiting users (agents can handle multiple chats)
       if (state.waitingQueue.length > 0) {
         const waitingUserId = state.waitingQueue[0];
         const waitingUserData = Array.from(state.connectedUsers.values())
@@ -702,14 +739,12 @@ io.on("connection", (socket) => {
         
         if (waitingUserData) {
           state.connectedAgents.forEach((otherAgentData, otherAgentId) => {
-            if (!otherAgentData.isBusy) {
-              const otherAgentSocket = io.sockets.sockets.get(otherAgentData.socketId);
-              if (otherAgentSocket) {
-                otherAgentSocket.emit("new_user_waiting", {
-                  userId: waitingUserId,
-                  waitingSince: waitingUserData.connectedAt,
-                });
-              }
+            const otherAgentSocket = io.sockets.sockets.get(otherAgentData.socketId);
+            if (otherAgentSocket) {
+              otherAgentSocket.emit("new_user_waiting", {
+                userId: waitingUserId,
+                waitingSince: waitingUserData.connectedAt,
+              });
             }
           });
         }
@@ -720,7 +755,48 @@ io.on("connection", (socket) => {
     }
   });
 
-  // ✅ User disconnects
+  // ✅ User ends chat (explicit disconnect from chat)
+  socket.on("user_disconnect_chat", (data) => {
+    const { roomId } = data;
+    const userData = state.connectedUsers.get(socket.id);
+    if (!userData || userData.type !== "user") return;
+
+    const userId = userData.userId;
+    const actualRoomId = roomId || state.roomMapping.get(userId);
+    if (!actualRoomId) return;
+
+    const room = state.activeRooms.get(actualRoomId);
+    if (room) {
+      // Notify agent
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("user_disconnected", { roomId: actualRoomId, userId });
+        }
+        
+        // Remove room from agent's active rooms
+        if (agentData.activeRoomIds) {
+          agentData.activeRoomIds = agentData.activeRoomIds.filter(id => id !== actualRoomId);
+        }
+        state.connectedAgents.set(room.agentId, agentData);
+        
+        // Broadcast agent status update
+        broadcastAgentStatus();
+      }
+
+      // Clean up room
+      state.roomMapping.delete(userId);
+      state.activeRooms.delete(actualRoomId);
+      
+      // Remove user from room
+      socket.leave(actualRoomId);
+      
+      console.log(`🔌 User ${userId} ended chat in room ${actualRoomId}`);
+    }
+  });
+
+  // ✅ User disconnects (socket disconnect)
   socket.on("disconnect", () => {
     const userData = state.connectedUsers.get(socket.id);
     if (!userData) return;

@@ -58,18 +58,50 @@ const uid = (prefix = "") =>
 type AgentStatus = {
   agentId: string;
   isConnected: boolean;
+  activeChatsCount?: number;
   isBusy: boolean;
 };
 
+const AGENT_AUTH_KEY = "cird_agent_auth";
+
 export default function AgentDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Load authentication state from localStorage on mount
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(AGENT_AUTH_KEY);
+      if (saved) {
+        try {
+          const authData = JSON.parse(saved);
+          return authData.isAuthenticated === true;
+        } catch {
+          return false;
+        }
+      }
+    }
+    return false;
+  });
+  
   const [pin, setPin] = useState("");
   const [pinError, setPinError] = useState("");
-  const [selectedAgentId, setSelectedAgentId] = useState<string>("agent1");
+  const [selectedAgentId, setSelectedAgentId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(AGENT_AUTH_KEY);
+      if (saved) {
+        try {
+          const authData = JSON.parse(saved);
+          return authData.agentId || "agent1";
+        } catch {
+          return "agent1";
+        }
+      }
+    }
+    return "agent1";
+  });
   const [socket, setSocket] = useState<Socket | null>(null);
   const [agentStatuses, setAgentStatuses] = useState<AgentStatus[]>([]);
   const [waitingUsers, setWaitingUsers] = useState<WaitingUser[]>([]);
-  const [activeChat, setActiveChat] = useState<ActiveChat | null>(null);
+  const [activeChats, setActiveChats] = useState<ActiveChat[]>([]);
+  const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [messageInput, setMessageInput] = useState("");
   const [userTyping, setUserTyping] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -79,31 +111,32 @@ export default function AgentDashboard() {
   const agentTypingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   /* ---------------- Scroll to bottom ---------------- */
+  const selectedChat = activeChats.find(chat => chat.roomId === selectedChatId);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [activeChat?.messages, userTyping]);
+  }, [selectedChat?.messages, userTyping]);
 
   // ✅ Mark user messages as read when agent views them
   useEffect(() => {
-    if (!activeChat || !socket) return;
+    if (!selectedChat || !socket) return;
 
     // Find unread user messages
-    const unreadUserMessages = activeChat.messages.filter(
+    const unreadUserMessages = selectedChat.messages.filter(
       (msg) => msg.sender === "user" && msg.readBy && !msg.readBy.agent
     );
 
     // Mark them as read after a delay
     unreadUserMessages.forEach((msg) => {
       setTimeout(() => {
-        if (socket && activeChat.roomId) {
+        if (socket && selectedChat.roomId) {
           socket.emit("message_read", {
             messageId: msg.id,
-            roomId: activeChat.roomId,
+            roomId: selectedChat.roomId,
           });
         }
       }, 500);
     });
-  }, [activeChat?.messages, socket, activeChat?.roomId]);
+  }, [selectedChat?.messages, socket, selectedChat?.roomId]);
 
   /* ---------------- Socket.io Connection ---------------- */
   useEffect(() => {
@@ -115,6 +148,15 @@ export default function AgentDashboard() {
         ? "https://cird.onrender.com"
         : "http://localhost:5000");
 
+    // Update localStorage when agent ID changes
+    if (typeof window !== "undefined") {
+      localStorage.setItem(AGENT_AUTH_KEY, JSON.stringify({
+        isAuthenticated: true,
+        agentId: selectedAgentId,
+        timestamp: Date.now(),
+      }));
+    }
+    
     setIsConnecting(true);
     const socketInstance = io(baseURL, {
       transports: ["websocket", "polling"],
@@ -131,6 +173,12 @@ export default function AgentDashboard() {
       console.error("❌ Agent connect error:", data.message);
       setPinError(data.message);
       setIsConnecting(false);
+      setIsAuthenticated(false);
+      // Disconnect the socket
+      socketInstance.disconnect();
+      setSocket(null);
+      // Clear localStorage
+      localStorage.removeItem(AGENT_AUTH_KEY);
     });
 
     socketInstance.on("agent_status_update", (data: { agents: AgentStatus[] }) => {
@@ -155,14 +203,11 @@ export default function AgentDashboard() {
 
     socketInstance.on("new_user_waiting", (data: { userId: string; waitingSince: number }) => {
       console.log("🆕 New user waiting:", data);
-      // Only add to waiting list if agent is free
-      const currentAgentStatus = agentStatuses.find(a => a.agentId === selectedAgentId);
-      if (!currentAgentStatus || !currentAgentStatus.isBusy) {
-        setWaitingUsers((prev) => {
-          if (prev.some((u) => u.userId === data.userId)) return prev;
-          return [...prev, { userId: data.userId, waitingSince: data.waitingSince }];
-        });
-      }
+      // Agents can handle multiple chats, so always add to waiting list
+      setWaitingUsers((prev) => {
+        if (prev.some((u) => u.userId === data.userId)) return prev;
+        return [...prev, { userId: data.userId, waitingSince: data.waitingSince }];
+      });
     });
 
     socketInstance.on("user_left_queue", (data: { userId: string }) => {
@@ -177,7 +222,7 @@ export default function AgentDashboard() {
 
     socketInstance.on("chat_started", (data: { roomId: string; userId: string; autoAssigned?: boolean }) => {
       console.log("💬 Chat started:", data);
-      setActiveChat({
+      const newChat: ActiveChat = {
         userId: data.userId,
         roomId: data.roomId,
         messages: [
@@ -189,30 +234,48 @@ export default function AgentDashboard() {
           },
         ],
         startedAt: Date.now(),
+      };
+      
+      setActiveChats((prev) => {
+        // Check if chat already exists
+        if (prev.some(chat => chat.roomId === data.roomId)) {
+          return prev;
+        }
+        return [...prev, newChat];
       });
+      
+      // Select the new chat
+      setSelectedChatId(data.roomId);
+      
       setWaitingUsers((prev) => prev.filter((u) => u.userId !== data.userId));
       
       // Update agent status locally
       setAgentStatuses(prev => prev.map(a => 
-        a.agentId === selectedAgentId ? { ...a, isBusy: true } : a
+        a.agentId === selectedAgentId ? { ...a, activeChatsCount: (a.activeChatsCount || 0) + 1, isBusy: true } : a
       ));
     });
 
     socketInstance.on("new_message", (data: { id?: string; sender: string; text: string; timestamp: number; roomId?: string; readBy?: { user: boolean; agent: boolean } }) => {
       // Handle both user and agent messages
       if (data.sender === "user" || data.sender === "agent") {
-        setActiveChat((prev) => {
-          // Only process if we have an active chat
-          if (!prev) return null;
+        if (!data.roomId) {
+          console.error("⚠️ No roomId in new_message event");
+          return;
+        }
+        
+        setActiveChats((prev) => {
+          const chatIndex = prev.findIndex(chat => chat.roomId === data.roomId);
           
-          // If roomId is provided, verify it matches the active chat
-          if (data.roomId && data.roomId !== prev.roomId) {
-            console.log(`⚠️ Message roomId mismatch: ${data.roomId} !== ${prev.roomId}`);
-            return prev;
+          if (chatIndex === -1) {
+            // Chat doesn't exist, might be a new auto-assigned chat
+            console.log(`📨 New chat detected for room ${data.roomId}`);
+            return prev; // Will be created by chat_started event
           }
-
+          
+          const chat = prev[chatIndex];
+          
           // Check if message already exists (prevent duplicates)
-          const messageExists = prev.messages.some(
+          const messageExists = chat.messages.some(
             (msg) => msg.text === data.text && Math.abs(msg.timestamp - data.timestamp) < 1000
           );
           if (messageExists) {
@@ -220,25 +283,26 @@ export default function AgentDashboard() {
             return prev;
           }
           
-          console.log(`📨 Received message from ${data.sender} in room ${data.roomId || prev.roomId}`);
+          console.log(`📨 Received message from ${data.sender} in room ${data.roomId}`);
           
-          // Mark user messages as read by agent when received
+          // Mark user messages as read by agent when received (only if chat is selected)
           const readBy = data.readBy || { user: data.sender === "user", agent: data.sender === "agent" };
-          if (data.sender === "user") {
-            readBy.agent = true; // Agent reads user messages immediately
+          if (data.sender === "user" && selectedChatId === data.roomId) {
+            readBy.agent = true; // Agent reads user messages when viewing
             // Notify server
-            if (socketInstance && prev.roomId) {
+            if (socketInstance) {
               socketInstance.emit("message_read", {
                 messageId: data.id || uid("msg_"),
-                roomId: prev.roomId,
+                roomId: data.roomId,
               });
             }
           }
           
-          return {
-            ...prev,
+          const updated = [...prev];
+          updated[chatIndex] = {
+            ...chat,
             messages: [
-              ...prev.messages,
+              ...chat.messages,
               {
                 id: data.id || uid("msg_"),
                 sender: data.sender as "agent" | "user",
@@ -248,61 +312,75 @@ export default function AgentDashboard() {
               },
             ],
           };
+          
+          return updated;
         });
       }
     });
 
     socketInstance.on("message_read_update", (data: { messageId: string; readBy: { user: boolean; agent: boolean }; roomId?: string }) => {
-      if (!activeChat) return;
-      
-      if (data.roomId && data.roomId !== activeChat.roomId) {
-        return;
-      }
+      if (!data.roomId) return;
       
       console.log("✅ Message read update received:", data);
       
-      setActiveChat((prev) => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          messages: prev.messages.map((msg) =>
+      setActiveChats((prev) => {
+        const chatIndex = prev.findIndex(chat => chat.roomId === data.roomId);
+        if (chatIndex === -1) return prev;
+        
+        const updated = [...prev];
+        updated[chatIndex] = {
+          ...updated[chatIndex],
+          messages: updated[chatIndex].messages.map((msg) =>
             msg.id === data.messageId
               ? { ...msg, readBy: data.readBy }
               : msg
           ),
         };
+        return updated;
       });
     });
 
-    socketInstance.on("user_typing", (data: { userId: string }) => {
-      if (activeChat && data.userId === activeChat.userId) {
-        setUserTyping(true);
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current);
+    socketInstance.on("user_typing", (data: { userId: string; roomId?: string }) => {
+      // Only show typing indicator for the selected chat
+      if (selectedChatId && data.roomId === selectedChatId) {
+        const selectedChat = activeChats.find(chat => chat.roomId === selectedChatId);
+        if (selectedChat && data.userId === selectedChat.userId) {
+          setUserTyping(true);
+          if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+          }
+          typingTimeoutRef.current = setTimeout(() => {
+            setUserTyping(false);
+          }, 3000);
         }
-        typingTimeoutRef.current = setTimeout(() => {
-          setUserTyping(false);
-        }, 3000);
       }
     });
 
     socketInstance.on("user_disconnected", (data: { roomId: string; userId: string }) => {
-      if (activeChat && activeChat.roomId === data.roomId) {
-        setActiveChat((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            messages: [
-              ...prev.messages,
-              {
-                id: uid("system_"),
-                sender: "user",
-                text: "User has disconnected.",
-                timestamp: Date.now(),
-              },
-            ],
-          };
-        });
+      setActiveChats((prev) => {
+        const chatIndex = prev.findIndex(chat => chat.roomId === data.roomId);
+        if (chatIndex === -1) return prev;
+        
+        const updated = [...prev];
+        updated[chatIndex] = {
+          ...updated[chatIndex],
+          messages: [
+            ...updated[chatIndex].messages,
+            {
+              id: uid("system_"),
+              sender: "user",
+              text: "User has disconnected.",
+              timestamp: Date.now(),
+            },
+          ],
+        };
+        return updated;
+      });
+      
+      // If this was the selected chat, clear selection
+      if (selectedChatId === data.roomId) {
+        setSelectedChatId(null);
+        setUserTyping(false);
       }
     });
 
@@ -320,6 +398,12 @@ export default function AgentDashboard() {
     if (pin === AGENT_PIN) {
       setIsAuthenticated(true);
       setPinError("");
+      // Save authentication state to localStorage
+      localStorage.setItem(AGENT_AUTH_KEY, JSON.stringify({
+        isAuthenticated: true,
+        agentId: selectedAgentId,
+        timestamp: Date.now(),
+      }));
     } else {
       setPinError("Invalid PIN. Please try again.");
       setPin("");
@@ -337,7 +421,7 @@ export default function AgentDashboard() {
 
   /* ---------------- Handle Agent Typing ---------------- */
   const handleAgentTyping = useCallback(() => {
-    if (!socket || !activeChat) return;
+    if (!socket || !selectedChatId) return;
 
     // Clear any existing stop typing timeout
     if (agentTypingTimeoutRef.current) {
@@ -345,20 +429,20 @@ export default function AgentDashboard() {
     }
 
     // Send typing indicator
-    socket.emit("agent_typing", { roomId: activeChat.roomId });
+    socket.emit("agent_typing", { roomId: selectedChatId });
 
     // Set timeout to send stop typing after 2 seconds of inactivity
     agentTypingTimeoutRef.current = setTimeout(() => {
-      if (socket && activeChat) {
-        socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+      if (socket && selectedChatId) {
+        socket.emit("agent_stopped_typing", { roomId: selectedChatId });
       }
       agentTypingTimeoutRef.current = null;
     }, 2000);
-  }, [socket, activeChat]);
+  }, [socket, selectedChatId]);
 
   /* ---------------- Send Message ---------------- */
   const sendMessage = useCallback(() => {
-    if (!socket || !activeChat || !messageInput.trim()) return;
+    if (!socket || !selectedChatId || !messageInput.trim()) return;
 
     const messageText = messageInput.trim();
     const timestamp = Date.now();
@@ -371,21 +455,24 @@ export default function AgentDashboard() {
     }
 
     // Send stop typing indicator
-    socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+    socket.emit("agent_stopped_typing", { roomId: selectedChatId });
 
     // Send via Socket.io first (server will broadcast to room)
     socket.emit("agent_message", {
       message: messageText,
-      roomId: activeChat.roomId,
+      roomId: selectedChatId,
     });
 
     // Add to local state (will also be received via new_message event, but adding immediately for better UX)
-    setActiveChat((prev) => {
-      if (!prev) return null;
-      return {
-        ...prev,
+    setActiveChats((prev) => {
+      const chatIndex = prev.findIndex(chat => chat.roomId === selectedChatId);
+      if (chatIndex === -1) return prev;
+      
+      const updated = [...prev];
+      updated[chatIndex] = {
+        ...updated[chatIndex],
         messages: [
-          ...prev.messages,
+          ...updated[chatIndex].messages,
           {
             id: messageId,
             sender: "agent",
@@ -395,24 +482,40 @@ export default function AgentDashboard() {
           },
         ],
       };
+      return updated;
     });
 
     setMessageInput("");
-  }, [socket, activeChat, messageInput]);
+  }, [socket, selectedChatId, messageInput]);
 
   /* ---------------- End Chat ---------------- */
-  const endChat = useCallback(() => {
-    if (!socket || !activeChat) return;
+  const endChat = useCallback((roomId: string) => {
+    if (!socket || !roomId) return;
 
-    socket.emit("agent_disconnect_chat", { roomId: activeChat.roomId });
-    setActiveChat(null);
-    setUserTyping(false);
+    socket.emit("agent_disconnect_chat", { roomId });
+    
+    // Remove chat from active chats
+    setActiveChats((prev) => prev.filter(chat => chat.roomId !== roomId));
+    
+    // If this was the selected chat, clear selection
+    if (selectedChatId === roomId) {
+      setSelectedChatId(null);
+      setUserTyping(false);
+      
+      // Select another chat if available
+      setActiveChats((prev) => {
+        if (prev.length > 0) {
+          setSelectedChatId(prev[0].roomId);
+        }
+        return prev;
+      });
+    }
     
     // Update agent status locally
     setAgentStatuses(prev => prev.map(a => 
-      a.agentId === selectedAgentId ? { ...a, isBusy: false } : a
+      a.agentId === selectedAgentId ? { ...a, activeChatsCount: Math.max(0, (a.activeChatsCount || 0) - 1), isBusy: (a.activeChatsCount || 0) > 1 } : a
     ));
-  }, [socket, activeChat, selectedAgentId]);
+  }, [socket, selectedChatId, selectedAgentId]);
 
   /* ---------------- Logout ---------------- */
   const handleLogout = () => {
@@ -421,9 +524,12 @@ export default function AgentDashboard() {
       setSocket(null);
     }
     setIsAuthenticated(false);
-    setActiveChat(null);
+    setActiveChats([]);
+    setSelectedChatId(null);
     setWaitingUsers([]);
     setPin("");
+    // Clear authentication from localStorage
+    localStorage.removeItem(AGENT_AUTH_KEY);
   };
 
   /* ---------------- Render ---------------- */
@@ -516,13 +622,25 @@ export default function AgentDashboard() {
                       key={status.agentId}
                       className={`text-xs px-2 py-0.5 rounded ${
                         status.agentId === selectedAgentId
-                          ? status.isBusy
-                            ? "bg-red-500"
-                            : "bg-green-500"
+                          ? status.activeChatsCount && status.activeChatsCount > 0
+                            ? "bg-orange-500"
+                            : status.isConnected
+                            ? "bg-green-500"
+                            : "bg-gray-400"
+                          : status.isConnected
+                          ? status.activeChatsCount && status.activeChatsCount > 0
+                            ? "bg-orange-500/50"
+                            : "bg-green-500/50"
                           : "bg-white/20"
                       }`}
                     >
-                      {status.agentId}: {status.isBusy ? "Busy" : "Free"}
+                      {status.agentId}: {
+                        !status.isConnected 
+                          ? "Free" 
+                          : status.activeChatsCount && status.activeChatsCount > 0
+                          ? `Live (${status.activeChatsCount})`
+                          : "Live"
+                      }
                     </span>
                   ))}
                 </div>
@@ -579,7 +697,7 @@ export default function AgentDashboard() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => joinUserChat(user.userId)}
-                      disabled={!!activeChat}
+                      disabled={false}
                       className="w-full bg-[#2d545e] text-white text-sm py-2 rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Join Chat
@@ -594,36 +712,69 @@ export default function AgentDashboard() {
         {/* Active Chat Panel */}
         <div className="lg:col-span-2">
           <div className="bg-white rounded-xl shadow-md h-[calc(100vh-120px)] flex flex-col">
-            {activeChat ? (
+            {activeChats.length > 0 ? (
               <>
-                {/* Chat Header */}
-                <div className="border-b border-gray-200 p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                      <UserIcon size={20} className="text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-800">
-                        Chat with {activeChat.userId.slice(0, 12)}...
-                      </h3>
-                      <p className="text-xs text-gray-500">
-                        Started {formatTime(activeChat.startedAt)}
-                      </p>
-                    </div>
-                  </div>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={endChat}
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
-                  >
-                    End Chat
-                  </motion.button>
+                {/* Chat Tabs */}
+                <div className="border-b border-gray-200 flex overflow-x-auto">
+                  {activeChats.map((chat) => (
+                    <button
+                      key={chat.roomId}
+                      onClick={() => setSelectedChatId(chat.roomId)}
+                      className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                        selectedChatId === chat.roomId
+                          ? "border-[#2d545e] text-[#2d545e] bg-[#e1b382]/10"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <UserIcon size={14} />
+                        <span>{chat.userId.slice(0, 10)}...</span>
+                        {(() => {
+                          const unreadCount = chat.messages.filter(
+                            msg => msg.sender === "user" && msg.readBy && !msg.readBy.agent
+                          ).length;
+                          return unreadCount > 0 ? (
+                            <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                              {unreadCount}
+                            </span>
+                          ) : null;
+                        })()}
+                      </div>
+                    </button>
+                  ))}
                 </div>
 
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-                  {activeChat.messages.map((msg) => (
+                {/* Selected Chat Content */}
+                {selectedChat && (
+                  <>
+                    {/* Chat Header */}
+                    <div className="border-b border-gray-200 p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                          <UserIcon size={20} className="text-white" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-800">
+                            Chat with {selectedChat.userId.slice(0, 12)}...
+                          </h3>
+                          <p className="text-xs text-gray-500">
+                            Started {formatTime(selectedChat.startedAt)}
+                          </p>
+                        </div>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => endChat(selectedChat.roomId)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                      >
+                        End Chat
+                      </motion.button>
+                    </div>
+
+                    {/* Messages */}
+                    <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+                      {selectedChat.messages.map((msg) => (
                     <motion.div
                       key={msg.id}
                       initial={{ opacity: 0, y: 10 }}
@@ -713,8 +864,8 @@ export default function AgentDashboard() {
                             clearTimeout(agentTypingTimeoutRef.current);
                             agentTypingTimeoutRef.current = null;
                           }
-                          if (socket && activeChat) {
-                            socket.emit("agent_stopped_typing", { roomId: activeChat.roomId });
+                          if (socket && selectedChatId) {
+                            socket.emit("agent_stopped_typing", { roomId: selectedChatId });
                           }
                         }
                       }}
@@ -725,19 +876,22 @@ export default function AgentDashboard() {
                         }
                       }}
                       placeholder="Type your message..."
-                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none"
+                      disabled={!selectedChat}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={sendMessage}
-                      disabled={!messageInput.trim()}
+                      disabled={!selectedChat || !messageInput.trim()}
                       className="px-6 py-2 bg-[#2d545e] text-white rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send size={18} />
                     </motion.button>
                   </div>
                 </div>
+                  </>
+                )}
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center text-center text-gray-500">
