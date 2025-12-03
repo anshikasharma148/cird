@@ -149,15 +149,15 @@ export default function HeroSection() {
     <section className="relative w-full bg-white">
       {/* Fixed Header and Navigation Container */}
       <div ref={headerRef} className="fixed top-0 left-0 right-0 bg-[#e1b382] z-50 shadow-sm">
-        {/* Agent Dashboard Link - Upper Right Corner */}
+        {/* Margadarshak Dashboard Link - Upper Right Corner */}
         <div className="absolute top-2 right-2 sm:top-3 sm:right-4 z-50">
           <Link
             href="/agent"
             className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[#2d545e] hover:text-white hover:bg-[#2d545e] rounded-md transition-all duration-200 border border-[#c89666] hover:border-[#2d545e] shadow-sm hover:shadow-md"
-            title="Agent Dashboard"
+            title="Margadarshak Dashboard"
           >
             <Shield size={14} className="sm:w-4 sm:h-4" />
-            <span className="hidden sm:inline">Agent</span>
+            <span className="hidden sm:inline">Margadarshak</span>
           </Link>
         </div>
         
