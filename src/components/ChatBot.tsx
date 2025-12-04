@@ -21,6 +21,11 @@ import {
   Copy,
   Check,
   Search,
+  Phone,
+  Video,
+  VideoOff,
+  Mic,
+  MicOff,
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
@@ -266,6 +271,17 @@ export default function ChatBot() {
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  
+  // Call state
+  const [callState, setCallState] = useState<"idle" | "ringing" | "connected" | "incoming">("idle");
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const localVideoRef = useRef<HTMLVideoElement | null>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+  const incomingCallOfferRef = useRef<RTCSessionDescriptionInit | null>(null);
 
   // Update refs when state changes
   useEffect(() => {
@@ -670,9 +686,88 @@ export default function ChatBot() {
       );
     });
 
+    // ✅ WebRTC Call Event Handlers
+    socketInstance.on("call_offer", async (data: { roomId: string; offer: RTCSessionDescriptionInit; callerId: string }) => {
+      console.log("📞 Incoming call offer from:", data.callerId, "roomId:", data.roomId, "currentRoom:", currentRoomIdRef.current);
+      
+      if (data.roomId !== currentRoomIdRef.current) {
+        console.log("⚠️ Room ID mismatch, ignoring call offer");
+        return;
+      }
+      
+      incomingCallOfferRef.current = data.offer;
+      setCallState("incoming");
+      
+      // Play notification sound (ringing)
+      const playRing = () => {
+        try {
+          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          oscillator.frequency.value = 800;
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.2);
+        } catch (error) {
+          console.log("Could not play call sound:", error);
+        }
+      };
+      
+      // Play ring sound every 2 seconds while incoming
+      const ringInterval = setInterval(() => {
+        if (callState === "incoming") {
+          playRing();
+        } else {
+          clearInterval(ringInterval);
+        }
+      }, 2000);
+      
+      // Cleanup interval when call state changes
+      setTimeout(() => clearInterval(ringInterval), 30000); // Stop after 30 seconds
+    });
+
+    socketInstance.on("call_answer", async (data: { roomId: string; answer: RTCSessionDescriptionInit }) => {
+      if (data.roomId !== currentRoomIdRef.current || !peerConnection) return;
+      
+      console.log("📞 Call answered");
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      setCallState("connected");
+    });
+
+    socketInstance.on("call_ice_candidate", async (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
+      if (data.roomId !== currentRoomIdRef.current || !peerConnection) return;
+      
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } catch (error) {
+        console.error("Error adding ICE candidate:", error);
+      }
+    });
+
+    socketInstance.on("call_end", (data: { roomId: string }) => {
+      if (data.roomId !== currentRoomIdRef.current) return;
+      
+      console.log("📞 Call ended by agent");
+      endCall();
+    });
+
     setSocket(socketInstance);
 
     return () => {
+      // Cleanup call handlers
+      socketInstance.off("call_offer");
+      socketInstance.off("call_answer");
+      socketInstance.off("call_ice_candidate");
+      socketInstance.off("call_end");
+      
       // Only disconnect when chat is closed, not on every render
       if (!open) {
         socketInstance.disconnect();
@@ -680,7 +775,7 @@ export default function ChatBot() {
         setSocketConnected(false);
       }
     };
-  }, [open, userId]);
+  }, [open, userId, peerConnection, endCall]);
 
   /* ---------------- Human Handoff Detection ---------------- */
   const detectHumanHandoff = (text: string): boolean => {
@@ -1033,6 +1128,213 @@ export default function ChatBot() {
   }, [socket, socketConnected, userId]);
 
   /* ---------------- End Chat with Agent ---------------- */
+  // WebRTC Configuration
+  const rtcConfiguration: RTCConfiguration = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ],
+  };
+
+  // Initialize WebRTC Peer Connection
+  const createPeerConnection = useCallback(() => {
+    const pc = new RTCPeerConnection(rtcConfiguration);
+
+    // Handle ICE candidates
+    pc.onicecandidate = (event) => {
+      if (event.candidate && socket && currentRoomIdRef.current) {
+        socket.emit("call_ice_candidate", {
+          roomId: currentRoomIdRef.current,
+          candidate: event.candidate,
+          senderType: "user",
+        });
+      }
+    };
+
+    // Handle remote stream
+    pc.ontrack = (event) => {
+      if (event.streams[0]) {
+        setRemoteStream(event.streams[0]);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = event.streams[0];
+        }
+      }
+    };
+
+    // Add local stream tracks if available
+    if (localStream) {
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream);
+      });
+    }
+
+    return pc;
+  }, [socket, localStream]);
+
+  // Answer Call
+  const answerCall = useCallback(async () => {
+    if (!currentRoomIdRef.current || !socket || !incomingCallOfferRef.current) {
+      console.error("Cannot answer call: missing roomId, socket, or offer");
+      return;
+    }
+
+    try {
+      console.log("📞 Answering call...");
+      
+      // Get user media
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: isVideoEnabled,
+        audio: !isMuted,
+      });
+      
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      // Create peer connection
+      const pc = new RTCPeerConnection(rtcConfiguration);
+
+      // Handle ICE candidates
+      pc.onicecandidate = (event) => {
+        if (event.candidate && socket && currentRoomIdRef.current) {
+          socket.emit("call_ice_candidate", {
+            roomId: currentRoomIdRef.current,
+            candidate: event.candidate,
+            senderType: "user",
+          });
+        }
+      };
+
+      // Handle remote stream
+      pc.ontrack = (event) => {
+        if (event.streams[0]) {
+          setRemoteStream(event.streams[0]);
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = event.streams[0];
+          }
+        }
+      };
+
+      // Add local stream tracks
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+      });
+
+      setPeerConnection(pc);
+
+      // Set remote description (the offer)
+      await pc.setRemoteDescription(new RTCSessionDescription(incomingCallOfferRef.current));
+
+      // Create answer
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      // Send answer
+      socket.emit("call_answer", {
+        roomId: currentRoomIdRef.current,
+        answer: answer,
+        answererType: "user",
+      });
+
+      console.log("✅ Call answered, waiting for connection...");
+      setCallState("connected");
+      incomingCallOfferRef.current = null;
+    } catch (error: any) {
+      console.error("Error answering call:", error);
+      let errorMessage = "Could not access camera/microphone.\n\n";
+      
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
+        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "3. Refresh the page and try again";
+      } else {
+        errorMessage += `Error: ${error.message || "Unknown error"}`;
+      }
+      
+      alert(errorMessage);
+      setCallState("idle");
+      incomingCallOfferRef.current = null;
+    }
+  }, [socket, isVideoEnabled, isMuted]);
+
+  // Reject Call
+  const rejectCall = useCallback(() => {
+    if (socket && currentRoomIdRef.current) {
+      socket.emit("call_end", {
+        roomId: currentRoomIdRef.current,
+        enderType: "user",
+      });
+    }
+    setCallState("idle");
+    incomingCallOfferRef.current = null;
+  }, [socket]);
+
+  // End Call
+  const endCall = useCallback(() => {
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop());
+      setLocalStream(null);
+    }
+    
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+      setRemoteStream(null);
+    }
+
+    if (peerConnection) {
+      peerConnection.close();
+      setPeerConnection(null);
+    }
+
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    if (socket && currentRoomIdRef.current) {
+      socket.emit("call_end", {
+        roomId: currentRoomIdRef.current,
+        enderType: "user",
+      });
+    }
+
+    setCallState("idle");
+    incomingCallOfferRef.current = null;
+  }, [localStream, remoteStream, peerConnection, socket]);
+
+  // Toggle Mute
+  const toggleMute = useCallback(() => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = isMuted;
+      });
+      setIsMuted(!isMuted);
+    }
+  }, [localStream, isMuted]);
+
+  // Toggle Video
+  const toggleVideo = useCallback(() => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((track) => {
+        track.enabled = !isVideoEnabled;
+      });
+      setIsVideoEnabled(!isVideoEnabled);
+    }
+  }, [localStream, isVideoEnabled]);
+
+  // Cleanup on unmount or chat change
+  useEffect(() => {
+    return () => {
+      if (callState !== "idle") {
+        endCall();
+      }
+    };
+  }, [currentRoomId]);
+
   const endChatWithAgent = useCallback(() => {
     if (chatMode !== "human_connected" || !socket || !currentRoomId) return;
 
@@ -1717,6 +2019,136 @@ export default function ChatBot() {
                   </div>
                 </div>
               )}
+
+              {/* Incoming Call UI */}
+              <AnimatePresence>
+                {callState === "incoming" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="border-t border-[#c89666] bg-gradient-to-r from-green-500 to-green-600 p-4"
+                  >
+                    <div className="text-center text-white">
+                      <div className="flex items-center justify-center gap-3 mb-4">
+                        <motion.div
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                          className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center"
+                        >
+                          <Phone size={32} className="text-white" />
+                        </motion.div>
+                      </div>
+                      <h3 className="text-lg font-semibold mb-2">Incoming Call</h3>
+                      <p className="text-sm text-white/90 mb-4">Margadarshak is calling you...</p>
+                      <div className="flex items-center justify-center gap-3">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={rejectCall}
+                          className="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors flex items-center gap-2"
+                        >
+                          <PhoneOff size={20} />
+                          Decline
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={answerCall}
+                          className="px-6 py-3 bg-white text-green-600 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-2 font-semibold"
+                        >
+                          <Phone size={20} />
+                          Answer
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Active Call UI */}
+              <AnimatePresence>
+                {callState === "connected" && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-t border-[#c89666] bg-gray-900 overflow-hidden"
+                  >
+                    <div className="grid grid-cols-2 gap-2 p-4">
+                      {/* Remote Video */}
+                      <div className="relative bg-black rounded-lg aspect-video">
+                        {remoteStream ? (
+                          <video
+                            ref={remoteVideoRef}
+                            autoPlay
+                            playsInline
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-white">
+                            Connecting...
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Local Video */}
+                      <div className="relative bg-black rounded-lg aspect-video">
+                        {localStream ? (
+                          <video
+                            ref={localVideoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            Local video
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Call Controls */}
+                    <div className="flex items-center justify-center gap-4 p-4 bg-gray-800">
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={toggleMute}
+                        className={`p-3 rounded-full ${
+                          isMuted ? "bg-red-500 text-white" : "bg-gray-700 text-white"
+                        }`}
+                        title={isMuted ? "Unmute" : "Mute"}
+                      >
+                        {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={toggleVideo}
+                        className={`p-3 rounded-full ${
+                          !isVideoEnabled ? "bg-red-500 text-white" : "bg-gray-700 text-white"
+                        }`}
+                        title={isVideoEnabled ? "Turn off video" : "Turn on video"}
+                      >
+                        {isVideoEnabled ? <Video size={20} /> : <VideoOff size={20} />}
+                      </motion.button>
+                      
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={endCall}
+                        className="p-3 rounded-full bg-red-500 text-white"
+                        title="End Call"
+                      >
+                        <PhoneOff size={20} />
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Enhanced Input Area */}
               <div className="border-t border-[#c89666] p-4 bg-[#e1b382]/20 backdrop-blur-sm">
