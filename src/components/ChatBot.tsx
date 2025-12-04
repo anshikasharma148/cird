@@ -390,6 +390,169 @@ export default function ChatBot() {
     });
   }, [messages, chatMode, socket, currentRoomId]);
 
+  // WebRTC Configuration
+  const rtcConfiguration: RTCConfiguration = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ],
+  };
+
+  // End Call
+  const endCall = useCallback(() => {
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop());
+      setLocalStream(null);
+    }
+    
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+      setRemoteStream(null);
+    }
+
+    if (peerConnection) {
+      peerConnection.close();
+      setPeerConnection(null);
+    }
+
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    if (socket && currentRoomIdRef.current) {
+      socket.emit("call_end", {
+        roomId: currentRoomIdRef.current,
+        enderType: "user",
+      });
+    }
+
+    setCallState("idle");
+    incomingCallOfferRef.current = null;
+  }, [localStream, remoteStream, peerConnection, socket]);
+
+  // Answer Call
+  const answerCall = useCallback(async () => {
+    if (!currentRoomIdRef.current || !socket || !incomingCallOfferRef.current) {
+      console.error("Cannot answer call: missing roomId, socket, or offer");
+      return;
+    }
+
+    try {
+      console.log("📞 Answering call...");
+      
+      // Get user media
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: isVideoEnabled,
+        audio: !isMuted,
+      });
+      
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      // Create peer connection
+      const pc = new RTCPeerConnection(rtcConfiguration);
+
+      // Handle ICE candidates
+      pc.onicecandidate = (event) => {
+        if (event.candidate && socket && currentRoomIdRef.current) {
+          socket.emit("call_ice_candidate", {
+            roomId: currentRoomIdRef.current,
+            candidate: event.candidate,
+            senderType: "user",
+          });
+        }
+      };
+
+      // Handle remote stream
+      pc.ontrack = (event) => {
+        if (event.streams[0]) {
+          setRemoteStream(event.streams[0]);
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = event.streams[0];
+          }
+        }
+      };
+
+      // Add local stream tracks
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+      });
+
+      setPeerConnection(pc);
+
+      // Set remote description (the offer)
+      await pc.setRemoteDescription(new RTCSessionDescription(incomingCallOfferRef.current));
+
+      // Create answer
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
+
+      // Send answer
+      socket.emit("call_answer", {
+        roomId: currentRoomIdRef.current,
+        answer: answer,
+        answererType: "user",
+      });
+
+      console.log("✅ Call answered, waiting for connection...");
+      setCallState("connected");
+      incomingCallOfferRef.current = null;
+    } catch (error: any) {
+      console.error("Error answering call:", error);
+      let errorMessage = "Could not access camera/microphone.\n\n";
+      
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
+        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "3. Refresh the page and try again";
+      } else {
+        errorMessage += `Error: ${error.message || "Unknown error"}`;
+      }
+      
+      alert(errorMessage);
+      setCallState("idle");
+      incomingCallOfferRef.current = null;
+    }
+  }, [socket, isVideoEnabled, isMuted]);
+
+  // Reject Call
+  const rejectCall = useCallback(() => {
+    if (socket && currentRoomIdRef.current) {
+      socket.emit("call_end", {
+        roomId: currentRoomIdRef.current,
+        enderType: "user",
+      });
+    }
+    setCallState("idle");
+    incomingCallOfferRef.current = null;
+  }, [socket]);
+
+  // Toggle Mute
+  const toggleMute = useCallback(() => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = isMuted;
+      });
+      setIsMuted(!isMuted);
+    }
+  }, [localStream, isMuted]);
+
+  // Toggle Video
+  const toggleVideo = useCallback(() => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((track) => {
+        track.enabled = !isVideoEnabled;
+      });
+      setIsVideoEnabled(!isVideoEnabled);
+    }
+  }, [localStream, isVideoEnabled]);
+
   /* ---------------- Socket.io Connection & Event Handlers ---------------- */
   useEffect(() => {
     if (!open) return; // Only connect when chat is open
@@ -1127,205 +1290,6 @@ export default function ChatBot() {
     }
   }, [socket, socketConnected, userId]);
 
-  /* ---------------- End Chat with Agent ---------------- */
-  // WebRTC Configuration
-  const rtcConfiguration: RTCConfiguration = {
-    iceServers: [
-      { urls: 'stun:stun.l.google.com:19302' },
-      { urls: 'stun:stun1.l.google.com:19302' },
-    ],
-  };
-
-  // Initialize WebRTC Peer Connection
-  const createPeerConnection = useCallback(() => {
-    const pc = new RTCPeerConnection(rtcConfiguration);
-
-    // Handle ICE candidates
-    pc.onicecandidate = (event) => {
-      if (event.candidate && socket && currentRoomIdRef.current) {
-        socket.emit("call_ice_candidate", {
-          roomId: currentRoomIdRef.current,
-          candidate: event.candidate,
-          senderType: "user",
-        });
-      }
-    };
-
-    // Handle remote stream
-    pc.ontrack = (event) => {
-      if (event.streams[0]) {
-        setRemoteStream(event.streams[0]);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = event.streams[0];
-        }
-      }
-    };
-
-    // Add local stream tracks if available
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        pc.addTrack(track, localStream);
-      });
-    }
-
-    return pc;
-  }, [socket, localStream]);
-
-  // Answer Call
-  const answerCall = useCallback(async () => {
-    if (!currentRoomIdRef.current || !socket || !incomingCallOfferRef.current) {
-      console.error("Cannot answer call: missing roomId, socket, or offer");
-      return;
-    }
-
-    try {
-      console.log("📞 Answering call...");
-      
-      // Get user media
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: isVideoEnabled,
-        audio: !isMuted,
-      });
-      
-      setLocalStream(stream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
-
-      // Create peer connection
-      const pc = new RTCPeerConnection(rtcConfiguration);
-
-      // Handle ICE candidates
-      pc.onicecandidate = (event) => {
-        if (event.candidate && socket && currentRoomIdRef.current) {
-          socket.emit("call_ice_candidate", {
-            roomId: currentRoomIdRef.current,
-            candidate: event.candidate,
-            senderType: "user",
-          });
-        }
-      };
-
-      // Handle remote stream
-      pc.ontrack = (event) => {
-        if (event.streams[0]) {
-          setRemoteStream(event.streams[0]);
-          if (remoteVideoRef.current) {
-            remoteVideoRef.current.srcObject = event.streams[0];
-          }
-        }
-      };
-
-      // Add local stream tracks
-      stream.getTracks().forEach((track) => {
-        pc.addTrack(track, stream);
-      });
-
-      setPeerConnection(pc);
-
-      // Set remote description (the offer)
-      await pc.setRemoteDescription(new RTCSessionDescription(incomingCallOfferRef.current));
-
-      // Create answer
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-
-      // Send answer
-      socket.emit("call_answer", {
-        roomId: currentRoomIdRef.current,
-        answer: answer,
-        answererType: "user",
-      });
-
-      console.log("✅ Call answered, waiting for connection...");
-      setCallState("connected");
-      incomingCallOfferRef.current = null;
-    } catch (error: any) {
-      console.error("Error answering call:", error);
-      let errorMessage = "Could not access camera/microphone.\n\n";
-      
-      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        errorMessage += "Please grant camera/microphone permissions:\n";
-        errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
-        errorMessage += "2. Allow Camera and Microphone access\n";
-        errorMessage += "3. Refresh the page and try again";
-      } else {
-        errorMessage += `Error: ${error.message || "Unknown error"}`;
-      }
-      
-      alert(errorMessage);
-      setCallState("idle");
-      incomingCallOfferRef.current = null;
-    }
-  }, [socket, isVideoEnabled, isMuted]);
-
-  // Reject Call
-  const rejectCall = useCallback(() => {
-    if (socket && currentRoomIdRef.current) {
-      socket.emit("call_end", {
-        roomId: currentRoomIdRef.current,
-        enderType: "user",
-      });
-    }
-    setCallState("idle");
-    incomingCallOfferRef.current = null;
-  }, [socket]);
-
-  // End Call
-  const endCall = useCallback(() => {
-    if (localStream) {
-      localStream.getTracks().forEach((track) => track.stop());
-      setLocalStream(null);
-    }
-    
-    if (remoteStream) {
-      remoteStream.getTracks().forEach((track) => track.stop());
-      setRemoteStream(null);
-    }
-
-    if (peerConnection) {
-      peerConnection.close();
-      setPeerConnection(null);
-    }
-
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
-    }
-
-    if (socket && currentRoomIdRef.current) {
-      socket.emit("call_end", {
-        roomId: currentRoomIdRef.current,
-        enderType: "user",
-      });
-    }
-
-    setCallState("idle");
-    incomingCallOfferRef.current = null;
-  }, [localStream, remoteStream, peerConnection, socket]);
-
-  // Toggle Mute
-  const toggleMute = useCallback(() => {
-    if (localStream) {
-      localStream.getAudioTracks().forEach((track) => {
-        track.enabled = isMuted;
-      });
-      setIsMuted(!isMuted);
-    }
-  }, [localStream, isMuted]);
-
-  // Toggle Video
-  const toggleVideo = useCallback(() => {
-    if (localStream) {
-      localStream.getVideoTracks().forEach((track) => {
-        track.enabled = !isVideoEnabled;
-      });
-      setIsVideoEnabled(!isVideoEnabled);
-    }
-  }, [localStream, isVideoEnabled]);
-
   // Cleanup on unmount or chat change
   useEffect(() => {
     return () => {
@@ -1333,8 +1297,9 @@ export default function ChatBot() {
         endCall();
       }
     };
-  }, [currentRoomId]);
+  }, [currentRoomId, callState, endCall]);
 
+  /* ---------------- End Chat with Agent ---------------- */
   const endChatWithAgent = useCallback(() => {
     if (chatMode !== "human_connected" || !socket || !currentRoomId) return;
 
