@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { io, Socket } from "socket.io-client";
 import {
@@ -12,6 +12,22 @@ import {
   Loader2,
   User as UserIcon,
   Clock,
+  ThumbsUp,
+  ThumbsDown,
+  Copy,
+  Download,
+  Check,
+  Search,
+  FileText,
+  Zap,
+  BarChart3,
+  Edit3,
+  Phone,
+  PhoneOff,
+  Video,
+  VideoOff,
+  Mic,
+  MicOff,
 } from "lucide-react";
 
 /* ----------------------- Types ----------------------- */
@@ -29,6 +45,7 @@ type ChatMessage = {
     user: boolean;
     agent: boolean;
   };
+  reaction?: "thumbs_up" | "thumbs_down";
 };
 
 type ActiveChat = {
@@ -36,14 +53,43 @@ type ActiveChat = {
   roomId: string;
   messages: ChatMessage[];
   startedAt: number;
+  notes?: string;
 };
 
 /* --------------------- Constants ------------------------ */
 const AGENT_PIN = process.env.NEXT_PUBLIC_AGENT_PIN || "1234"; // Default PIN for development
 
 /* --------------------- Helpers ------------------------ */
-const formatTime = (ts: number) =>
-  new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+const formatTime = (ts: number, use24Hour: boolean = false) =>
+  new Date(ts).toLocaleTimeString([], { 
+    hour: "2-digit", 
+    minute: "2-digit",
+    hour12: !use24Hour
+  });
+
+const formatDate = (ts: number) => {
+  const date = new Date(ts);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString([], { month: "short", day: "numeric", year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined });
+  }
+};
+
+const formatDuration = (startTime: number) => {
+  const seconds = Math.floor((Date.now() - startTime) / 1000);
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ${seconds % 60}s`;
+  const hours = Math.floor(minutes / 60);
+  return `${hours}h ${minutes % 60}m`;
+};
 
 const formatWaitingTime = (since: number) => {
   const seconds = Math.floor((Date.now() - since) / 1000);
@@ -63,6 +109,18 @@ type AgentStatus = {
 };
 
 const AGENT_AUTH_KEY = "cird_agent_auth";
+
+// Quick Reply Templates
+const QUICK_REPLIES = [
+  "Hello! How can I help you today?",
+  "Thank you for contacting CIRD. I'm here to assist you.",
+  "I understand your concern. Let me help you with that.",
+  "Could you please provide more details?",
+  "I'll look into this for you right away.",
+  "Is there anything else I can help you with?",
+  "Thank you for your patience.",
+  "Have a great day!",
+];
 
 export default function AgentDashboard() {
   // Load authentication state from localStorage on mount
@@ -105,6 +163,27 @@ export default function AgentDashboard() {
   const [messageInput, setMessageInput] = useState("");
   const [userTyping, setUserTyping] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [chatDuration, setChatDuration] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
+  const [showChatNotes, setShowChatNotes] = useState(false);
+  const [showChatStats, setShowChatStats] = useState(false);
+  const [editingNotes, setEditingNotes] = useState(false);
+  const [timeFormat24, setTimeFormat24] = useState(false);
+  const [chatTags, setChatTags] = useState<Record<string, string>>({});
+  const [showTagSelector, setShowTagSelector] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  
+  // Call state
+  const [callState, setCallState] = useState<"idle" | "ringing" | "connected" | "incoming">("idle");
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
+  const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+  const localVideoRef = useRef<HTMLVideoElement | null>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -167,6 +246,347 @@ export default function AgentDashboard() {
         container.scrollTop = container.scrollHeight;
       }
     }, 100);
+  }, [selectedChatId]);
+
+  // Update chat duration timer
+  useEffect(() => {
+    if (!selectedChat) {
+      setChatDuration(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setChatDuration(Date.now() - selectedChat.startedAt);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [selectedChat]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + K: Focus search
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('input[placeholder*="Search"]') as HTMLInputElement;
+        searchInput?.focus();
+      }
+      
+      // Ctrl/Cmd + /: Toggle quick replies
+      if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+        e.preventDefault();
+        setShowQuickReplies(!showQuickReplies);
+      }
+      
+      // Escape: Close modals/panels
+      if (e.key === 'Escape') {
+        setShowQuickReplies(false);
+        setShowChatNotes(false);
+        setShowChatStats(false);
+        setShowTagSelector(false);
+        setSearchQuery("");
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAuthenticated, showQuickReplies]);
+
+  // Play notification sound
+  const playNotificationSound = useCallback(() => {
+    if (!soundEnabled) return;
+    
+    try {
+      // Create a simple beep sound using Web Audio API
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.1);
+    } catch (error) {
+      console.log("Could not play notification sound:", error);
+    }
+  }, [soundEnabled]);
+
+  // Play sound on new message
+  useEffect(() => {
+    if (!selectedChat || !socket) return;
+    
+    const lastMessage = selectedChat.messages[selectedChat.messages.length - 1];
+    if (lastMessage && lastMessage.sender === "user" && selectedChatId === selectedChat.roomId) {
+      playNotificationSound();
+    }
+  }, [selectedChat?.messages.length, selectedChatId, playNotificationSound, selectedChat, socket]);
+
+  // WebRTC Configuration
+  const rtcConfiguration: RTCConfiguration = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+    ],
+  };
+
+  // Initialize WebRTC Peer Connection
+  const createPeerConnection = useCallback(() => {
+    const pc = new RTCPeerConnection(rtcConfiguration);
+
+    // Handle ICE candidates
+    pc.onicecandidate = (event) => {
+      if (event.candidate && socket && selectedChatId) {
+        socket.emit("call_ice_candidate", {
+          roomId: selectedChatId,
+          candidate: event.candidate,
+          senderType: "agent",
+        });
+      }
+    };
+
+    // Handle remote stream
+    pc.ontrack = (event) => {
+      if (event.streams[0]) {
+        setRemoteStream(event.streams[0]);
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = event.streams[0];
+        }
+      }
+    };
+
+    // Add local stream tracks
+    if (localStream) {
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream);
+      });
+    }
+
+    return pc;
+  }, [socket, selectedChatId, localStream]);
+
+  // Start Call
+  const startCall = useCallback(async () => {
+    if (!selectedChatId || !socket) return;
+
+    try {
+      // Get user media
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: isVideoEnabled,
+        audio: !isMuted,
+      });
+      
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      // Create peer connection
+      const pc = createPeerConnection();
+      setPeerConnection(pc);
+
+      // Create offer
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      // Send offer
+      socket.emit("call_offer", {
+        roomId: selectedChatId,
+        offer: offer,
+        callerType: "agent",
+      });
+
+      setCallState("ringing");
+    } catch (error: any) {
+      console.error("Error starting call:", error);
+      
+      let errorMessage = "Could not access camera/microphone.\n\n";
+      
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
+        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "3. Refresh the page and try again\n\n";
+        errorMessage += "Or go to: Settings → Privacy and Security → Site Settings → Camera/Microphone";
+      } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
+        errorMessage += "No camera/microphone found. Please connect a device and try again.";
+      } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
+        errorMessage += "Camera/microphone is being used by another application. Please close it and try again.";
+      } else {
+        errorMessage += `Error: ${error.message || "Unknown error"}`;
+      }
+      
+      alert(errorMessage);
+      setCallState("idle");
+    }
+  }, [selectedChatId, socket, isVideoEnabled, isMuted, createPeerConnection]);
+
+  // Answer Call
+  const answerCall = useCallback(async (offer: RTCSessionDescriptionInit) => {
+    if (!selectedChatId || !socket || !peerConnection) return;
+
+    try {
+      // Get user media
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: isVideoEnabled,
+        audio: !isMuted,
+      });
+      
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      // Set remote description
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+
+      // Create answer
+      const answer = await peerConnection.createAnswer();
+      await peerConnection.setLocalDescription(answer);
+
+      // Send answer
+      socket.emit("call_answer", {
+        roomId: selectedChatId,
+        answer: answer,
+        answererType: "agent",
+      });
+
+      setCallState("connected");
+    } catch (error: any) {
+      console.error("Error answering call:", error);
+      
+      let errorMessage = "Could not access camera/microphone.\n\n";
+      
+      if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
+        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
+        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "3. Refresh the page and try again";
+      } else {
+        errorMessage += `Error: ${error.message || "Unknown error"}`;
+      }
+      
+      alert(errorMessage);
+      setCallState("idle");
+    }
+  }, [selectedChatId, socket, peerConnection, isVideoEnabled, isMuted]);
+
+  // End Call
+  const endCall = useCallback(() => {
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop());
+      setLocalStream(null);
+    }
+    
+    if (remoteStream) {
+      remoteStream.getTracks().forEach((track) => track.stop());
+      setRemoteStream(null);
+    }
+
+    if (peerConnection) {
+      peerConnection.close();
+      setPeerConnection(null);
+    }
+
+    if (localVideoRef.current) {
+      localVideoRef.current.srcObject = null;
+    }
+    if (remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+
+    if (socket && selectedChatId) {
+      socket.emit("call_end", {
+        roomId: selectedChatId,
+        enderType: "agent",
+      });
+    }
+
+    setCallState("idle");
+  }, [localStream, remoteStream, peerConnection, socket, selectedChatId]);
+
+  // Toggle Mute
+  const toggleMute = useCallback(() => {
+    if (localStream) {
+      localStream.getAudioTracks().forEach((track) => {
+        track.enabled = isMuted;
+      });
+      setIsMuted(!isMuted);
+    }
+  }, [localStream, isMuted]);
+
+  // Toggle Video
+  const toggleVideo = useCallback(() => {
+    if (localStream) {
+      localStream.getVideoTracks().forEach((track) => {
+        track.enabled = !isVideoEnabled;
+      });
+      setIsVideoEnabled(!isVideoEnabled);
+    }
+  }, [localStream, isVideoEnabled]);
+
+  // Setup call event listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("call_offer", async (data: { roomId: string; offer: RTCSessionDescriptionInit; callerId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      
+      setCallState("incoming");
+      const pc = createPeerConnection();
+      setPeerConnection(pc);
+      
+      // Auto-answer for now (can add accept/reject UI later)
+      setTimeout(() => {
+        answerCall(data.offer);
+      }, 1000);
+    });
+
+    socket.on("call_answer", async (data: { roomId: string; answer: RTCSessionDescriptionInit }) => {
+      if (data.roomId !== selectedChatId || !peerConnection) return;
+      
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      setCallState("connected");
+    });
+
+    socket.on("call_ice_candidate", async (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
+      if (data.roomId !== selectedChatId || !peerConnection) return;
+      
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+      } catch (error) {
+        console.error("Error adding ICE candidate:", error);
+      }
+    });
+
+    socket.on("call_end", (data: { roomId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      endCall();
+    });
+
+    return () => {
+      socket.off("call_offer");
+      socket.off("call_answer");
+      socket.off("call_ice_candidate");
+      socket.off("call_end");
+    };
+  }, [socket, selectedChatId, peerConnection, createPeerConnection, answerCall, endCall]);
+
+  // Cleanup on unmount or chat change
+  useEffect(() => {
+    return () => {
+      if (callState !== "idle") {
+        endCall();
+      }
+    };
   }, [selectedChatId]);
 
   // DISABLED: No auto-scroll on new messages - user must manually scroll
@@ -442,31 +862,36 @@ export default function AgentDashboard() {
     });
 
     socketInstance.on("user_disconnected", (data: { roomId: string; userId: string }) => {
+      console.log("👋 User disconnected from chat:", data.roomId);
+      
+      // Remove the chat completely from active chats
       setActiveChats((prev) => {
-        const chatIndex = prev.findIndex(chat => chat.roomId === data.roomId);
-        if (chatIndex === -1) return prev;
+        const filtered = prev.filter(chat => chat.roomId !== data.roomId);
         
-        const updated = [...prev];
-        updated[chatIndex] = {
-          ...updated[chatIndex],
-          messages: [
-            ...updated[chatIndex].messages,
-            {
-              id: uid("system_"),
-              sender: "user",
-              text: "User has disconnected.",
-              timestamp: Date.now(),
-            },
-          ],
-        };
-        return updated;
+        // If this was the selected chat, select another one or clear selection
+        if (selectedChatId === data.roomId) {
+          if (filtered.length > 0) {
+            setSelectedChatId(filtered[0].roomId);
+          } else {
+            setSelectedChatId(null);
+          }
+        }
+        
+        return filtered;
       });
       
-      // If this was the selected chat, clear selection
-      if (selectedChatId === data.roomId) {
-        setSelectedChatId(null);
-        setUserTyping(false);
-      }
+      // Clear typing indicator
+      setUserTyping(false);
+      
+      // Stop duration timer (will be handled by useEffect when selectedChat changes)
+      setChatDuration(0);
+      
+      // Update agent status locally
+      setAgentStatuses(prev => prev.map(a => 
+        a.agentId === selectedAgentId 
+          ? { ...a, activeChatsCount: Math.max(0, (a.activeChatsCount || 0) - 1), isBusy: (a.activeChatsCount || 0) > 1 } 
+          : a
+      ));
     });
 
     setSocket(socketInstance);
@@ -582,6 +1007,142 @@ export default function AgentDashboard() {
     }, 100);
     setMessageInput("");
   }, [socket, selectedChatId, messageInput]);
+
+  /* ---------------- Copy Message ---------------- */
+  const copyMessage = useCallback((text: string, messageId: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedMessageId(messageId);
+    setTimeout(() => setCopiedMessageId(null), 2000);
+  }, []);
+
+  /* ---------------- Export Chat ---------------- */
+  const exportChat = useCallback(() => {
+    if (!selectedChat) return;
+
+    const chatText = selectedChat.messages
+      .map((msg) => {
+        const date = new Date(msg.timestamp);
+        const sender = msg.sender === "agent" ? "Margadarshak" : "User";
+        return `[${date.toLocaleString()}] ${sender}: ${msg.text}`;
+      })
+      .join("\n\n");
+
+    const blob = new Blob([chatText], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `chat_${selectedChat.userId.slice(0, 8)}_${new Date().toISOString().split("T")[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [selectedChat]);
+
+  /* ---------------- Quick Reply ---------------- */
+  const insertQuickReply = useCallback((template: string) => {
+    setMessageInput(template);
+    setShowQuickReplies(false);
+    inputRef.current?.focus();
+  }, []);
+
+  /* ---------------- Save Chat Notes ---------------- */
+  const saveChatNotes = useCallback((notes: string) => {
+    if (!selectedChat) return;
+    setActiveChats((prev) =>
+      prev.map((chat) =>
+        chat.roomId === selectedChat.roomId ? { ...chat, notes } : chat
+      )
+    );
+    // Save to localStorage
+    const notesKey = `chat_notes_${selectedChat.roomId}`;
+    localStorage.setItem(notesKey, notes);
+    setEditingNotes(false);
+  }, [selectedChat]);
+
+  /* ---------------- Save Chat Tag ---------------- */
+  const saveChatTag = useCallback((tag: string) => {
+    if (!selectedChat) return;
+    setChatTags((prev) => {
+      const updated = { ...prev, [selectedChat.roomId]: tag };
+      localStorage.setItem('chat_tags', JSON.stringify(updated));
+      return updated;
+    });
+    setShowTagSelector(false);
+  }, [selectedChat]);
+
+  /* ---------------- Load Chat Tags ---------------- */
+  useEffect(() => {
+    const savedTags = localStorage.getItem('chat_tags');
+    if (savedTags) {
+      try {
+        setChatTags(JSON.parse(savedTags));
+      } catch (e) {
+        console.error("Error loading chat tags:", e);
+      }
+    }
+  }, []);
+
+  /* ---------------- Format Message Text ---------------- */
+  const formatMessageText = (text: string) => {
+    // Simple markdown-like formatting
+    let formatted = text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/`(.*?)`/g, '<code class="bg-gray-200 px-1 py-0.5 rounded text-sm">$1</code>');
+    
+    return formatted;
+  };
+
+  /* ---------------- Load Chat Notes ---------------- */
+  useEffect(() => {
+    if (selectedChat) {
+      const notesKey = `chat_notes_${selectedChat.roomId}`;
+      const savedNotes = localStorage.getItem(notesKey);
+      if (savedNotes && !selectedChat.notes) {
+        setActiveChats((prev) =>
+          prev.map((chat) =>
+            chat.roomId === selectedChat.roomId ? { ...chat, notes: savedNotes } : chat
+          )
+        );
+      }
+    }
+  }, [selectedChat]);
+
+  /* ---------------- Chat Statistics ---------------- */
+  const getChatStats = useCallback(() => {
+    if (!selectedChat) return null;
+    
+    const agentMessages = selectedChat.messages.filter(m => m.sender === "agent");
+    const userMessages = selectedChat.messages.filter(m => m.sender === "user");
+    const totalWords = selectedChat.messages.reduce((acc, msg) => {
+      return acc + msg.text.split(/\s+/).length;
+    }, 0);
+    const avgResponseTime = selectedChat.messages.length > 0
+      ? (Date.now() - selectedChat.startedAt) / selectedChat.messages.length
+      : 0;
+
+    return {
+      totalMessages: selectedChat.messages.length,
+      agentMessages: agentMessages.length,
+      userMessages: userMessages.length,
+      totalWords,
+      avgResponseTime: Math.round(avgResponseTime / 1000), // in seconds
+      duration: Math.round((Date.now() - selectedChat.startedAt) / 1000), // in seconds
+    };
+  }, [selectedChat]);
+
+  /* ---------------- Filter Messages by Search ---------------- */
+  const filteredMessages = useMemo(() => {
+    if (!selectedChat || !searchQuery.trim()) {
+      return selectedChat?.messages || [];
+    }
+    const query = searchQuery.toLowerCase();
+    return selectedChat.messages.filter((msg) =>
+      msg.text.toLowerCase().includes(query)
+    );
+  }, [selectedChat, searchQuery]);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   /* ---------------- End Chat ---------------- */
   const endChat = useCallback((roomId: string) => {
@@ -814,8 +1375,11 @@ export default function AgentDashboard() {
                   {activeChats.map((chat) => (
                     <button
                       key={chat.roomId}
-                      onClick={() => setSelectedChatId(chat.roomId)}
-                      className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+                      onClick={() => {
+                        setSelectedChatId(chat.roomId);
+                        setSearchQuery(""); // Clear search when switching chats
+                      }}
+                      className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap relative ${
                         selectedChatId === chat.roomId
                           ? "border-[#2d545e] text-[#2d545e] bg-[#e1b382]/10"
                           : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
@@ -829,11 +1393,19 @@ export default function AgentDashboard() {
                             msg => msg.sender === "user" && msg.readBy && !msg.readBy.agent
                           ).length;
                           return unreadCount > 0 ? (
-                            <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            <span className="bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 font-semibold">
                               {unreadCount}
                             </span>
                           ) : null;
                         })()}
+                        {chat.notes && (
+                          <FileText size={12} className="text-yellow-600" title="Has notes" />
+                        )}
+                        {chatTags[chat.roomId] && (
+                          <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded border border-purple-300">
+                            {chatTags[chat.roomId]}
+                          </span>
+                        )}
                       </div>
                     </button>
                   ))}
@@ -849,23 +1421,155 @@ export default function AgentDashboard() {
                           <UserIcon size={20} className="text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-800">
-                            Chat with {selectedChat.userId.slice(0, 12)}...
-                          </h3>
-                          <p className="text-xs text-gray-500">
-                            Started {formatTime(selectedChat.startedAt)}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-800">
+                              Chat with {selectedChat.userId.slice(0, 12)}...
+                            </h3>
+                            {chatTags[selectedChat.roomId] && (
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full border border-purple-300">
+                                {chatTags[selectedChat.roomId]}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span>Started {formatTime(selectedChat.startedAt, timeFormat24)}</span>
+                            <span>•</span>
+                            <span className="font-medium text-[#2d545e]">
+                              Duration: {formatDuration(selectedChat.startedAt)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => endChat(selectedChat.roomId)}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
-                      >
-                        End Chat
-                      </motion.button>
+                      <div className="flex items-center gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={exportChat}
+                          className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-1"
+                          title="Export Chat"
+                        >
+                          <Download size={14} />
+                          Export
+                        </motion.button>
+                        {/* Call Button */}
+                        {callState === "idle" && (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={startCall}
+                            className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-1"
+                            title="Start Call"
+                          >
+                            <Phone size={14} />
+                            Call
+                          </motion.button>
+                        )}
+                        {callState !== "idle" && (
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={endCall}
+                            className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm flex items-center gap-1"
+                            title="End Call"
+                          >
+                            <PhoneOff size={14} />
+                            End Call
+                          </motion.button>
+                        )}
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => endChat(selectedChat.roomId)}
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                        >
+                          End Chat
+                        </motion.button>
+                      </div>
                     </div>
+
+                    {/* Call UI */}
+                    <AnimatePresence>
+                      {callState !== "idle" && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-b border-gray-200 bg-gray-900 overflow-hidden"
+                        >
+                          <div className="grid grid-cols-2 gap-2 p-4">
+                            {/* Remote Video */}
+                            <div className="relative bg-black rounded-lg aspect-video">
+                              {remoteStream ? (
+                                <video
+                                  ref={remoteVideoRef}
+                                  autoPlay
+                                  playsInline
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-white">
+                                  {callState === "ringing" ? "Calling..." : callState === "incoming" ? "Incoming call..." : "Connecting..."}
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Local Video */}
+                            <div className="relative bg-black rounded-lg aspect-video">
+                              {localStream ? (
+                                <video
+                                  ref={localVideoRef}
+                                  autoPlay
+                                  playsInline
+                                  muted
+                                  className="w-full h-full object-cover rounded-lg"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                  Local video
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          
+                          {/* Call Controls */}
+                          <div className="flex items-center justify-center gap-4 p-4 bg-gray-800">
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={toggleMute}
+                              className={`p-3 rounded-full ${
+                                isMuted ? "bg-red-500 text-white" : "bg-gray-700 text-white"
+                              }`}
+                              title={isMuted ? "Unmute" : "Mute"}
+                            >
+                              {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
+                            </motion.button>
+                            
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={toggleVideo}
+                              className={`p-3 rounded-full ${
+                                !isVideoEnabled ? "bg-red-500 text-white" : "bg-gray-700 text-white"
+                              }`}
+                              title={isVideoEnabled ? "Turn off video" : "Turn on video"}
+                            >
+                              {isVideoEnabled ? <Video size={20} /> : <VideoOff size={20} />}
+                            </motion.button>
+                            
+                            <motion.button
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                              onClick={endCall}
+                              className="p-3 rounded-full bg-red-500 text-white"
+                              title="End Call"
+                            >
+                              <PhoneOff size={20} />
+                            </motion.button>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
 
                     {/* Messages */}
                     <div 
@@ -873,47 +1577,83 @@ export default function AgentDashboard() {
                       onScroll={handleScroll}
                       className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
                     >
-                      {selectedChat.messages.map((msg) => (
-                    <motion.div
-                      key={msg.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`flex ${msg.sender === "agent" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`max-w-[70%] px-4 py-2 rounded-lg ${
-                          msg.sender === "agent"
-                            ? "bg-[#2d545e] text-white rounded-br-sm"
-                            : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
-                        }`}
-                      >
-                        <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                      {(searchQuery ? filteredMessages : selectedChat.messages).map((msg, index) => {
+                        const allMessages = selectedChat.messages;
+                        const actualIndex = allMessages.findIndex(m => m.id === msg.id);
+                        const prevMsg = actualIndex > 0 ? allMessages[actualIndex - 1] : null;
+                        const showDateSeparator = !prevMsg || 
+                          formatDate(prevMsg.timestamp) !== formatDate(msg.timestamp);
+                        
+                        return (
+                          <React.Fragment key={msg.id}>
+                            {showDateSeparator && (
+                              <div className="flex items-center justify-center my-4">
+                                <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                  {formatDate(msg.timestamp)}
+                                </div>
+                              </div>
+                            )}
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`flex ${msg.sender === "agent" ? "justify-end" : "justify-start"} group`}
+                            >
+                              <div
+                                className={`max-w-[70%] px-4 py-2 rounded-lg relative ${
+                                  msg.sender === "agent"
+                                    ? "bg-[#2d545e] text-white rounded-br-sm"
+                                    : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
+                                }`}
+                              >
+                        <p 
+                          className="text-sm whitespace-pre-wrap"
+                          dangerouslySetInnerHTML={{ __html: formatMessageText(msg.text) }}
+                        />
                         <div className="flex items-center justify-between mt-1 gap-2">
                           <p className={`text-xs opacity-70 ${msg.sender === "agent" ? "text-white/70" : "text-gray-500"}`}>
-                            {formatTime(msg.timestamp)}
+                            {formatTime(msg.timestamp, timeFormat24)}
                           </p>
-                          {/* Read Receipt Ticks - Only on AGENT's sent messages */}
-                          {msg.sender === "agent" && (
-                            <div className="flex items-center">
-                              {/* For agent's own messages, show if user has read */}
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 15"
-                                fill="none"
-                                className={msg.readBy?.user ? "text-blue-300" : "text-white/40"}
-                              >
-                                <path
-                                  d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.175a.366.366 0 0 0-.063-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.175a.365.365 0 0 0-.063-.51z"
-                                  fill="currentColor"
-                                />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                                  <div className="flex items-center gap-1">
+                                    {/* Read Receipt Ticks - Only on AGENT's sent messages */}
+                                    {msg.sender === "agent" && (
+                                      <div className="flex items-center">
+                                        <svg
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 16 15"
+                                          fill="none"
+                                          className={msg.readBy?.user ? "text-blue-300" : "text-white/40"}
+                                        >
+                                          <path
+                                            d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.175a.366.366 0 0 0-.063-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.175a.365.365 0 0 0-.063-.51z"
+                                            fill="currentColor"
+                                          />
+                                        </svg>
+                                      </div>
+                                    )}
+                                    {/* Copy Button - Show on hover */}
+                                    <motion.button
+                                      initial={{ opacity: 0 }}
+                                      whileHover={{ opacity: 1 }}
+                                      className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
+                                        msg.sender === "agent" ? "hover:bg-white/20" : "hover:bg-gray-100"
+                                      }`}
+                                      onClick={() => copyMessage(msg.text, msg.id)}
+                                      title="Copy message"
+                                    >
+                                      {copiedMessageId === msg.id ? (
+                                        <Check size={12} className={msg.sender === "agent" ? "text-green-300" : "text-green-600"} />
+                                      ) : (
+                                        <Copy size={12} className={msg.sender === "agent" ? "text-white/70" : "text-gray-500"} />
+                                      )}
+                                    </motion.button>
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          </React.Fragment>
+                        );
+                      })}
 
                   {/* User Typing Indicator */}
                   {userTyping && (
@@ -949,35 +1689,98 @@ export default function AgentDashboard() {
 
                 {/* Input */}
                 <div className="border-t border-gray-200 p-4">
+                  {/* Quick Replies */}
+                  <AnimatePresence>
+                    {showQuickReplies && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="mb-3 overflow-hidden"
+                      >
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-[#2d545e] flex items-center gap-1">
+                              <Zap size={12} />
+                              Quick Replies
+                            </span>
+                            <button
+                              onClick={() => setShowQuickReplies(false)}
+                              className="text-gray-400 hover:text-gray-600"
+                            >
+                              <X size={14} />
+                            </button>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {QUICK_REPLIES.map((reply, idx) => (
+                              <motion.button
+                                key={idx}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => insertQuickReply(reply)}
+                                className="px-3 py-1.5 bg-white border border-blue-300 text-sm text-[#2d545e] rounded-lg hover:bg-blue-100 hover:border-blue-400 transition-colors"
+                              >
+                                {reply}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <div className="flex gap-2">
-                    <input
-                      value={messageInput}
-                      onChange={(e) => {
-                        setMessageInput(e.target.value);
-                        // Send typing indicator when agent types
-                        if (e.target.value.trim()) {
-                          handleAgentTyping();
-                        } else {
-                          // Clear typing if input is empty
-                          if (agentTypingTimeoutRef.current) {
-                            clearTimeout(agentTypingTimeoutRef.current);
-                            agentTypingTimeoutRef.current = null;
+                    <div className="flex-1 relative">
+                      <input
+                        ref={inputRef}
+                        value={messageInput}
+                        onChange={(e) => {
+                          setMessageInput(e.target.value);
+                          // Send typing indicator when agent types
+                          if (e.target.value.trim()) {
+                            handleAgentTyping();
+                          } else {
+                            // Clear typing if input is empty
+                            if (agentTypingTimeoutRef.current) {
+                              clearTimeout(agentTypingTimeoutRef.current);
+                              agentTypingTimeoutRef.current = null;
+                            }
+                            if (socket && selectedChatId) {
+                              socket.emit("agent_stopped_typing", { roomId: selectedChatId });
+                            }
                           }
-                          if (socket && selectedChatId) {
-                            socket.emit("agent_stopped_typing", { roomId: selectedChatId });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            sendMessage();
                           }
-                        }
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          sendMessage();
-                        }
-                      }}
-                      placeholder="Type your message..."
-                      disabled={!selectedChat}
-                      className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-                    />
+                        }}
+                        placeholder="Type your message..."
+                        disabled={!selectedChat}
+                        maxLength={2000}
+                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                      />
+                      {/* Character Counter */}
+                      {messageInput.length > 0 && (
+                        <div className="absolute bottom-1 right-2 text-xs text-gray-400">
+                          {messageInput.length}/2000
+                        </div>
+                      )}
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => setShowQuickReplies(!showQuickReplies)}
+                      className={`px-3 py-2 rounded-lg transition-colors ${
+                        showQuickReplies
+                          ? "bg-[#2d545e] text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                      title="Quick Replies"
+                    >
+                      <Zap size={18} />
+                    </motion.button>
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}

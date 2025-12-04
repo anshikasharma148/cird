@@ -762,6 +762,125 @@ io.on("connection", (socket) => {
   });
 
   // ✅ User disconnects (socket disconnect)
+  // ✅ WebRTC Call Signaling
+  socket.on("call_offer", (data) => {
+    const { roomId, offer, callerType } = data; // callerType: 'user' or 'agent'
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    console.log(`📞 Call offer from ${callerType} in room ${roomId}`);
+
+    if (callerType === "user") {
+      // Forward to agent
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_offer", { roomId, offer, callerId: room.userId });
+        }
+      }
+    } else if (callerType === "agent") {
+      // Forward to user
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_offer", { roomId, offer, callerId: socket.data.agentId });
+        }
+      }
+    }
+  });
+
+  socket.on("call_answer", (data) => {
+    const { roomId, answer, answererType } = data;
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    console.log(`📞 Call answer from ${answererType} in room ${roomId}`);
+
+    if (answererType === "user") {
+      // Forward to agent
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_answer", { roomId, answer });
+        }
+      }
+    } else if (answererType === "agent") {
+      // Forward to user
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_answer", { roomId, answer });
+        }
+      }
+    }
+  });
+
+  socket.on("call_ice_candidate", (data) => {
+    const { roomId, candidate, senderType } = data;
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    if (senderType === "user") {
+      // Forward to agent
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_ice_candidate", { roomId, candidate });
+        }
+      }
+    } else if (senderType === "agent") {
+      // Forward to user
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_ice_candidate", { roomId, candidate });
+        }
+      }
+    }
+  });
+
+  socket.on("call_end", (data) => {
+    const { roomId, enderType } = data;
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    console.log(`📞 Call ended by ${enderType} in room ${roomId}`);
+
+    if (enderType === "user") {
+      // Notify agent
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_end", { roomId });
+        }
+      }
+    } else if (enderType === "agent") {
+      // Notify user
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_end", { roomId });
+        }
+      }
+    }
+  });
+
   socket.on("disconnect", () => {
     const userData = state.connectedUsers.get(socket.id);
     if (!userData) return;

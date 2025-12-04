@@ -18,6 +18,9 @@ import {
   Users,
   Loader2,
   PhoneOff,
+  Copy,
+  Check,
+  Search,
 } from "lucide-react";
 import Fuse, { FuseResult } from "fuse.js";
 import faqs, { FAQ } from "@/data/faqs";
@@ -50,6 +53,21 @@ const uid = (prefix = "") =>
 
 const formatTime = (ts: number) =>
   new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+const formatDate = (ts: number) => {
+  const date = new Date(ts);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  
+  if (date.toDateString() === today.toDateString()) {
+    return "Today";
+  } else if (date.toDateString() === yesterday.toDateString()) {
+    return "Yesterday";
+  } else {
+    return date.toLocaleDateString([], { month: "short", day: "numeric", year: date.getFullYear() !== today.getFullYear() ? "numeric" : undefined });
+  }
+};
 
 const STORAGE_KEY = (path: string) => `cird_chat_v2:${path || "root"}`;
 
@@ -245,6 +263,9 @@ export default function ChatBot() {
   const [queuePosition, setQueuePosition] = useState<number | null>(null);
   const [agentTyping, setAgentTyping] = useState(false);
   const [currentRoomId, setCurrentRoomId] = useState<string | null>(null);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   // Update refs when state changes
   useEffect(() => {
@@ -1236,6 +1257,25 @@ export default function ChatBot() {
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
+                  {/* Search Button - Only show when there are messages */}
+                  {messages.length > 0 && (
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => {
+                        setShowSearch(!showSearch);
+                        if (showSearch) {
+                          setSearchQuery("");
+                        }
+                      }}
+                      title="Search messages"
+                      className={`p-2 rounded-xl transition-colors ${
+                        showSearch ? "bg-[#e1b382] text-[#2d545e]" : "hover:bg-[#e1b382]/20 text-white"
+                      }`}
+                    >
+                      <Search size={16} />
+                    </motion.button>
+                  )}
                   {/* End Chat Button - Only in human_connected mode */}
                   {chatMode === "human_connected" && (
                     <motion.button
@@ -1328,19 +1368,72 @@ export default function ChatBot() {
                 )}
               </AnimatePresence>
 
+              {/* Search Bar - Show when search is active */}
+              <AnimatePresence>
+                {showSearch && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="border-b border-[#c89666] bg-[#e1b382]/20 overflow-hidden"
+                  >
+                    <div className="px-4 py-2">
+                      <div className="relative">
+                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2d545e]" />
+                        <input
+                          type="text"
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          placeholder="Search messages..."
+                          className="w-full pl-10 pr-10 py-2 border border-[#c89666] rounded-lg text-sm bg-white text-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none"
+                          autoFocus
+                        />
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2d545e] hover:text-[#12343b]"
+                          >
+                            <X size={16} />
+                          </button>
+                        )}
+                        {searchQuery && (
+                          <div className="absolute right-10 top-1/2 transform -translate-y-1/2 text-xs text-[#2d545e]">
+                            {messages.filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase())).length} found
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               {/* Enhanced Messages Area - More space now */}
               <div 
                 ref={containerRef} 
                 className="flex-1 overflow-y-auto p-4 bg-[#e1b382]/10 space-y-4"
               >
-                {messages.map((m, index) => (
-                  <motion.div
-                    key={m.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"}`}
-                  >
+                {(searchQuery ? messages.filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase())) : messages).map((m, index) => {
+                  const allMessages = messages;
+                  const actualIndex = allMessages.findIndex(msg => msg.id === m.id);
+                  const prevMsg = actualIndex > 0 ? allMessages[actualIndex - 1] : null;
+                  const showDateSeparator = !prevMsg || 
+                    formatDate(prevMsg.time) !== formatDate(m.time);
+                  
+                  return (
+                    <React.Fragment key={m.id}>
+                      {showDateSeparator && (
+                        <div className="flex items-center justify-center my-4">
+                          <div className="bg-[#2d545e]/10 text-[#2d545e] text-xs px-3 py-1 rounded-full border border-[#c89666]/30">
+                            {formatDate(m.time)}
+                          </div>
+                        </div>
+                      )}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className={`flex ${m.sender === "user" ? "justify-end" : "justify-start"} group`}
+                      >
                     <div className="flex items-start gap-2 max-w-[85%]">
                       {(m.sender === "bot" || m.sender === "agent") && (
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
@@ -1412,6 +1505,27 @@ export default function ChatBot() {
                                 </svg>
                               </div>
                             )}
+                            
+                            {/* Copy Button - Show on hover */}
+                            <motion.button
+                              initial={{ opacity: 0 }}
+                              whileHover={{ opacity: 1 }}
+                              className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
+                                m.sender === "user" ? "hover:bg-white/20" : "hover:bg-gray-100"
+                              }`}
+                              onClick={() => {
+                                navigator.clipboard.writeText(m.text);
+                                setCopiedMessageId(m.id);
+                                setTimeout(() => setCopiedMessageId(null), 2000);
+                              }}
+                              title="Copy message"
+                            >
+                              {copiedMessageId === m.id ? (
+                                <Check size={12} className={m.sender === "user" ? "text-green-300" : "text-green-600"} />
+                              ) : (
+                                <Copy size={12} className={m.sender === "user" ? "text-white/70" : "text-gray-500"} />
+                              )}
+                            </motion.button>
 
                             {m.meta?.confidence && (
                               <span className={`px-2 py-1 rounded-full ${
@@ -1466,7 +1580,9 @@ export default function ChatBot() {
                       )}
                     </div>
                   </motion.div>
-                ))}
+                    </React.Fragment>
+                  );
+                })}
 
                 {/* Enhanced Typing Indicator */}
                 {isTyping && !isGeneratingAnswer && chatMode === "bot" && (
@@ -1605,28 +1721,37 @@ export default function ChatBot() {
               {/* Enhanced Input Area */}
               <div className="border-t border-[#c89666] p-4 bg-[#e1b382]/20 backdrop-blur-sm">
                 <div className="flex gap-3">
-                  <input
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        if (chatMode === "human_connected" || (!isStreaming && chatMode === "bot")) {
-                          sendMessage(input);
+                  <div className="flex-1 relative">
+                    <input
+                      ref={inputRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          if (chatMode === "human_connected" || (!isStreaming && chatMode === "bot")) {
+                            sendMessage(input);
+                          }
                         }
+                      }}
+                      placeholder={
+                        chatMode === "bot"
+                          ? "Ask about research, projects, patents..."
+                          : chatMode === "human_waiting"
+                          ? "Waiting for Margadarshak..."
+                          : "Type your message to the Margadarshak..."
                       }
-                    }}
-                    placeholder={
-                      chatMode === "bot"
-                        ? "Ask about research, projects, patents..."
-                        : chatMode === "human_waiting"
-                        ? "Waiting for Margadarshak..."
-                        : "Type your message to the Margadarshak..."
-                    }
-                    disabled={isStreaming || chatMode === "human_waiting"}
-                    className="flex-1 px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
+                      disabled={isStreaming || chatMode === "human_waiting"}
+                      maxLength={2000}
+                      className="w-full px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    {/* Character Counter */}
+                    {input.length > 0 && (
+                      <div className="absolute bottom-1 right-2 text-xs text-gray-400">
+                        {input.length}/2000
+                      </div>
+                    )}
+                  </div>
                   {chatMode === "bot" && isStreaming ? (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
