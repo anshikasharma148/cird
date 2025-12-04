@@ -299,6 +299,7 @@ export default function ChatBot() {
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const chatModeRef = useRef<ChatMode>("bot");
   const currentRoomIdRef = useRef<string | null>(null);
+  const socketInitializedRef = useRef(false);
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
@@ -555,7 +556,32 @@ export default function ChatBot() {
 
   /* ---------------- Socket.io Connection & Event Handlers ---------------- */
   useEffect(() => {
-    if (!open) return; // Only connect when chat is open
+    if (!open) {
+      // Disconnect if chat is closed
+      if (socket) {
+        console.log("🔌 Disconnecting socket (chat closed)");
+        socket.disconnect();
+        setSocket(null);
+        setSocketConnected(false);
+        socketInitializedRef.current = false;
+      }
+      return;
+    }
+
+    // Prevent multiple socket connections
+    if (socketInitializedRef.current) {
+      console.log("🔌 Socket already initialized, skipping new connection");
+      return;
+    }
+
+    // If socket already exists and is connected, don't create a new one
+    if (socket && socket.connected) {
+      console.log("🔌 Socket already connected, skipping new connection");
+      socketInitializedRef.current = true;
+      return;
+    }
+
+    socketInitializedRef.current = true;
 
     const baseURL =
       process.env.NEXT_PUBLIC_API_BASE_URL ||
@@ -570,6 +596,7 @@ export default function ChatBot() {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionAttempts: 5,
+      forceNew: true, // Force new connection to avoid reuse issues
     });
 
     socketInstance.on("connect", () => {
@@ -930,15 +957,26 @@ export default function ChatBot() {
       socketInstance.off("call_answer");
       socketInstance.off("call_ice_candidate");
       socketInstance.off("call_end");
+      socketInstance.off("connect");
+      socketInstance.off("disconnect");
+      socketInstance.off("connect_error");
+      socketInstance.off("queue_position");
+      socketInstance.off("agent_connected");
+      socketInstance.off("agent_not_available");
+      socketInstance.off("new_message");
+      socketInstance.off("agent_typing");
+      socketInstance.off("agent_stopped_typing");
+      socketInstance.off("agent_disconnected");
+      socketInstance.off("message_read_update");
       
-      // Only disconnect when chat is closed, not on every render
-      if (!open) {
-        socketInstance.disconnect();
-        setSocket(null);
-        setSocketConnected(false);
-      }
+      // Always disconnect and cleanup
+      console.log("🔌 Cleaning up socket connection");
+      socketInitializedRef.current = false;
+      socketInstance.disconnect();
+      setSocket(null);
+      setSocketConnected(false);
     };
-  }, [open, userId, peerConnection, endCall]);
+  }, [open, userId]); // Only depend on open and userId
 
   /* ---------------- Human Handoff Detection ---------------- */
   const detectHumanHandoff = (text: string): boolean => {

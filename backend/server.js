@@ -113,6 +113,26 @@ io.on("connection", (socket) => {
   // ✅ User connects (from chatbot)
   socket.on("user_connect", (data) => {
     const userId = data.userId || socket.id;
+    
+    // Check if this userId already has a connected socket
+    const existingSocketEntry = Array.from(state.connectedUsers.entries())
+      .find(([_, userData]) => userData.userId === userId && userData.type === "user");
+    
+    if (existingSocketEntry) {
+      const [existingSocketId, existingUserData] = existingSocketEntry;
+      const existingSocket = io.sockets.sockets.get(existingSocketId);
+      
+      // If the existing socket is still connected, disconnect it first
+      if (existingSocket && existingSocket.connected) {
+        console.log(`⚠️ User ${userId} already has an active connection (socket: ${existingSocketId}), disconnecting old socket`);
+        existingSocket.disconnect();
+      }
+      
+      // Remove the old entry
+      state.connectedUsers.delete(existingSocketId);
+    }
+    
+    // Add new connection
     state.connectedUsers.set(socket.id, {
       userId,
       type: "user",
