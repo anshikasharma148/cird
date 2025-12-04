@@ -1399,7 +1399,9 @@ export default function AgentDashboard() {
                           ) : null;
                         })()}
                         {chat.notes && (
-                          <FileText size={12} className="text-yellow-600" title="Has notes" />
+                          <span title="Has notes">
+                            <FileText size={12} className="text-yellow-600" />
+                          </span>
                         )}
                         {chatTags[chat.roomId] && (
                           <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded border border-purple-300">
