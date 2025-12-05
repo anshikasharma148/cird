@@ -429,14 +429,41 @@ export default function ChatBot() {
   }, [localStream, remoteStream, peerConnection, socket]);
 
   // Answer Call
-  const answerCall = useCallback(async () => {
+  const answerCall = useCallback(async (e?: React.MouseEvent) => {
+    // Prevent event propagation to avoid closing chat
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // Ensure chat stays open
+    if (!open) {
+      console.warn("⚠️ Chat is closed, cannot answer call");
+      return;
+    }
+
     if (!currentRoomIdRef.current || !socket || !incomingCallOfferRef.current) {
-      console.error("Cannot answer call: missing roomId, socket, or offer");
+      console.error("Cannot answer call: missing roomId, socket, or offer", {
+        roomId: currentRoomIdRef.current,
+        socket: !!socket,
+        socketConnected: socket?.connected,
+        offer: !!incomingCallOfferRef.current
+      });
+      return;
+    }
+
+    // Ensure socket is connected
+    if (!socket.connected) {
+      console.error("❌ Socket is not connected, cannot answer call");
+      alert("Connection lost. Please refresh the page and try again.");
       return;
     }
 
     try {
-      console.log("📞 Answering call...");
+      console.log("📞 Answering call...", {
+        roomId: currentRoomIdRef.current,
+        socketId: socket.id
+      });
       
       // Get user media (audio-only)
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -444,14 +471,17 @@ export default function ChatBot() {
         audio: true,
       });
       
+      console.log("✅ Got user media stream");
       setLocalStream(stream);
 
       // Create peer connection
       const pc = new RTCPeerConnection(rtcConfiguration);
+      console.log("✅ Created peer connection");
 
       // Handle ICE candidates
       pc.onicecandidate = (event) => {
         if (event.candidate && socket && currentRoomIdRef.current) {
+          console.log("📤 Sending ICE candidate");
           socket.emit("call_ice_candidate", {
             roomId: currentRoomIdRef.current,
             candidate: event.candidate,
@@ -462,7 +492,7 @@ export default function ChatBot() {
 
       // Handle remote stream
       pc.ontrack = (event) => {
-        console.log("📞 Received remote audio track");
+        console.log("📞 Received remote audio track", event);
         if (event.streams[0]) {
           setRemoteStream(event.streams[0]);
           // Play remote audio using audio element
@@ -473,9 +503,20 @@ export default function ChatBot() {
         }
       };
 
+      // Handle connection state changes
+      pc.onconnectionstatechange = () => {
+        console.log("📞 Peer connection state:", pc.connectionState);
+        if (pc.connectionState === "connected") {
+          console.log("✅ Peer connection established!");
+        } else if (pc.connectionState === "failed" || pc.connectionState === "disconnected") {
+          console.error("❌ Peer connection failed or disconnected");
+        }
+      };
+
       // Add local stream tracks
       stream.getTracks().forEach((track) => {
         pc.addTrack(track, stream);
+        console.log("✅ Added local track:", track.kind);
       });
 
       setPeerConnection(pc);
@@ -500,7 +541,7 @@ export default function ChatBot() {
       setCallState("connected");
       incomingCallOfferRef.current = null;
     } catch (error: any) {
-      console.error("Error answering call:", error);
+      console.error("❌ Error answering call:", error);
       let errorMessage = "Could not access microphone.\n\n";
       
       if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
@@ -516,10 +557,16 @@ export default function ChatBot() {
       setCallState("idle");
       incomingCallOfferRef.current = null;
     }
-  }, [socket]);
+  }, [socket, open]);
 
   // Reject Call
-  const rejectCall = useCallback(() => {
+  const rejectCall = useCallback((e?: React.MouseEvent) => {
+    // Prevent event propagation
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
     if (socket && currentRoomIdRef.current) {
       socket.emit("call_end", {
         roomId: currentRoomIdRef.current,
@@ -2017,6 +2064,7 @@ export default function ChatBot() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
                     className="border-t border-[#c89666] bg-gradient-to-r from-green-500 to-green-600 p-4"
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <div className="text-center text-white">
                       <div className="flex items-center justify-center gap-3 mb-4">
@@ -2034,7 +2082,11 @@ export default function ChatBot() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={rejectCall}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            rejectCall(e);
+                          }}
                           className="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors flex items-center gap-2"
                         >
                           <PhoneOff size={20} />
@@ -2043,7 +2095,11 @@ export default function ChatBot() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={answerCall}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            answerCall(e);
+                          }}
                           className="px-6 py-3 bg-white text-green-600 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-2 font-semibold"
                         >
                           <Phone size={20} />
