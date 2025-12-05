@@ -24,8 +24,6 @@ import {
   Edit3,
   Phone,
   PhoneOff,
-  Video,
-  VideoOff,
   Mic,
   MicOff,
 } from "lucide-react";
@@ -175,15 +173,13 @@ export default function AgentDashboard() {
   const [showTagSelector, setShowTagSelector] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   
-  // Call state
+  // Call state (audio-only)
   const [callState, setCallState] = useState<"idle" | "ringing" | "connected" | "incoming">("idle");
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const localVideoRef = useRef<HTMLVideoElement | null>(null);
-  const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -353,12 +349,15 @@ export default function AgentDashboard() {
       }
     };
 
-    // Handle remote stream
+    // Handle remote stream (audio-only)
     pc.ontrack = (event) => {
+      console.log("📞 Received remote audio track");
       if (event.streams[0]) {
         setRemoteStream(event.streams[0]);
-        if (remoteVideoRef.current) {
-          remoteVideoRef.current.srcObject = event.streams[0];
+        // Play remote audio using audio element
+        if (remoteAudioRef.current) {
+          remoteAudioRef.current.srcObject = event.streams[0];
+          remoteAudioRef.current.play().catch(err => console.error("Error playing remote audio:", err));
         }
       }
     };
@@ -373,21 +372,19 @@ export default function AgentDashboard() {
     return pc;
   }, [socket, selectedChatId, localStream]);
 
-  // Start Call
+  // Start Call (audio-only)
   const startCall = useCallback(async () => {
     if (!selectedChatId || !socket) return;
 
     try {
-      // Get user media
+      console.log("📞 Starting call...");
+      // Get user media (audio-only)
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: isVideoEnabled,
-        audio: !isMuted,
+        video: false,
+        audio: true,
       });
       
       setLocalStream(stream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
 
       // Create peer connection
       const pc = createPeerConnection();
@@ -396,6 +393,7 @@ export default function AgentDashboard() {
       // Create offer
       const offer = await pc.createOffer();
       await pc.setLocalDescription(offer);
+      console.log("✅ Created and set local description (offer)");
 
       // Send offer
       socket.emit("call_offer", {
@@ -408,18 +406,18 @@ export default function AgentDashboard() {
     } catch (error: any) {
       console.error("Error starting call:", error);
       
-      let errorMessage = "Could not access camera/microphone.\n\n";
+      let errorMessage = "Could not access microphone.\n\n";
       
       if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "Please grant microphone permissions:\n";
         errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
-        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "2. Allow Microphone access\n";
         errorMessage += "3. Refresh the page and try again\n\n";
-        errorMessage += "Or go to: Settings → Privacy and Security → Site Settings → Camera/Microphone";
+        errorMessage += "Or go to: Settings → Privacy and Security → Site Settings → Microphone";
       } else if (error.name === "NotFoundError" || error.name === "DevicesNotFoundError") {
-        errorMessage += "No camera/microphone found. Please connect a device and try again.";
+        errorMessage += "No microphone found. Please connect a device and try again.";
       } else if (error.name === "NotReadableError" || error.name === "TrackStartError") {
-        errorMessage += "Camera/microphone is being used by another application. Please close it and try again.";
+        errorMessage += "Microphone is being used by another application. Please close it and try again.";
       } else {
         errorMessage += `Error: ${error.message || "Unknown error"}`;
       }
@@ -427,30 +425,30 @@ export default function AgentDashboard() {
       alert(errorMessage);
       setCallState("idle");
     }
-  }, [selectedChatId, socket, isVideoEnabled, isMuted, createPeerConnection]);
+  }, [selectedChatId, socket, createPeerConnection]);
 
-  // Answer Call
+  // Answer Call (audio-only)
   const answerCall = useCallback(async (offer: RTCSessionDescriptionInit) => {
     if (!selectedChatId || !socket || !peerConnection) return;
 
     try {
-      // Get user media
+      console.log("📞 Answering call...");
+      // Get user media (audio-only)
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: isVideoEnabled,
-        audio: !isMuted,
+        video: false,
+        audio: true,
       });
       
       setLocalStream(stream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
 
       // Set remote description
       await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      console.log("✅ Set remote description (offer)");
 
       // Create answer
       const answer = await peerConnection.createAnswer();
       await peerConnection.setLocalDescription(answer);
+      console.log("✅ Created and set local description (answer)");
 
       // Send answer
       socket.emit("call_answer", {
@@ -463,12 +461,12 @@ export default function AgentDashboard() {
     } catch (error: any) {
       console.error("Error answering call:", error);
       
-      let errorMessage = "Could not access camera/microphone.\n\n";
+      let errorMessage = "Could not access microphone.\n\n";
       
       if (error.name === "NotAllowedError" || error.name === "PermissionDeniedError") {
-        errorMessage += "Please grant camera/microphone permissions:\n";
+        errorMessage += "Please grant microphone permissions:\n";
         errorMessage += "1. Click the lock icon (🔒) in your browser's address bar\n";
-        errorMessage += "2. Allow Camera and Microphone access\n";
+        errorMessage += "2. Allow Microphone access\n";
         errorMessage += "3. Refresh the page and try again";
       } else {
         errorMessage += `Error: ${error.message || "Unknown error"}`;
@@ -477,7 +475,7 @@ export default function AgentDashboard() {
       alert(errorMessage);
       setCallState("idle");
     }
-  }, [selectedChatId, socket, peerConnection, isVideoEnabled, isMuted]);
+  }, [selectedChatId, socket, peerConnection]);
 
   // End Call
   const endCall = useCallback(() => {
@@ -491,16 +489,14 @@ export default function AgentDashboard() {
       setRemoteStream(null);
     }
 
+    if (remoteAudioRef.current) {
+      remoteAudioRef.current.srcObject = null;
+      remoteAudioRef.current.pause();
+    }
+
     if (peerConnection) {
       peerConnection.close();
       setPeerConnection(null);
-    }
-
-    if (localVideoRef.current) {
-      localVideoRef.current.srcObject = null;
-    }
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = null;
     }
 
     if (socket && selectedChatId) {
@@ -523,15 +519,6 @@ export default function AgentDashboard() {
     }
   }, [localStream, isMuted]);
 
-  // Toggle Video
-  const toggleVideo = useCallback(() => {
-    if (localStream) {
-      localStream.getVideoTracks().forEach((track) => {
-        track.enabled = !isVideoEnabled;
-      });
-      setIsVideoEnabled(!isVideoEnabled);
-    }
-  }, [localStream, isVideoEnabled]);
 
   // Setup call event listeners
   useEffect(() => {
@@ -1489,85 +1476,72 @@ export default function AgentDashboard() {
                       </div>
                     </div>
 
-                    {/* Call UI */}
+                    {/* Call UI (Audio-only) */}
                     <AnimatePresence>
                       {callState !== "idle" && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="border-b border-gray-200 bg-gray-900 overflow-hidden"
+                          className="border-b border-gray-200 bg-gradient-to-r from-green-500 to-green-600 overflow-hidden"
                         >
-                          <div className="grid grid-cols-2 gap-2 p-4">
-                            {/* Remote Video */}
-                            <div className="relative bg-black rounded-lg aspect-video">
-                              {remoteStream ? (
-                                <video
-                                  ref={remoteVideoRef}
-                                  autoPlay
-                                  playsInline
-                                  className="w-full h-full object-cover rounded-lg"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-white">
-                                  {callState === "ringing" ? "Calling..." : callState === "incoming" ? "Incoming call..." : "Connecting..."}
-                                </div>
-                              )}
-                            </div>
-                            
-                            {/* Local Video */}
-                            <div className="relative bg-black rounded-lg aspect-video">
-                              {localStream ? (
-                                <video
-                                  ref={localVideoRef}
-                                  autoPlay
-                                  playsInline
-                                  muted
-                                  className="w-full h-full object-cover rounded-lg"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                  Local video
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                          {/* Hidden audio element for remote audio */}
+                          <audio ref={remoteAudioRef} autoPlay playsInline />
                           
-                          {/* Call Controls */}
-                          <div className="flex items-center justify-center gap-4 p-4 bg-gray-800">
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={toggleMute}
-                              className={`p-3 rounded-full ${
-                                isMuted ? "bg-red-500 text-white" : "bg-gray-700 text-white"
-                              }`}
-                              title={isMuted ? "Unmute" : "Mute"}
+                          <div className="p-6 text-center text-white">
+                            <motion.div
+                              animate={{ scale: [1, 1.1, 1] }}
+                              transition={{ duration: 2, repeat: Infinity }}
+                              className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"
                             >
-                              {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
-                            </motion.button>
+                              <Phone size={40} className="text-white" />
+                            </motion.div>
+                            <h3 className="text-lg font-semibold mb-2">
+                              {callState === "ringing" ? "Calling..." : callState === "incoming" ? "Incoming call..." : "Call Connected"}
+                            </h3>
+                            <p className="text-sm text-white/90 mb-6">
+                              {callState === "connected" ? "Voice call in progress" : "Waiting for answer..."}
+                            </p>
                             
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={toggleVideo}
-                              className={`p-3 rounded-full ${
-                                !isVideoEnabled ? "bg-red-500 text-white" : "bg-gray-700 text-white"
-                              }`}
-                              title={isVideoEnabled ? "Turn off video" : "Turn on video"}
-                            >
-                              {isVideoEnabled ? <Video size={20} /> : <VideoOff size={20} />}
-                            </motion.button>
+                            {/* Call Controls */}
+                            {callState === "connected" && (
+                              <div className="flex items-center justify-center gap-4">
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={toggleMute}
+                                  className={`p-4 rounded-full ${
+                                    isMuted ? "bg-red-500 text-white" : "bg-white/20 text-white"
+                                  }`}
+                                  title={isMuted ? "Unmute" : "Mute"}
+                                >
+                                  {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
+                                </motion.button>
+                                
+                                <motion.button
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={endCall}
+                                  className="p-4 rounded-full bg-red-500 text-white"
+                                  title="End Call"
+                                >
+                                  <PhoneOff size={24} />
+                                </motion.button>
+                              </div>
+                            )}
                             
-                            <motion.button
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                              onClick={endCall}
-                              className="p-3 rounded-full bg-red-500 text-white"
-                              title="End Call"
-                            >
-                              <PhoneOff size={20} />
-                            </motion.button>
+                            {/* End call button for ringing/incoming states */}
+                            {(callState === "ringing" || callState === "incoming") && (
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                onClick={endCall}
+                                className="p-4 rounded-full bg-red-500 text-white"
+                                title="Cancel Call"
+                              >
+                                <PhoneOff size={24} />
+                              </motion.button>
+                            )}
                           </div>
                         </motion.div>
                       )}
