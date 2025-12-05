@@ -47,6 +47,8 @@ const state = {
   roomMapping: new Map(),
   // Map: roomId -> { userId, agentId, messages: [], createdAt }
   activeRooms: new Map(),
+  // Map: roomId -> "idle" | "pending" | "accepted" | "connected"
+  callStates: new Map(),
 };
 
 // ✅ Valid margadarshak IDs
@@ -788,26 +790,105 @@ io.on("connection", (socket) => {
     const room = state.activeRooms.get(roomId);
     if (!room) return;
 
+    // Check if call already in progress
+    const currentCallState = state.callStates.get(roomId);
+    if (currentCallState && currentCallState !== "idle") {
+      console.log(`⚠️ Call already in progress in room ${roomId}, ignoring new offer`);
+      return;
+    }
+
     console.log(`📞 Call offer from ${callerType} in room ${roomId}`);
 
+    // Set call state to pending
+    state.callStates.set(roomId, "pending");
+
     if (callerType === "user") {
-      // Forward to agent
+      // Forward to agent: first send call_pending, then call_offer
       const agentData = state.connectedAgents.get(room.agentId);
       if (agentData) {
         const agentSocket = io.sockets.sockets.get(agentData.socketId);
         if (agentSocket) {
+          // Send pending notification first
+          agentSocket.emit("call_pending", { roomId, callerId: room.userId });
+          // Then send the actual offer
           agentSocket.emit("call_offer", { roomId, offer, callerId: room.userId });
         }
       }
     } else if (callerType === "agent") {
-      // Forward to user
+      // Forward to user: first send call_pending, then call_offer
       const userSocketEntry = Array.from(state.connectedUsers.entries())
         .find(([_, data]) => data.userId === room.userId && data.type === "user");
       if (userSocketEntry) {
         const [userSocketId] = userSocketEntry;
         const userSocket = io.sockets.sockets.get(userSocketId);
         if (userSocket) {
+          // Send pending notification first
+          userSocket.emit("call_pending", { roomId, callerId: socket.data.agentId });
+          // Then send the actual offer
           userSocket.emit("call_offer", { roomId, offer, callerId: socket.data.agentId });
+        }
+      }
+    }
+  });
+
+  socket.on("call_accepted", (data) => {
+    const { roomId, answererType } = data;
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    console.log(`📞 Call accepted by ${answererType} in room ${roomId}`);
+    state.callStates.set(roomId, "accepted");
+
+    if (answererType === "user") {
+      // Notify agent that user accepted
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_accepted", { roomId });
+        }
+      }
+    } else if (answererType === "agent") {
+      // Notify user that agent accepted
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_accepted", { roomId });
+        }
+      }
+    }
+  });
+
+  socket.on("call_rejected", (data) => {
+    const { roomId, rejecterType } = data;
+    const room = state.activeRooms.get(roomId);
+    if (!room) return;
+
+    console.log(`📞 Call rejected by ${rejecterType} in room ${roomId}`);
+    // Reset call state to idle
+    state.callStates.set(roomId, "idle");
+
+    if (rejecterType === "user") {
+      // Notify agent that user rejected
+      const agentData = state.connectedAgents.get(room.agentId);
+      if (agentData) {
+        const agentSocket = io.sockets.sockets.get(agentData.socketId);
+        if (agentSocket) {
+          agentSocket.emit("call_rejected", { roomId });
+        }
+      }
+    } else if (rejecterType === "agent") {
+      // Notify user that agent rejected
+      const userSocketEntry = Array.from(state.connectedUsers.entries())
+        .find(([_, data]) => data.userId === room.userId && data.type === "user");
+      if (userSocketEntry) {
+        const [userSocketId] = userSocketEntry;
+        const userSocket = io.sockets.sockets.get(userSocketId);
+        if (userSocket) {
+          userSocket.emit("call_rejected", { roomId });
         }
       }
     }
@@ -839,6 +920,28 @@ io.on("connection", (socket) => {
         if (userSocket) {
           userSocket.emit("call_answer", { roomId, answer });
         }
+      }
+    }
+
+    // After answer is forwarded, emit call_started to both peers
+    state.callStates.set(roomId, "connected");
+    
+    // Notify both peers that call is started
+    const agentData = state.connectedAgents.get(room.agentId);
+    if (agentData) {
+      const agentSocket = io.sockets.sockets.get(agentData.socketId);
+      if (agentSocket) {
+        agentSocket.emit("call_started", { roomId });
+      }
+    }
+    
+    const userSocketEntry = Array.from(state.connectedUsers.entries())
+      .find(([_, data]) => data.userId === room.userId && data.type === "user");
+    if (userSocketEntry) {
+      const [userSocketId] = userSocketEntry;
+      const userSocket = io.sockets.sockets.get(userSocketId);
+      if (userSocket) {
+        userSocket.emit("call_started", { roomId });
       }
     }
   });
@@ -877,6 +980,9 @@ io.on("connection", (socket) => {
     if (!room) return;
 
     console.log(`📞 Call ended by ${enderType} in room ${roomId}`);
+    
+    // Reset call state to idle
+    state.callStates.set(roomId, "idle");
 
     if (enderType === "user") {
       // Notify agent

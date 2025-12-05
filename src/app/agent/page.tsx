@@ -174,12 +174,14 @@ export default function AgentDashboard() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   
   // Call state (audio-only)
-  const [callState, setCallState] = useState<"idle" | "ringing" | "connected" | "incoming">("idle");
+  const [callState, setCallState] = useState<"idle" | "pending" | "ringing" | "connected" | "incoming">("idle");
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
+  const pendingIceCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
+  const incomingCallOfferRef = useRef<RTCSessionDescriptionInit | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -334,6 +336,43 @@ export default function AgentDashboard() {
     ],
   };
 
+  // Safe addIceCandidate wrapper - queues candidates if remoteDescription not set
+  const safeAddIceCandidate = useCallback(async (candidate: RTCIceCandidateInit) => {
+    if (!peerConnection) return;
+    
+    if (peerConnection.remoteDescription) {
+      // Remote description is set, add immediately
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log("✅ Added ICE candidate immediately");
+      } catch (error) {
+        console.error("Error adding ICE candidate:", error);
+      }
+    } else {
+      // Queue candidate for later
+      pendingIceCandidatesRef.current.push(candidate);
+      console.log("📦 Queued ICE candidate (remoteDescription not set yet)");
+    }
+  }, [peerConnection]);
+
+  // Flush queued ICE candidates
+  const flushIceCandidates = useCallback(async () => {
+    if (!peerConnection || pendingIceCandidatesRef.current.length === 0) return;
+    
+    console.log(`🔄 Flushing ${pendingIceCandidatesRef.current.length} queued ICE candidates`);
+    const candidates = [...pendingIceCandidatesRef.current];
+    pendingIceCandidatesRef.current = [];
+    
+    for (const candidate of candidates) {
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log("✅ Flushed queued ICE candidate");
+      } catch (error) {
+        console.error("Error flushing ICE candidate:", error);
+      }
+    }
+  }, [peerConnection]);
+
   // Initialize WebRTC Peer Connection
   const createPeerConnection = useCallback(() => {
     const pc = new RTCPeerConnection(rtcConfiguration);
@@ -362,19 +401,20 @@ export default function AgentDashboard() {
       }
     };
 
-    // Add local stream tracks
-    if (localStream) {
-      localStream.getTracks().forEach((track) => {
-        pc.addTrack(track, localStream);
-      });
-    }
+    // Don't add local stream tracks here - do it in startCall/answerCall
 
     return pc;
-  }, [socket, selectedChatId, localStream]);
+  }, [socket, selectedChatId]);
 
   // Start Call (audio-only)
   const startCall = useCallback(async () => {
     if (!selectedChatId || !socket) return;
+
+    // Prevent starting new call if one is in progress
+    if (callState !== "idle") {
+      console.log("⚠️ Call already in progress, cannot start new call");
+      return;
+    }
 
     try {
       console.log("📞 Starting call...");
@@ -388,6 +428,13 @@ export default function AgentDashboard() {
 
       // Create peer connection
       const pc = createPeerConnection();
+      
+      // Add local stream tracks
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+        console.log("✅ Added local track:", track.kind);
+      });
+      
       setPeerConnection(pc);
 
       // Create offer
@@ -395,7 +442,7 @@ export default function AgentDashboard() {
       await pc.setLocalDescription(offer);
       console.log("✅ Created and set local description (offer)");
 
-      // Send offer
+      // Send offer (backend will send call_pending first)
       socket.emit("call_offer", {
         roomId: selectedChatId,
         offer: offer,
@@ -425,14 +472,25 @@ export default function AgentDashboard() {
       alert(errorMessage);
       setCallState("idle");
     }
-  }, [selectedChatId, socket, createPeerConnection]);
+  }, [selectedChatId, socket, createPeerConnection, callState]);
 
-  // Answer Call (audio-only)
-  const answerCall = useCallback(async (offer: RTCSessionDescriptionInit) => {
-    if (!selectedChatId || !socket || !peerConnection) return;
+  // Answer Call (audio-only) - called when agent manually accepts
+  const answerCall = useCallback(async () => {
+    if (!selectedChatId || !socket || !incomingCallOfferRef.current) {
+      console.error("Cannot answer call: missing roomId, socket, or offer");
+      return;
+    }
 
     try {
       console.log("📞 Answering call...");
+      
+      // Send call_accepted event first
+      socket.emit("call_accepted", {
+        roomId: selectedChatId,
+        answererType: "agent",
+      });
+      console.log("✅ Sent call_accepted event");
+      
       // Get user media (audio-only)
       const stream = await navigator.mediaDevices.getUserMedia({
         video: false,
@@ -441,13 +499,29 @@ export default function AgentDashboard() {
       
       setLocalStream(stream);
 
+      // Create peer connection if not exists
+      let pc = peerConnection;
+      if (!pc) {
+        pc = createPeerConnection();
+        setPeerConnection(pc);
+      }
+      
+      // Add local stream tracks
+      stream.getTracks().forEach((track) => {
+        pc.addTrack(track, stream);
+        console.log("✅ Added local track:", track.kind);
+      });
+
       // Set remote description
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      await pc.setRemoteDescription(new RTCSessionDescription(incomingCallOfferRef.current));
       console.log("✅ Set remote description (offer)");
 
+      // Flush queued ICE candidates after setting remote description
+      await flushIceCandidates();
+
       // Create answer
-      const answer = await peerConnection.createAnswer();
-      await peerConnection.setLocalDescription(answer);
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
       console.log("✅ Created and set local description (answer)");
 
       // Send answer
@@ -457,7 +531,9 @@ export default function AgentDashboard() {
         answererType: "agent",
       });
 
-      setCallState("connected");
+      console.log("✅ Call answered, waiting for call_started event...");
+      // Don't set state to "connected" yet - wait for call_started event
+      incomingCallOfferRef.current = null;
     } catch (error: any) {
       console.error("Error answering call:", error);
       
@@ -474,8 +550,25 @@ export default function AgentDashboard() {
       
       alert(errorMessage);
       setCallState("idle");
+      incomingCallOfferRef.current = null;
+      pendingIceCandidatesRef.current = [];
     }
-  }, [selectedChatId, socket, peerConnection]);
+  }, [selectedChatId, socket, peerConnection, createPeerConnection, flushIceCandidates]);
+
+  // Reject Call
+  const rejectCall = useCallback(() => {
+    if (!socket || !selectedChatId) return;
+    
+    socket.emit("call_rejected", {
+      roomId: selectedChatId,
+      rejecterType: "agent",
+    });
+    console.log("✅ Sent call_rejected event");
+    setCallState("idle");
+    incomingCallOfferRef.current = null;
+    // Clear any pending ICE candidates
+    pendingIceCandidatesRef.current = [];
+  }, [socket, selectedChatId]);
 
   // End Call
   const endCall = useCallback(() => {
@@ -507,6 +600,9 @@ export default function AgentDashboard() {
     }
 
     setCallState("idle");
+    incomingCallOfferRef.current = null;
+    // Clear pending ICE candidates
+    pendingIceCandidatesRef.current = [];
   }, [localStream, remoteStream, peerConnection, socket, selectedChatId]);
 
   // Toggle Mute
@@ -524,48 +620,80 @@ export default function AgentDashboard() {
   useEffect(() => {
     if (!socket) return;
 
+    socket.on("call_pending", (data: { roomId: string; callerId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      console.log("📞 Call pending from:", data.callerId);
+      // Set state to pending - will show incoming call UI
+      setCallState("pending");
+    });
+
     socket.on("call_offer", async (data: { roomId: string; offer: RTCSessionDescriptionInit; callerId: string }) => {
       if (data.roomId !== selectedChatId) return;
       
+      console.log("📞 Incoming call offer from:", data.callerId);
+      // Store offer but don't create peer connection yet
+      incomingCallOfferRef.current = data.offer;
       setCallState("incoming");
-      const pc = createPeerConnection();
-      setPeerConnection(pc);
-      
-      // Auto-answer for now (can add accept/reject UI later)
-      setTimeout(() => {
-        answerCall(data.offer);
-      }, 1000);
+      // Do NOT auto-answer - wait for manual accept
+    });
+
+    socket.on("call_accepted", (data: { roomId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      console.log("📞 Call accepted by receiver");
+      // Agent can prepare for answer if needed
+    });
+
+    socket.on("call_rejected", (data: { roomId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      console.log("📞 Call rejected by receiver");
+      setCallState("idle");
+      incomingCallOfferRef.current = null;
     });
 
     socket.on("call_answer", async (data: { roomId: string; answer: RTCSessionDescriptionInit }) => {
       if (data.roomId !== selectedChatId || !peerConnection) return;
       
+      console.log("📞 Call answer received");
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      console.log("✅ Set remote description (answer)");
+      
+      // Flush queued ICE candidates after setting remote description
+      await flushIceCandidates();
+      
+      // Wait for call_started event before setting state to "connected"
+      // Don't set state here
+    });
+
+    socket.on("call_started", (data: { roomId: string }) => {
+      if (data.roomId !== selectedChatId) return;
+      console.log("📞 Call started - connection established");
       setCallState("connected");
     });
 
     socket.on("call_ice_candidate", async (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
-      if (data.roomId !== selectedChatId || !peerConnection) return;
+      if (data.roomId !== selectedChatId) return;
       
-      try {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-      } catch (error) {
-        console.error("Error adding ICE candidate:", error);
-      }
+      // Use safe wrapper to queue if needed
+      await safeAddIceCandidate(data.candidate);
     });
 
     socket.on("call_end", (data: { roomId: string }) => {
       if (data.roomId !== selectedChatId) return;
+      console.log("📞 Call ended");
       endCall();
     });
 
     return () => {
+      socket.off("call_pending");
       socket.off("call_offer");
+      socket.off("call_accepted");
+      socket.off("call_rejected");
       socket.off("call_answer");
+      socket.off("call_started");
       socket.off("call_ice_candidate");
       socket.off("call_end");
     };
-  }, [socket, selectedChatId, peerConnection, createPeerConnection, answerCall, endCall]);
+  }, [socket, selectedChatId, peerConnection, createPeerConnection, answerCall, endCall, flushIceCandidates, safeAddIceCandidate]);
 
   // Cleanup on unmount or chat change
   useEffect(() => {
@@ -1476,9 +1604,55 @@ export default function AgentDashboard() {
                       </div>
                     </div>
 
-                    {/* Call UI (Audio-only) */}
+                    {/* Incoming Call UI */}
                     <AnimatePresence>
-                      {callState !== "idle" && (
+                      {(callState === "pending" || callState === "incoming") && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 20 }}
+                          className="border-b border-gray-200 bg-gradient-to-r from-green-500 to-green-600 p-4"
+                        >
+                          <div className="text-center text-white">
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                              <motion.div
+                                animate={{ scale: [1, 1.2, 1] }}
+                                transition={{ duration: 1, repeat: Infinity }}
+                                className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center"
+                              >
+                                <Phone size={32} className="text-white" />
+                              </motion.div>
+                            </div>
+                            <h3 className="text-lg font-semibold mb-2">Incoming Call</h3>
+                            <p className="text-sm text-white/90 mb-4">User is calling you...</p>
+                            <div className="flex items-center justify-center gap-3">
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={rejectCall}
+                                className="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors flex items-center gap-2"
+                              >
+                                <PhoneOff size={20} />
+                                Decline
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={answerCall}
+                                className="px-6 py-3 bg-white text-green-600 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-2 font-semibold"
+                              >
+                                <Phone size={20} />
+                                Answer
+                              </motion.button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Call UI (Audio-only) - Connected or Ringing */}
+                    <AnimatePresence>
+                      {(callState === "ringing" || callState === "connected") && (
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
@@ -1497,7 +1671,7 @@ export default function AgentDashboard() {
                               <Phone size={40} className="text-white" />
                             </motion.div>
                             <h3 className="text-lg font-semibold mb-2">
-                              {callState === "ringing" ? "Calling..." : callState === "incoming" ? "Incoming call..." : "Call Connected"}
+                              {callState === "ringing" ? "Calling..." : "Call Connected"}
                             </h3>
                             <p className="text-sm text-white/90 mb-6">
                               {callState === "connected" ? "Voice call in progress" : "Waiting for answer..."}
@@ -1530,8 +1704,8 @@ export default function AgentDashboard() {
                               </div>
                             )}
                             
-                            {/* End call button for ringing/incoming states */}
-                            {(callState === "ringing" || callState === "incoming") && (
+                            {/* End call button for ringing state */}
+                            {callState === "ringing" && (
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}

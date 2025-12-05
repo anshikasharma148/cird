@@ -271,13 +271,14 @@ export default function ChatBot() {
   const [showSearch, setShowSearch] = useState(false);
   
   // Call state (audio-only)
-  const [callState, setCallState] = useState<"idle" | "ringing" | "connected" | "incoming">("idle");
+  const [callState, setCallState] = useState<"idle" | "pending" | "ringing" | "connected" | "incoming">("idle");
   const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remoteStream, setRemoteStream] = useState<MediaStream | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
   const incomingCallOfferRef = useRef<RTCSessionDescriptionInit | null>(null);
   const remoteAudioRef = useRef<HTMLAudioElement | null>(null);
+  const pendingIceCandidatesRef = useRef<RTCIceCandidateInit[]>([]);
 
   // Update refs when state changes
   useEffect(() => {
@@ -395,6 +396,43 @@ export default function ChatBot() {
     ],
   };
 
+  // Safe addIceCandidate wrapper - queues candidates if remoteDescription not set
+  const safeAddIceCandidate = useCallback(async (candidate: RTCIceCandidateInit) => {
+    if (!peerConnection) return;
+    
+    if (peerConnection.remoteDescription) {
+      // Remote description is set, add immediately
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log("✅ Added ICE candidate immediately");
+      } catch (error) {
+        console.error("Error adding ICE candidate:", error);
+      }
+    } else {
+      // Queue candidate for later
+      pendingIceCandidatesRef.current.push(candidate);
+      console.log("📦 Queued ICE candidate (remoteDescription not set yet)");
+    }
+  }, [peerConnection]);
+
+  // Flush queued ICE candidates
+  const flushIceCandidates = useCallback(async () => {
+    if (!peerConnection || pendingIceCandidatesRef.current.length === 0) return;
+    
+    console.log(`🔄 Flushing ${pendingIceCandidatesRef.current.length} queued ICE candidates`);
+    const candidates = [...pendingIceCandidatesRef.current];
+    pendingIceCandidatesRef.current = [];
+    
+    for (const candidate of candidates) {
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        console.log("✅ Flushed queued ICE candidate");
+      } catch (error) {
+        console.error("Error flushing ICE candidate:", error);
+      }
+    }
+  }, [peerConnection]);
+
   // End Call
   const endCall = useCallback(() => {
     if (localStream) {
@@ -426,6 +464,8 @@ export default function ChatBot() {
 
     setCallState("idle");
     incomingCallOfferRef.current = null;
+    // Clear pending ICE candidates
+    pendingIceCandidatesRef.current = [];
   }, [localStream, remoteStream, peerConnection, socket]);
 
   // Answer Call
@@ -464,6 +504,13 @@ export default function ChatBot() {
         roomId: currentRoomIdRef.current,
         socketId: socket.id
       });
+      
+      // Send call_accepted event first
+      socket.emit("call_accepted", {
+        roomId: currentRoomIdRef.current,
+        answererType: "user",
+      });
+      console.log("✅ Sent call_accepted event");
       
       // Get user media (audio-only)
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -525,6 +572,9 @@ export default function ChatBot() {
       await pc.setRemoteDescription(new RTCSessionDescription(incomingCallOfferRef.current));
       console.log("✅ Set remote description (offer)");
 
+      // Flush queued ICE candidates after setting remote description
+      await flushIceCandidates();
+
       // Create answer
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
@@ -537,8 +587,8 @@ export default function ChatBot() {
         answererType: "user",
       });
 
-      console.log("✅ Call answered, waiting for connection...");
-      setCallState("connected");
+      console.log("✅ Call answered, waiting for call_started event...");
+      // Don't set state to "connected" yet - wait for call_started event
       incomingCallOfferRef.current = null;
     } catch (error: any) {
       console.error("❌ Error answering call:", error);
@@ -557,7 +607,7 @@ export default function ChatBot() {
       setCallState("idle");
       incomingCallOfferRef.current = null;
     }
-  }, [socket, open]);
+      }, [socket, open, flushIceCandidates, safeAddIceCandidate]);
 
   // Reject Call
   const rejectCall = useCallback((e?: React.MouseEvent) => {
@@ -568,13 +618,16 @@ export default function ChatBot() {
     }
     
     if (socket && currentRoomIdRef.current) {
-      socket.emit("call_end", {
+      socket.emit("call_rejected", {
         roomId: currentRoomIdRef.current,
-        enderType: "user",
+        rejecterType: "user",
       });
+      console.log("✅ Sent call_rejected event");
     }
     setCallState("idle");
     incomingCallOfferRef.current = null;
+    // Clear any pending ICE candidates
+    pendingIceCandidatesRef.current = [];
   }, [socket]);
 
   // Toggle Mute
@@ -910,6 +963,18 @@ export default function ChatBot() {
     });
 
     // ✅ WebRTC Call Event Handlers
+    socketInstance.on("call_pending", (data: { roomId: string; callerId: string }) => {
+      console.log("📞 Call pending from:", data.callerId, "roomId:", data.roomId);
+      
+      if (data.roomId !== currentRoomIdRef.current) {
+        console.log("⚠️ Room ID mismatch, ignoring call_pending");
+        return;
+      }
+      
+      // Set state to pending - will show incoming call UI
+      setCallState("pending");
+    });
+
     socketInstance.on("call_offer", async (data: { roomId: string; offer: RTCSessionDescriptionInit; callerId: string }) => {
       console.log("📞 Incoming call offer from:", data.callerId, "roomId:", data.roomId, "currentRoom:", currentRoomIdRef.current);
       
@@ -918,6 +983,7 @@ export default function ChatBot() {
         return;
       }
       
+      // Store offer but don't create peer connection yet
       incomingCallOfferRef.current = data.offer;
       setCallState("incoming");
       
@@ -946,7 +1012,7 @@ export default function ChatBot() {
       
       // Play ring sound every 2 seconds while incoming
       const ringInterval = setInterval(() => {
-        if (callState === "incoming") {
+        if (callState === "incoming" || callState === "pending") {
           playRing();
         } else {
           clearInterval(ringInterval);
@@ -957,28 +1023,50 @@ export default function ChatBot() {
       setTimeout(() => clearInterval(ringInterval), 30000); // Stop after 30 seconds
     });
 
+    socketInstance.on("call_accepted", (data: { roomId: string }) => {
+      if (data.roomId !== currentRoomIdRef.current) return;
+      console.log("📞 Call accepted by receiver");
+      // User can prepare for answer if needed
+    });
+
+    socketInstance.on("call_rejected", (data: { roomId: string }) => {
+      if (data.roomId !== currentRoomIdRef.current) return;
+      console.log("📞 Call rejected by receiver");
+      setCallState("idle");
+      incomingCallOfferRef.current = null;
+    });
+
     socketInstance.on("call_answer", async (data: { roomId: string; answer: RTCSessionDescriptionInit }) => {
       if (data.roomId !== currentRoomIdRef.current || !peerConnection) return;
       
-      console.log("📞 Call answered");
+      console.log("📞 Call answer received");
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      console.log("✅ Set remote description (answer)");
+      
+      // Flush queued ICE candidates after setting remote description
+      await flushIceCandidates();
+      
+      // Wait for call_started event before setting state to "connected"
+      // Don't set state here
+    });
+
+    socketInstance.on("call_started", (data: { roomId: string }) => {
+      if (data.roomId !== currentRoomIdRef.current) return;
+      console.log("📞 Call started - connection established");
       setCallState("connected");
     });
 
     socketInstance.on("call_ice_candidate", async (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
-      if (data.roomId !== currentRoomIdRef.current || !peerConnection) return;
+      if (data.roomId !== currentRoomIdRef.current) return;
       
-      try {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-      } catch (error) {
-        console.error("Error adding ICE candidate:", error);
-      }
+      // Use safe wrapper to queue if needed
+      await safeAddIceCandidate(data.candidate);
     });
 
     socketInstance.on("call_end", (data: { roomId: string }) => {
       if (data.roomId !== currentRoomIdRef.current) return;
       
-      console.log("📞 Call ended by agent");
+      console.log("📞 Call ended");
       endCall();
     });
 
@@ -986,8 +1074,12 @@ export default function ChatBot() {
 
     return () => {
       // Cleanup call handlers
+      socketInstance.off("call_pending");
       socketInstance.off("call_offer");
+      socketInstance.off("call_accepted");
+      socketInstance.off("call_rejected");
       socketInstance.off("call_answer");
+      socketInstance.off("call_started");
       socketInstance.off("call_ice_candidate");
       socketInstance.off("call_end");
       socketInstance.off("connect");
