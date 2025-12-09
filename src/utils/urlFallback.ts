@@ -13,39 +13,29 @@ const CACHE_DURATION = 10000; // Cache for only 10 seconds (reduced for faster d
 
 /**
  * Check if a URL is reachable using multiple methods
- * Uses fetch with proper error handling and timeout
+ * Only works in browser environment (client-side)
  */
 async function isUrlReachable(url: string): Promise<boolean> {
+  // Only run in browser environment
+  if (typeof window === "undefined") {
+    return false;
+  }
+
   // Check cache first (but with shorter duration)
   const cached = urlCache[url];
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.available;
   }
 
-  // Method 1: Try fetch with no-cors first (fastest, but limited info)
-  // This will resolve even if server is down, so we need method 2 for verification
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 2000);
-
-    // Try with no-cors first - this will resolve if network is reachable
-    await fetch(url, {
-      method: "HEAD",
-      mode: "no-cors",
-      signal: controller.signal,
-      cache: "no-cache",
-    });
-
-    clearTimeout(timeoutId);
-  } catch (error: any) {
-    // Network error or timeout - server is definitely down
-    urlCache[url] = { available: false, timestamp: Date.now() };
-    return false;
-  }
-
-  // Method 2: Use XMLHttpRequest for better error detection
+  // Use XMLHttpRequest for better error detection
   // This gives us more control over detecting actual server errors
   return new Promise<boolean>((resolve) => {
+    if (typeof XMLHttpRequest === "undefined") {
+      urlCache[url] = { available: false, timestamp: Date.now() };
+      resolve(false);
+      return;
+    }
+
     const xhr = new XMLHttpRequest();
     const timeout = setTimeout(() => {
       xhr.abort();
@@ -55,8 +45,9 @@ async function isUrlReachable(url: string): Promise<boolean> {
 
     xhr.onload = () => {
       clearTimeout(timeout);
-      // If we get any response (even 404/500), server is up
-      if (xhr.status >= 200 || xhr.status >= 400) {
+      // If we get any HTTP response (even 404/500), server is up
+      // Status 0 might indicate network error, but other statuses mean server responded
+      if (xhr.status > 0) {
         urlCache[url] = { available: true, timestamp: Date.now() };
         resolve(true);
       } else {
@@ -77,10 +68,16 @@ async function isUrlReachable(url: string): Promise<boolean> {
       resolve(false);
     };
 
+    xhr.onabort = () => {
+      clearTimeout(timeout);
+      urlCache[url] = { available: false, timestamp: Date.now() };
+      resolve(false);
+    };
+
     xhr.timeout = TIMEOUT_MS;
-    xhr.open("HEAD", url, true);
     
     try {
+      xhr.open("HEAD", url, true);
       xhr.send();
     } catch (error) {
       clearTimeout(timeout);
@@ -172,6 +169,12 @@ export function clearUrlCache(url?: string) {
  */
 export async function handleQuickUrlClick(e: React.MouseEvent<HTMLAnchorElement>) {
   e.preventDefault();
+  
+  // Only run in browser environment
+  if (typeof window === "undefined") {
+    return;
+  }
+
   const target = (e.currentTarget as HTMLAnchorElement).target;
 
   // Clear cache to ensure fresh check (server might have been restarted)
