@@ -116,7 +116,7 @@ export default function HeroSection() {
         setHeaderHeight(headerRef.current.offsetHeight);
       }
     };
-    
+
     updateHeaderHeight();
     window.addEventListener('resize', updateHeaderHeight);
     return () => window.removeEventListener('resize', updateHeaderHeight);
@@ -125,7 +125,7 @@ export default function HeroSection() {
   // Auto-slide functionality for hero images
   useEffect(() => {
     if (isPaused || heroImages.length <= 1) return;
-    
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 5000);
@@ -160,7 +160,7 @@ export default function HeroSection() {
             <span className="hidden sm:inline">Margadarshak</span>
           </Link>
         </div>
-        
+
         {/* Header Section with Logo and Full Form */}
         <div className="border-b border-[#c89666]">
           <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16 py-3 sm:py-4">
@@ -199,9 +199,9 @@ export default function HeroSection() {
                   </a>
                 </div>
                 <div className="flex items-center gap-2">
-                  <a 
-                    href="https://www.linkedin.com/in/center-of-industrial-research-and-development/" 
-                    target="_blank" 
+                  <a
+                    href="https://www.linkedin.com/in/center-of-industrial-research-and-development/"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#e1b382] hover:bg-[#2d545e] flex items-center justify-center transition-colors group flex-shrink-0"
                   >
@@ -217,386 +217,386 @@ export default function HeroSection() {
         <div className="border-b border-[#c89666]">
           <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16">
             <nav className="flex h-14 sm:h-16 items-center justify-end">
-            <NavigationMenu className="hidden lg:flex flex-1 justify-end">
-              <NavigationMenuList className="flex flex-wrap justify-end gap-0.5 md:gap-1">
-                <NavigationMenuItem>
-                  <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e] data-[active]:bg-[#2d545e] data-[active]:text-white">
-                    <span className="group-hover:scale-105 transition-transform duration-200">Home</span>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
-                    <span className="group-hover:scale-105 transition-transform duration-200">About</span>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <div className="relative group/nav">
-                    <NavigationMenuTrigger 
-                      className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.tagName !== 'svg' && !target.closest('svg')) {
-                          router.push('/research');
-                        }
-                      }}
-                    >
-                      <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
-                        Research
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-2xl z-50">
-                      <ul className="grid gap-3 p-4 w-max">
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/projects/ba01-pp-b"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                BA01/PP/B - Problems and Remedies of Bottom Ash Replacement
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Investigate challenges and develop remedies for replacing natural sand with bottom ash
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/projects/ba01-pp-c"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                BA01/PP/C - Bottom Ash Replacement in Pavers and Bricks
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Develop methodology to replace 80% of sand with bottom ash in paver and brick manufacturing
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/projects/ba03-pp-b"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                BA03/PP/B - Monitoring & Control System for CHP
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Automate and monitor conveyor systems in coal handling plants using robotics and PLC control
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/projects/ba07-pp-a"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                BA07/PP/A - Early Warning System (EWS)
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Real-time hydrological monitoring and early warning system for flood and weather monitoring
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/projects/ba07-pp-b"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                BA07/PP/B - Automatic Weather Station (AWS)
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Automate weather data collection and visualization for hydro stations
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      </ul>
-                    </NavigationMenuContent>
-                  </div>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <div className="relative group/nav">
-                    <NavigationMenuTrigger 
-                      className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.tagName !== 'svg' && !target.closest('svg')) {
-                          router.push('/entities');
-                        }
-                      }}
-                    >
-                      <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
-                        Entities
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
-                      <ul className="grid gap-3 p-4 w-max">
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/entities/cdc"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                CDC - Control Development Centre
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Advanced Control Systems Research
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/entities/mtl"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                MTL - Mechanical Testing Lab
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Specialized research laboratory for advanced material and mechanical testing
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      </ul>
-                    </NavigationMenuContent>
-                  </div>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <div className="relative group/nav">
-                    <NavigationMenuTrigger 
-                      className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.tagName !== 'svg' && !target.closest('svg')) {
-                          router.push('/training');
-                        }
-                      }}
-                    >
-                      <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
-                        Training
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
-                      <ul className="grid gap-3 p-4 w-max">
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/training#overview"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Program Overview
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Summer Industrial Training 2025 - Program details and structure
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/training#ai-srijan"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                AI Srijan - Faculty Development Programme
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Hands-on sessions in Machine Learning and Deep Learning with Intel
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/training#power-plant"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Power Plant Visit
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Visit to Jaypee Nigrie Super Thermal Power Plant
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/training#closing"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Closing Ceremony
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Recognition, certificates, and program conclusion
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      </ul>
-                    </NavigationMenuContent>
-                  </div>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <div className="relative group/nav">
-                    <NavigationMenuTrigger 
-                      className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
-                      onClick={(e) => {
-                        const target = e.target as HTMLElement;
-                        if (target.tagName !== 'svg' && !target.closest('svg')) {
-                          router.push('/team');
-                        }
-                      }}
-                    >
-                      <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
-                        Team
-                      </span>
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
-                      <ul className="grid gap-3 p-4 w-max">
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/team#coordination"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Coordination Committee
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Leading CIRD's vision and strategic direction
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/team#technical"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Technical Professional Consultants
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Expert consultants supporting CIRD projects
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/team#cdc"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Control Development Centre Team
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Software development and automation specialists
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/team#mtl"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Mechanical Testing Lab Team
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Meet the talented professionals driving innovation at MTL
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                        <li>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href="/team#nodal"
-                              className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
-                            >
-                              <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
-                                Nodal Officers of JPVL
-                              </div>
-                              <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
-                                Key collaborators from JPVL supporting CIRD projects
-                              </p>
-                            </Link>
-                          </NavigationMenuLink>
-                        </li>
-                      </ul>
-                    </NavigationMenuContent>
-                  </div>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/patents" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
-                    <span className="group-hover:scale-105 transition-transform duration-200">Patents</span>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/mou" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
-                    <span className="group-hover:scale-105 transition-transform duration-200">MoU</span>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
-                    <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
-                    <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
-                  </Link>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-            
-            {/* Mobile/Tablet Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="lg:hidden text-[#2d545e] hover:bg-[#2d545e] hover:text-white flex-shrink-0 ml-2 p-2 min-w-[40px] h-10"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <X size={22} className="sm:w-6 sm:h-6" /> : <Menu size={22} className="sm:w-6 sm:h-6" />}
-            </Button>
+              <NavigationMenu className="hidden lg:flex flex-1 justify-end">
+                <NavigationMenuList className="flex flex-wrap justify-end gap-0.5 md:gap-1">
+                  <NavigationMenuItem>
+                    <Link href="/" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e] data-[active]:bg-[#2d545e] data-[active]:text-white">
+                      <span className="group-hover:scale-105 transition-transform duration-200">Home</span>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="/about" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                      <span className="group-hover:scale-105 transition-transform duration-200">About</span>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <div className="relative group/nav">
+                      <NavigationMenuTrigger
+                        className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName !== 'svg' && !target.closest('svg')) {
+                            router.push('/research');
+                          }
+                        }}
+                      >
+                        <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
+                          Research
+                        </span>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-2xl z-50">
+                        <ul className="grid gap-3 p-4 w-max">
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/projects/ba01-pp-b"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  BA01/PP/B - Problems and Remedies of Bottom Ash Replacement
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Investigate challenges and develop remedies for replacing natural sand with bottom ash
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/projects/ba01-pp-c"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  BA01/PP/C - Bottom Ash Replacement in Pavers and Bricks
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Develop methodology to replace 80% of sand with bottom ash in paver and brick manufacturing
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/projects/ba03-pp-b"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  BA03/PP/B - Monitoring & Control System for CHP
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Automate and monitor conveyor systems in coal handling plants using robotics and PLC control
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/projects/ba07-pp-a"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  BA07/PP/A - Early Warning System (EWS)
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Real-time hydrological monitoring and early warning system for flood and weather monitoring
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/projects/ba07-pp-b"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  BA07/PP/B - Automatic Weather Station (AWS)
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Automate weather data collection and visualization for hydro stations
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        </ul>
+                      </NavigationMenuContent>
+                    </div>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <div className="relative group/nav">
+                      <NavigationMenuTrigger
+                        className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName !== 'svg' && !target.closest('svg')) {
+                            router.push('/entities');
+                          }
+                        }}
+                      >
+                        <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
+                          Entities
+                        </span>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
+                        <ul className="grid gap-3 p-4 w-max">
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/entities/cdc"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  CDC - Control Development Centre
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Advanced Control Systems Research
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/entities/mtl"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  MTL - Mechanical Testing Lab
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Specialized research laboratory for advanced material and mechanical testing
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        </ul>
+                      </NavigationMenuContent>
+                    </div>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <div className="relative group/nav">
+                      <NavigationMenuTrigger
+                        className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName !== 'svg' && !target.closest('svg')) {
+                            router.push('/training');
+                          }
+                        }}
+                      >
+                        <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
+                          Training
+                        </span>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
+                        <ul className="grid gap-3 p-4 w-max">
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/training#overview"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Program Overview
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Summer Industrial Training 2025 - Program details and structure
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/training#ai-srijan"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  AI Srijan - Faculty Development Programme
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Hands-on sessions in Machine Learning and Deep Learning with Intel
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/training#power-plant"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Power Plant Visit
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Visit to Jaypee Nigrie Super Thermal Power Plant
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/training#closing"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Closing Ceremony
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Recognition, certificates, and program conclusion
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        </ul>
+                      </NavigationMenuContent>
+                    </div>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <div className="relative group/nav">
+                      <NavigationMenuTrigger
+                        className="bg-transparent text-[#2d545e] hover:bg-[#2d545e] hover:text-white data-[state=open]:bg-[#2d545e] data-[state=open]:text-white cursor-pointer px-2 md:px-4 text-xs md:text-sm h-10"
+                        onClick={(e) => {
+                          const target = e.target as HTMLElement;
+                          if (target.tagName !== 'svg' && !target.closest('svg')) {
+                            router.push('/team');
+                          }
+                        }}
+                      >
+                        <span className="group-hover/nav:scale-105 transition-transform duration-200 cursor-pointer">
+                          Team
+                        </span>
+                      </NavigationMenuTrigger>
+                      <NavigationMenuContent className="bg-white backdrop-blur-xl border border-[#c89666] shadow-xl w-max max-w-xl z-50">
+                        <ul className="grid gap-3 p-4 w-max">
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/team#coordination"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Coordination Committee
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Leading CIRD's vision and strategic direction
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/team#technical"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Technical Professional Consultants
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Expert consultants supporting CIRD projects
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/team#cdc"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Control Development Centre Team
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Software development and automation specialists
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/team#mtl"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Mechanical Testing Lab Team
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Meet the talented professionals driving innovation at MTL
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href="/team#nodal"
+                                className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-[#e1b382]/20 focus:bg-[#e1b382]/20"
+                              >
+                                <div className="text-sm font-medium leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                                  Nodal Officers of JPVL
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
+                                  Key collaborators from JPVL supporting CIRD projects
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        </ul>
+                      </NavigationMenuContent>
+                    </div>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="/patents" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                      <span className="group-hover:scale-105 transition-transform duration-200">Patents</span>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="/mou" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                      <span className="group-hover:scale-105 transition-transform duration-200">MoU</span>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="/contact" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                      <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
+                    </Link>
+                  </NavigationMenuItem>
+                  <NavigationMenuItem>
+                    <Link href="http://115.242.156.230:4000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                      <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
+                    </Link>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+
+              {/* Mobile/Tablet Menu Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="lg:hidden text-[#2d545e] hover:bg-[#2d545e] hover:text-white flex-shrink-0 ml-2 p-2 min-w-[40px] h-10"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {isMobileMenuOpen ? <X size={22} className="sm:w-6 sm:h-6" /> : <Menu size={22} className="sm:w-6 sm:h-6" />}
+              </Button>
             </nav>
           </div>
-          
+
           {/* Mobile/Tablet Menu */}
           {isMobileMenuOpen && (
             <div
               className="lg:hidden border-t border-[#c89666]/40 bg-[#e1b382]/98 backdrop-blur-md transition-all duration-300 max-h-[calc(100vh-8rem)] sm:max-h-[calc(100vh-9rem)] overflow-y-auto shadow-lg"
             >
               <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-1 sm:space-y-2">
-                <Link 
-                  href="/agent" 
+                <Link
+                  href="/agent"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium border border-[#c89666]"
                 >
@@ -604,15 +604,15 @@ export default function HeroSection() {
                   <span>Margadarshak Dashboard</span>
                 </Link>
                 <div className="border-t border-[#c89666]/40 my-2"></div>
-                <Link 
-                  href="/" 
+                <Link
+                  href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Home
                 </Link>
-                <Link 
-                  href="/about" 
+                <Link
+                  href="/about"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
@@ -621,43 +621,43 @@ export default function HeroSection() {
                 <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Research
                 </div>
-                <Link 
-                  href="/research" 
+                <Link
+                  href="/research"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Research Projects
                 </Link>
-                <Link 
-                  href="/projects/ba01-pp-b" 
+                <Link
+                  href="/projects/ba01-pp-b"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA01/PP/B - Problems and Remedies
                 </Link>
-                <Link 
-                  href="/projects/ba01-pp-c" 
+                <Link
+                  href="/projects/ba01-pp-c"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA01/PP/C - Bottom Ash in Pavers
                 </Link>
-                <Link 
-                  href="/projects/ba03-pp-b" 
+                <Link
+                  href="/projects/ba03-pp-b"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA03/PP/B - CHP Monitoring
                 </Link>
-                <Link 
-                  href="/projects/ba07-pp-a" 
+                <Link
+                  href="/projects/ba07-pp-a"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   BA07/PP/A - Early Warning System
                 </Link>
-                <Link 
-                  href="/projects/ba07-pp-b" 
+                <Link
+                  href="/projects/ba07-pp-b"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
@@ -666,22 +666,22 @@ export default function HeroSection() {
                 <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Entities
                 </div>
-                <Link 
-                  href="/entities" 
+                <Link
+                  href="/entities"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Entities
                 </Link>
-                <Link 
-                  href="/entities/cdc" 
+                <Link
+                  href="/entities/cdc"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   CDC - Control Development Centre
                 </Link>
-                <Link 
-                  href="/entities/mtl" 
+                <Link
+                  href="/entities/mtl"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
@@ -690,36 +690,36 @@ export default function HeroSection() {
                 <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Training
                 </div>
-                <Link 
-                  href="/training" 
+                <Link
+                  href="/training"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Training Programs
                 </Link>
-                <Link 
-                  href="/training#overview" 
+                <Link
+                  href="/training#overview"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Program Overview
                 </Link>
-                <Link 
-                  href="/training#ai-srijan" 
+                <Link
+                  href="/training#ai-srijan"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   AI Srijan FDP
                 </Link>
-                <Link 
-                  href="/training#power-plant" 
+                <Link
+                  href="/training#power-plant"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Power Plant Visit
                 </Link>
-                <Link 
-                  href="/training#closing" 
+                <Link
+                  href="/training#closing"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
@@ -728,72 +728,72 @@ export default function HeroSection() {
                 <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-[#2d545e] font-semibold uppercase tracking-wide">
                   Team
                 </div>
-                <Link 
-                  href="/team" 
+                <Link
+                  href="/team"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   All Team Members
                 </Link>
-                <Link 
-                  href="/team#coordination" 
+                <Link
+                  href="/team#coordination"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Coordination Committee
                 </Link>
-                <Link 
-                  href="/team#technical" 
+                <Link
+                  href="/team#technical"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Technical Consultants
                 </Link>
-                <Link 
-                  href="/team#cdc" 
+                <Link
+                  href="/team#cdc"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   CDC Team
                 </Link>
-                <Link 
-                  href="/team#mtl" 
+                <Link
+                  href="/team#mtl"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   MTL Team
                 </Link>
-                <Link 
-                  href="/team#nodal" 
+                <Link
+                  href="/team#nodal"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors"
                 >
                   Nodal Officers
                 </Link>
-                <Link 
-                  href="/patents" 
+                <Link
+                  href="/patents"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Patents
                 </Link>
-                <Link 
-                  href="/mou" 
+                <Link
+                  href="/mou"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   MoU
                 </Link>
-                <Link 
-                  href="/contact" 
+                <Link
+                  href="/contact"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
                   Contact
                 </Link>
-                <Link 
-                  href="http://115.242.156.230:3000" 
-                  target="_blank" 
+                <Link
+                  href="http://115.242.156.230:4000"
+                  target="_blank"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
                 >
@@ -839,7 +839,7 @@ export default function HeroSection() {
             </motion.div>
           );
         })}
-        
+
         {/* Fixed Overlay with text - Doesn't change with images */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/40 to-black/20 sm:from-black/55 sm:via-black/45 sm:to-black/25 md:from-black/60 md:via-black/50 md:to-black/30 flex items-center z-10">
           <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
@@ -857,7 +857,7 @@ export default function HeroSection() {
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <Link href="/research">
-                  <Button 
+                  <Button
                     size="default"
                     className="bg-[#2d545e] hover:bg-[#12343b] text-white px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-sm sm:text-base font-semibold rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 w-full sm:w-auto"
                   >
@@ -866,8 +866,8 @@ export default function HeroSection() {
                   </Button>
                 </Link>
                 <Link href="/about">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="default"
                     className="border-2 border-white bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 px-4 py-2 sm:px-5 sm:py-2.5 md:px-6 md:py-3 lg:px-8 lg:py-4 text-sm sm:text-base font-semibold rounded-lg transition-all duration-300 w-full sm:w-auto"
                   >
@@ -910,11 +910,10 @@ export default function HeroSection() {
                   setIsPaused(true);
                   setTimeout(() => setIsPaused(false), 6000);
                 }}
-                className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${
-                  index === currentImageIndex
+                className={`h-1 sm:h-1.5 rounded-full transition-all duration-300 ${index === currentImageIndex
                     ? "w-5 sm:w-6 bg-white"
                     : "w-1 sm:w-1.5 bg-white/50 hover:bg-white/75"
-                }`}
+                  }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}
@@ -930,7 +929,7 @@ export default function HeroSection() {
               {stats.map((stat, index) => (
                 <div key={`first-${index}`} className="inline-flex items-center mx-4 sm:mx-6 md:mx-8 lg:mx-12">
                   {stat.link && stat.link !== "#" ? (
-                    <Link 
+                    <Link
                       href={stat.link}
                       className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group"
                     >
@@ -959,7 +958,7 @@ export default function HeroSection() {
               {stats.map((stat, index) => (
                 <div key={`second-${index}`} className="inline-flex items-center mx-4 sm:mx-6 md:mx-8 lg:mx-12">
                   {stat.link && stat.link !== "#" ? (
-                    <Link 
+                    <Link
                       href={stat.link}
                       className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group"
                     >
