@@ -1,6 +1,9 @@
+"use client";
+
 /**
  * Utility functions for URL fallback mechanism
  * Tries primary URL first, falls back to secondary URL if primary is unreachable
+ * Client-side only - uses browser APIs
  */
 
 const PRIMARY_URL = "http://115.242.156.230:3000";
