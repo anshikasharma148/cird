@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { FallbackLink } from "./FallbackLink";
 import { ExternalLink, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
@@ -56,9 +55,9 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <FallbackLink href="http://115.242.156.230:3000" target="_blank" className="text-gray-400 hover:text-cyan-400 transition-colors flex items-center">
+                  <Link href="http://115.242.156.230:4000" target="_blank" className="text-gray-400 hover:text-cyan-400 transition-colors flex items-center">
                     Hydrology <ExternalLink className="ml-1 w-3 h-3" />
-                  </FallbackLink>
+                  </Link>
                 </li>
               </ul>
             </motion.div>
