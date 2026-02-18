@@ -569,7 +569,7 @@ export default function HeroSection() {
                     </Link>
                   </NavigationMenuItem>
                   <NavigationMenuItem>
-                    <Link href="http://115.242.156.230:3000" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
+                    <Link href="https://hydrologyjpvl.cird.co.in" target="_blank" className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-transparent px-2 md:px-4 py-2 text-xs md:text-sm font-medium transition-all duration-300 hover:bg-[#2d545e] hover:text-white focus:bg-[#2d545e] focus:text-white focus:outline-none disabled:pointer-events-none disabled:opacity-50 text-[#2d545e]">
                       <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
                     </Link>
                   </NavigationMenuItem>
@@ -792,7 +792,7 @@ export default function HeroSection() {
                   Contact
                 </Link>
                 <Link
-                  href="http://115.242.156.230:3000"
+                  href="https://hydrologyjpvl.cird.co.in"
                   target="_blank"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e] hover:text-white rounded-md transition-colors font-medium"
