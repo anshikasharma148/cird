@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Search, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   NavigationMenu,
@@ -17,23 +17,9 @@ import {
 
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 10);
-    };
-
-    // Check initial scroll position
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Check if path is active
   const isActive = (path: string) => {
@@ -42,73 +28,92 @@ export function Navigation() {
   };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-500 ${isScrolled
-        ? "border-b-2 border-[#c89666]/50 bg-gradient-to-r from-[#e1b382]/98 via-[#e1b382]/97 to-[#e1b382]/98 backdrop-blur-xl supports-backdrop-filter:backdrop-blur-xl shadow-lg shadow-[#2d545e]/10"
-        : "border-b border-[#c89666]/30 bg-gradient-to-r from-[#e1b382]/95 via-[#e1b382]/93 to-[#e1b382]/95 backdrop-blur-lg supports-backdrop-filter:backdrop-blur-lg shadow-md shadow-[#2d545e]/5"
-        }`}
-    >
-      <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16 flex h-16 sm:h-18 md:h-20 items-center justify-between">
-        <div className="flex flex-shrink-0 min-w-0">
-          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#2d545e] to-[#12343b] rounded-lg opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-sm"></div>
-              <div className="relative px-3 py-1.5 bg-gradient-to-br from-[#2d545e] to-[#12343b] rounded-lg shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <div className="font-bold text-lg sm:text-xl md:text-2xl text-white whitespace-nowrap">
-                  CIRD
+    <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm border-b border-slate-200">
+      {/* Top Bar: Logo, Search, Buttons - same as home */}
+      <div className="border-b border-slate-200 bg-white">
+        <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16 py-2.5 sm:py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#FF9800] flex items-center justify-center shadow flex-shrink-0">
+                  <span className="text-white font-bold text-lg sm:text-xl">C</span>
                 </div>
+                <div className="min-w-0">
+                  <h1 className="text-lg sm:text-xl font-bold text-[#1A237E] tracking-tight truncate">CIRD</h1>
+                  <p className="text-[10px] sm:text-xs text-[#37474F] font-medium hidden sm:block truncate max-w-[200px] lg:max-w-none">
+                    Centre for Industrial Research and Development
+                  </p>
+                </div>
+              </Link>
+            </div>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="hidden sm:flex items-center flex-1 max-w-[180px] lg:max-w-[220px] bg-slate-100 border border-slate-200 rounded-md px-3 py-2 text-slate-500 text-sm">
+                <Search className="w-4 h-4 mr-2 flex-shrink-0" />
+                <span>Find Anything</span>
               </div>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-3 py-2 text-sm font-semibold text-white bg-[#263238] hover:bg-[#37474F] rounded transition-colors"
+              >
+                Contact
+              </Link>
+              <Link
+                href="/agent"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-semibold text-white bg-[#4CAF50] hover:bg-[#43A047] rounded transition-colors"
+                title="Agent Login"
+              >
+                <Shield size={14} />
+                <span className="hidden sm:inline">Agent Login</span>
+              </Link>
             </div>
-            <div className="text-left min-w-0 hidden sm:block">
-              <div className="text-xs md:text-sm text-[#2d545e] font-semibold whitespace-nowrap">Centre for Industrial Research and Development</div>
-            </div>
-          </Link>
+          </div>
         </div>
-        <NavigationMenu className="hidden lg:block flex-1">
-          <NavigationMenuList className="flex flex-wrap justify-end gap-1 md:gap-2">
-            <NavigationMenuItem>
-              <Link
-                href="/"
-                className={`group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 ${isActive("/")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-                  }`}
-              >
-                {isActive("/") && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative group-hover:scale-105 transition-transform duration-200">Home</span>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link
-                href="/about"
-                className={`group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 ${isActive("/about")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-                  }`}
-              >
-                {isActive("/about") && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative group-hover:scale-105 transition-transform duration-200">About</span>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <div className="relative group/nav">
-                <NavigationMenuTrigger
-                  className={`relative bg-transparent cursor-pointer px-3 md:px-4 text-sm font-semibold h-10 rounded-lg transition-all duration-300 ${isActive("/research") || isActive("/projects")
-                    ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30 data-[state=open]:bg-gradient-to-r data-[state=open]:from-[#2d545e] data-[state=open]:to-[#12343b]"
-                    : "text-[#2d545e] hover:bg-[#2d545e]/10 data-[state=open]:bg-[#2d545e]/10"
-                    }`}
+      </div>
+
+      {/* Main Navigation Bar - dark blue, same as home: centered, larger font */}
+      <div className="bg-[#1A237E]">
+        <div className="container mx-auto px-3 sm:px-6 md:px-8 lg:px-16">
+          <nav className="flex h-12 sm:h-14 items-center justify-center">
+            <NavigationMenu className="hidden lg:flex flex-1 justify-center">
+              <NavigationMenuList className="flex flex-wrap justify-center gap-0.5 md:gap-1">
+                <NavigationMenuItem>
+                  <Link
+                    href="/"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/")
+                      ? "bg-[#FF9800] text-white"
+                      : "bg-transparent text-white hover:bg-white/10"
+                      }`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">Home</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/about"
+                    aria-label="About CIRD"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/about")
+                      ? "bg-[#FF9800] text-white"
+                      : "bg-transparent text-white hover:bg-white/10"
+                      }`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">About</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/authorities"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/authorities")
+                      ? "bg-[#FF9800] text-white"
+                      : "bg-transparent text-white hover:bg-white/10"
+                      }`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">Authorities</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <div className="relative group/nav">
+                    <NavigationMenuTrigger
+                      className={`bg-transparent text-white hover:bg-white/10 data-[state=open]:bg-white/10 cursor-pointer px-2 md:px-4 text-sm md:text-base font-semibold h-10 rounded-md transition-all duration-300 ${isActive("/research") || isActive("/projects") ? "!bg-[#FF9800]" : ""}`}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
                     if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -120,15 +125,15 @@ export function Navigation() {
                     Research
                   </span>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white/98 backdrop-blur-xl border-2 border-[#c89666]/50 shadow-2xl w-max max-w-2xl rounded-xl overflow-hidden">
-                  <ul className="grid gap-2 p-4 w-max">
+                <NavigationMenuContent className="bg-white backdrop-blur-xl border border-slate-200 shadow-xl w-max max-w-2xl z-50">
+                  <ul className="grid gap-3 p-4 w-max">
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
                           href="/projects/ba01-pp-b"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-medium leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors">
                             BA01/PP/B - Problems and Remedies of Bottom Ash Replacement
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -141,9 +146,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/projects/ba01-pp-c"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             BA01/PP/C - Bottom Ash Replacement in Pavers and Bricks
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -156,9 +161,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/projects/ba03-pp-b"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             BA03/PP/B - Monitoring & Control System for CHP
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -171,9 +176,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/projects/ba07-pp-a"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             BA07/PP/A - Early Warning System (EWS)
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -186,9 +191,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/projects/ba07-pp-b"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             BA07/PP/B - Automatic Weather Station (AWS)
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -204,10 +209,7 @@ export function Navigation() {
             <NavigationMenuItem>
               <div className="relative group/nav">
                 <NavigationMenuTrigger
-                  className={`relative bg-transparent cursor-pointer px-3 md:px-4 text-sm font-semibold h-10 rounded-lg transition-all duration-300 ${isActive("/entities")
-                    ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30 data-[state=open]:bg-gradient-to-r data-[state=open]:from-[#2d545e] data-[state=open]:to-[#12343b]"
-                    : "text-[#2d545e] hover:bg-[#2d545e]/10 data-[state=open]:bg-[#2d545e]/10"
-                    }`}
+                  className={`bg-transparent text-white hover:bg-white/10 data-[state=open]:bg-white/10 cursor-pointer px-2 md:px-4 text-sm md:text-base font-semibold h-10 rounded-md transition-all duration-300 ${isActive("/entities") ? "!bg-[#FF9800]" : ""}`}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
                     if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -219,15 +221,15 @@ export function Navigation() {
                     Entities
                   </span>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white/98 backdrop-blur-xl border-2 border-[#c89666]/50 shadow-2xl w-max max-w-xl rounded-xl overflow-hidden z-50">
+                <NavigationMenuContent className="bg-white backdrop-blur-xl border border-slate-200 shadow-xl w-max max-w-xl z-50">
                   <ul className="grid gap-2 p-4 w-max">
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
                           href="/entities/cdc"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             CDC - Control Development Centre
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -240,9 +242,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/entities/mtl"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             MTL - Mechanical Testing Lab
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -258,10 +260,7 @@ export function Navigation() {
             <NavigationMenuItem>
               <div className="relative group/nav">
                 <NavigationMenuTrigger
-                  className={`relative bg-transparent cursor-pointer px-3 md:px-4 text-sm font-semibold h-10 rounded-lg transition-all duration-300 ${isActive("/training")
-                    ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30 data-[state=open]:bg-gradient-to-r data-[state=open]:from-[#2d545e] data-[state=open]:to-[#12343b]"
-                    : "text-[#2d545e] hover:bg-[#2d545e]/10 data-[state=open]:bg-[#2d545e]/10"
-                    }`}
+                  className={`bg-transparent text-white hover:bg-white/10 data-[state=open]:bg-white/10 cursor-pointer px-2 md:px-4 text-sm md:text-base font-semibold h-10 rounded-md transition-all duration-300 ${isActive("/training") ? "!bg-[#FF9800]" : ""}`}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
                     if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -273,15 +272,15 @@ export function Navigation() {
                     Training
                   </span>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white/98 backdrop-blur-xl border-2 border-[#c89666]/50 shadow-2xl w-max max-w-xl rounded-xl overflow-hidden z-50">
+                <NavigationMenuContent className="bg-white backdrop-blur-xl border border-slate-200 shadow-xl w-max max-w-xl z-50">
                   <ul className="grid gap-2 p-4 w-max">
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
                           href="/training#overview"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Program Overview
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -294,9 +293,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/training#ai-srijan"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             AI Srijan - Faculty Development Programme
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -309,9 +308,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/training#power-plant"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Power Plant Visit
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -324,9 +323,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/training#closing"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Closing Ceremony
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -342,10 +341,7 @@ export function Navigation() {
             <NavigationMenuItem>
               <div className="relative group/nav">
                 <NavigationMenuTrigger
-                  className={`relative bg-transparent cursor-pointer px-3 md:px-4 text-sm font-semibold h-10 rounded-lg transition-all duration-300 ${isActive("/team")
-                    ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30 data-[state=open]:bg-gradient-to-r data-[state=open]:from-[#2d545e] data-[state=open]:to-[#12343b]"
-                    : "text-[#2d545e] hover:bg-[#2d545e]/10 data-[state=open]:bg-[#2d545e]/10"
-                    }`}
+                  className={`bg-transparent text-white hover:bg-white/10 data-[state=open]:bg-white/10 cursor-pointer px-2 md:px-4 text-sm md:text-base font-semibold h-10 rounded-md transition-all duration-300 ${isActive("/team") ? "!bg-[#FF9800]" : ""}`}
                   onClick={(e) => {
                     const target = e.target as HTMLElement;
                     if (target.tagName !== 'svg' && !target.closest('svg')) {
@@ -357,15 +353,15 @@ export function Navigation() {
                     Team
                   </span>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="bg-white/98 backdrop-blur-xl border-2 border-[#c89666]/50 shadow-2xl w-max max-w-xl rounded-xl overflow-hidden z-50">
+                <NavigationMenuContent className="bg-white backdrop-blur-xl border border-slate-200 shadow-xl w-max max-w-xl z-50">
                   <ul className="grid gap-2 p-4 w-max">
                     <li>
                       <NavigationMenuLink asChild>
                         <Link
                           href="/team#coordination"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Coordination Committee
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -378,9 +374,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/team#technical"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Technical Professional Consultants
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -393,9 +389,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/team#cdc"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Control Development Centre Team
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -408,9 +404,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/team#mtl"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Mechanical Testing Lab Team
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -423,9 +419,9 @@ export function Navigation() {
                       <NavigationMenuLink asChild>
                         <Link
                           href="/team#nodal"
-                          className="group block select-none space-y-1 rounded-lg p-4 leading-none no-underline outline-none transition-all duration-200 hover:bg-gradient-to-r hover:from-[#e1b382]/20 hover:to-[#c89666]/20 focus:bg-[#e1b382]/20 border border-transparent hover:border-[#c89666]/30"
+                          className="group block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-slate-100 focus:bg-slate-100"
                         >
-                          <div className="text-sm font-semibold leading-none text-[#2d545e] group-hover:text-[#12343b] transition-colors mb-1">
+                          <div className="text-sm font-semibold leading-none text-[#1A237E] group-hover:text-[#FF9800] transition-colors mb-1">
                             Nodal Officers of JPVL
                           </div>
                           <p className="line-clamp-2 text-xs leading-snug text-slate-600 group-hover:text-slate-700 transition-colors">
@@ -438,86 +434,55 @@ export function Navigation() {
                 </NavigationMenuContent>
               </div>
             </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link
-                href="/patents"
-                className={`group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 ${isActive("/patents")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-                  }`}
-              >
-                {isActive("/patents") && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative group-hover:scale-105 transition-transform duration-200">Patents</span>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link
-                href="/mou"
-                className={`group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 ${isActive("/mou")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-                  }`}
-              >
-                {isActive("/mou") && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative group-hover:scale-105 transition-transform duration-200">MoU</span>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-              <Link
-                href="/contact"
-                className={`group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 ${isActive("/contact")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg shadow-[#2d545e]/30"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-                  }`}
-              >
-                {isActive("/contact") && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-lg -z-10"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
-                )}
-                <span className="relative group-hover:scale-105 transition-transform duration-200">Contact</span>
-              </Link>
-            </NavigationMenuItem>
-            <NavigationMenuItem>
-
-              <Link
-                href="https://hydrologyjpvl.cird.co.in"
-                target="_blank"
-                className="group relative inline-flex h-10 w-max items-center justify-center rounded-lg px-3 md:px-4 py-2 text-sm font-semibold transition-all duration-300 text-[#2d545e] hover:bg-[#2d545e]/10 hover:text-[#2d545e]"
-              >
-                <span className="relative group-hover:scale-105 transition-transform duration-200">Hydrology</span>
-              </Link>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-        {/* Mobile/Tablet Menu Button */}
-        {/* Mobile/Tablet Menu Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="lg:hidden text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white flex-shrink-0 ml-2 p-2 min-w-[40px] h-10 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? <X size={22} className="sm:w-6 sm:h-6" /> : <Menu size={22} className="sm:w-6 sm:h-6" />}
-        </Button>
+                <NavigationMenuItem>
+                  <Link
+                    href="/patents"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/patents") ? "bg-[#FF9800] text-white" : "bg-transparent text-white hover:bg-white/10"}`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">Patents</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/mou"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/mou") ? "bg-[#FF9800] text-white" : "bg-transparent text-white hover:bg-white/10"}`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">MoU</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="/contact"
+                    className={`group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 ${isActive("/contact") ? "bg-[#FF9800] text-white" : "bg-transparent text-white hover:bg-white/10"}`}
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">Contact</span>
+                  </Link>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <Link
+                    href="https://hydrologyjpvl.cird.co.in"
+                    target="_blank"
+                    className="group inline-flex h-10 w-max items-center justify-center rounded-md px-2 md:px-4 py-2 text-sm md:text-base font-semibold transition-all duration-300 bg-transparent text-white hover:bg-white/10"
+                  >
+                    <span className="group-hover:scale-105 transition-transform duration-200">Hydrology</span>
+                  </Link>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="lg:hidden text-white hover:bg-white/10 flex-shrink-0 ml-2 p-2 min-w-[40px] h-10"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X size={22} className="sm:w-6 sm:h-6" /> : <Menu size={22} className="sm:w-6 sm:h-6" />}
+            </Button>
+          </nav>
+        </div>
       </div>
 
-      {/* Mobile/Tablet Menu */}
+      {/* Mobile/Tablet Menu - same as home: dark blue bg, white text */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -525,252 +490,61 @@ export function Navigation() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden border-t-2 border-[#c89666]/50 bg-gradient-to-b from-[#e1b382]/98 to-[#e1b382]/95 backdrop-blur-xl max-h-[calc(100vh-4rem)] sm:max-h-[calc(100vh-5rem)] overflow-y-auto shadow-2xl"
+            className="lg:hidden border-t border-white/20 bg-[#1A237E] backdrop-blur-md max-h-[calc(100vh-10rem)] sm:max-h-[calc(100vh-11rem)] overflow-y-auto shadow-lg"
           >
-            <div className="px-3 sm:px-4 py-4 sm:py-5 space-y-1 sm:space-y-2">
+            <div className="px-3 sm:px-4 py-3 sm:py-4 space-y-1 sm:space-y-2">
               <Link
                 href="/"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base rounded-lg transition-all duration-200 font-semibold ${isActive("/")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg"
-                  : "text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md"
-                  }`}
+                className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}
               >
                 Home
               </Link>
               <Link
                 href="/about"
+                aria-label="About CIRD"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base rounded-lg transition-all duration-200 font-semibold ${isActive("/about")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg"
-                  : "text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md"
-                  }`}
+                className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/about") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}
               >
                 About
               </Link>
-              <div className="px-4 sm:px-5 py-2 text-xs sm:text-sm text-[#2d545e] font-bold uppercase tracking-wider border-b border-[#c89666]/30">
+              <Link
+                href="/authorities"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/authorities") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}
+              >
+                Authorities
+              </Link>
+              <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-white/80 font-semibold uppercase tracking-wide">
                 Research
               </div>
-              <Link
-                href="/research"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/research")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                All Research Projects
-              </Link>
-              <Link
-                href="/projects/ba01-pp-b"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/projects/ba01-pp-b")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                BA01/PP/B - Problems and Remedies
-              </Link>
-              <Link
-                href="/projects/ba01-pp-c"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/projects/ba01-pp-c")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                BA01/PP/C - Bottom Ash in Pavers
-              </Link>
-              <Link
-                href="/projects/ba03-pp-b"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/projects/ba03-pp-b")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                BA03/PP/B - CHP Monitoring
-              </Link>
-              <Link
-                href="/projects/ba07-pp-a"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/projects/ba07-pp-a")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                BA07/PP/A - Early Warning System
-              </Link>
-              <Link
-                href="/projects/ba07-pp-b"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/projects/ba07-pp-b")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                BA07/PP/B - Weather Station
-              </Link>
-              <div className="px-4 sm:px-5 py-2 text-xs sm:text-sm text-[#2d545e] font-bold uppercase tracking-wider border-b border-[#c89666]/30 mt-2">
-                Entities
-              </div>
-              <Link
-                href="/entities"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/entities")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                All Entities
-              </Link>
-              <Link
-                href="/entities/cdc"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/entities/cdc")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                CDC - Control Development Centre
-              </Link>
-              <Link
-                href="/entities/mtl"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/entities/mtl")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                MTL - Mechanical Testing Lab
-              </Link>
-              <div className="px-4 sm:px-5 py-2 text-xs sm:text-sm text-[#2d545e] font-bold uppercase tracking-wider border-b border-[#c89666]/30 mt-2">
-                Training
-              </div>
-              <Link
-                href="/training"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/training")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                All Training Programs
-              </Link>
-              <Link
-                href="/training#overview"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Program Overview
-              </Link>
-              <Link
-                href="/training#ai-srijan"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                AI Srijan FDP
-              </Link>
-              <Link
-                href="/training#power-plant"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Power Plant Visit
-              </Link>
-              <Link
-                href="/training#closing"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Closing Ceremony
-              </Link>
-              <div className="px-4 sm:px-5 py-2 text-xs sm:text-sm text-[#2d545e] font-bold uppercase tracking-wider border-b border-[#c89666]/30 mt-2">
-                Team
-              </div>
-              <Link
-                href="/team"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base rounded-lg transition-all duration-200 ${isActive("/team")
-                  ? "bg-gradient-to-r from-[#2d545e]/20 to-[#12343b]/20 text-[#2d545e] font-semibold border-l-4 border-[#2d545e]"
-                  : "text-[#2d545e] hover:bg-[#2d545e]/10"
-                  }`}
-              >
-                All Team Members
-              </Link>
-              <Link
-                href="/team#coordination"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Coordination Committee
-              </Link>
-              <Link
-                href="/team#technical"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Technical Consultants
-              </Link>
-              <Link
-                href="/team#cdc"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                CDC Team
-              </Link>
-              <Link
-                href="/team#mtl"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                MTL Team
-              </Link>
-              <Link
-                href="/team#nodal"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-[#2d545e] hover:bg-[#2d545e]/10 rounded-lg transition-all duration-200"
-              >
-                Nodal Officers
-              </Link>
-              <Link
-                href="/patents"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base rounded-lg transition-all duration-200 font-semibold ${isActive("/patents")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg"
-                  : "text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md"
-                  }`}
-              >
-                Patents
-              </Link>
-              <Link
-                href="/mou"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base rounded-lg transition-all duration-200 font-semibold ${isActive("/mou")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg"
-                  : "text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md"
-                  }`}
-              >
-                MoU
-              </Link>
-              <Link
-                href="/contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className={`block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base rounded-lg transition-all duration-200 font-semibold ${isActive("/contact")
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg"
-                  : "text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md"
-                  }`}
-              >
-                Contact
-              </Link>
-              <Link
-                href="https://hydrologyjpvl.cird.co.in"
-                target="_blank"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-4 sm:px-5 py-3 sm:py-2.5 text-sm sm:text-base text-[#2d545e] hover:bg-gradient-to-r hover:from-[#2d545e] hover:to-[#12343b] hover:text-white hover:shadow-md rounded-lg transition-all duration-200 font-semibold"
-              >
-                Hydrology
-              </Link>
+              <Link href="/research" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">All Research Projects</Link>
+              <Link href="/projects/ba01-pp-b" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">BA01/PP/B - Problems and Remedies</Link>
+              <Link href="/projects/ba01-pp-c" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">BA01/PP/C - Bottom Ash in Pavers</Link>
+              <Link href="/projects/ba03-pp-b" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">BA03/PP/B - CHP Monitoring</Link>
+              <Link href="/projects/ba07-pp-a" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">BA07/PP/A - Early Warning System</Link>
+              <Link href="/projects/ba07-pp-b" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">BA07/PP/B - Weather Station</Link>
+              <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-white/80 font-semibold uppercase tracking-wide mt-2">Entities</div>
+              <Link href="/entities" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">All Entities</Link>
+              <Link href="/entities/cdc" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">CDC - Control Development Centre</Link>
+              <Link href="/entities/mtl" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">MTL - Mechanical Testing Lab</Link>
+              <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-white/80 font-semibold uppercase tracking-wide mt-2">Training</div>
+              <Link href="/training" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">All Training Programs</Link>
+              <Link href="/training#overview" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Program Overview</Link>
+              <Link href="/training#ai-srijan" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">AI Srijan FDP</Link>
+              <Link href="/training#power-plant" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Power Plant Visit</Link>
+              <Link href="/training#closing" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Closing Ceremony</Link>
+              <div className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-white/80 font-semibold uppercase tracking-wide mt-2">Team</div>
+              <Link href="/team" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">All Team Members</Link>
+              <Link href="/team#coordination" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Coordination Committee</Link>
+              <Link href="/team#technical" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Technical Consultants</Link>
+              <Link href="/team#cdc" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">CDC Team</Link>
+              <Link href="/team#mtl" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">MTL Team</Link>
+              <Link href="/team#nodal" onClick={() => setIsMobileMenuOpen(false)} className="block px-6 sm:px-8 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors">Nodal Officers</Link>
+              <Link href="/patents" onClick={() => setIsMobileMenuOpen(false)} className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/patents") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}>Patents</Link>
+              <Link href="/mou" onClick={() => setIsMobileMenuOpen(false)} className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/mou") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}>MoU</Link>
+              <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} className={`block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base rounded-md transition-colors font-semibold ${isActive("/contact") ? "bg-[#FF9800] text-white" : "text-white hover:bg-white/10"}`}>Contact</Link>
+              <Link href="https://hydrologyjpvl.cird.co.in" target="_blank" onClick={() => setIsMobileMenuOpen(false)} className="block px-3 sm:px-4 py-2.5 sm:py-2 text-sm sm:text-base text-white hover:bg-white/10 rounded-md transition-colors font-semibold">Hydrology</Link>
             </div>
           </motion.div>
         )}

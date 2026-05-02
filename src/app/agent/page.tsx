@@ -736,12 +736,6 @@ export default function AgentDashboard() {
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    const baseURL =
-      process.env.NEXT_PUBLIC_API_BASE_URL ||
-      (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
-        ? "https://cird.onrender.com"
-        : "http://localhost:5000");
-
     // Update localStorage when agent ID changes
     if (typeof window !== "undefined") {
       localStorage.setItem(AGENT_AUTH_KEY, JSON.stringify({
@@ -750,9 +744,10 @@ export default function AgentDashboard() {
         timestamp: Date.now(),
       }));
     }
-    
+
+    // Same-origin: Socket.io connects to current host (e.g. https://cird.co.in)
     setIsConnecting(true);
-    const socketInstance = io(baseURL, {
+    const socketInstance = io({
       transports: ["websocket", "polling"],
       query: { agentId: selectedAgentId },
     });
@@ -1203,7 +1198,7 @@ export default function AgentDashboard() {
     let formatted = text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/`(.*?)`/g, '<code class="bg-gray-200 px-1 py-0.5 rounded text-sm">$1</code>');
+      .replace(/`(.*?)`/g, '<code class="bg-slate-200 px-1.5 py-0.5 rounded text-sm text-[#1A237E]">$1</code>');
     
     return formatted;
   };
@@ -1306,30 +1301,30 @@ export default function AgentDashboard() {
   /* ---------------- Render ---------------- */
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#2d545e] to-[#12343b] flex items-center justify-center p-4 pt-28">
+      <div className="min-h-screen bg-gradient-to-br from-[#1A237E] to-[#0D1542] flex items-center justify-center p-4 pt-28">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md"
+          className="bg-white rounded-2xl shadow-xl border border-slate-200 p-8 w-full max-w-md"
         >
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-[#2d545e] rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-[#FF9800] rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Users size={32} className="text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-[#2d545e] mb-2">Margadarshak Dashboard</h1>
-            <p className="text-gray-600">Enter your PIN to access</p>
+            <h1 className="text-2xl font-bold text-[#1A237E] mb-2">Margadarshak Dashboard</h1>
+            <p className="text-[#37474F]">Enter your PIN to access</p>
           </div>
 
           <form onSubmit={handlePinSubmit} className="space-y-4">
             <div>
-              <label htmlFor="agentId" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="agentId" className="block text-sm font-semibold text-[#1A237E] mb-2">
                 Margadarshak ID
               </label>
               <select
                 id="agentId"
                 value={selectedAgentId}
                 onChange={(e) => setSelectedAgentId(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-[#c89666] rounded-xl focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none transition-all bg-white"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1A237E]/20 focus:border-[#1A237E] outline-none transition-all bg-white text-[#37474F]"
               >
                 <option value="margadarshak1">Margadarshak 1</option>
                 <option value="margadarshak2">Margadarshak 2</option>
@@ -1338,7 +1333,7 @@ export default function AgentDashboard() {
               </select>
             </div>
             <div>
-              <label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="pin" className="block text-sm font-semibold text-[#1A237E] mb-2">
                 PIN
               </label>
               <input
@@ -1350,7 +1345,7 @@ export default function AgentDashboard() {
                   setPinError("");
                 }}
                 placeholder="Enter PIN"
-                className="w-full px-4 py-3 border-2 border-[#c89666] rounded-xl focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none transition-all"
+                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1A237E]/20 focus:border-[#1A237E] outline-none transition-all text-[#37474F]"
                 autoFocus
               />
               {pinError && (
@@ -1362,7 +1357,7 @@ export default function AgentDashboard() {
               type="submit"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-[#2d545e] text-white py-3 rounded-xl font-medium hover:bg-[#12343b] transition-colors"
+              className="w-full bg-[#FF9800] text-white py-3 rounded-xl font-semibold hover:bg-[#F57C00] transition-colors shadow-sm"
             >
               Login
             </motion.button>
@@ -1373,13 +1368,13 @@ export default function AgentDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-28">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white shadow-lg">
+    <div className="min-h-screen bg-slate-50 pt-28">
+      {/* Header - CIRD theme */}
+      <div className="bg-gradient-to-r from-[#1A237E] to-[#0D1542] text-white shadow-md border-b border-[#1A237E]/30">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#e1b382] rounded-full flex items-center justify-center">
-              <Users size={20} className="text-[#2d545e]" />
+            <div className="w-10 h-10 bg-[#FF9800] rounded-full flex items-center justify-center shadow-sm">
+              <Users size={20} className="text-white" />
             </div>
             <div>
               <h1 className="text-xl font-bold">Margadarshak Dashboard</h1>
@@ -1394,14 +1389,14 @@ export default function AgentDashboard() {
                       className={`text-xs px-2 py-0.5 rounded ${
                         status.agentId === selectedAgentId
                           ? status.activeChatsCount && status.activeChatsCount > 0
-                            ? "bg-orange-500"
+                            ? "bg-[#FF9800]"
                             : status.isConnected
-                            ? "bg-green-500"
-                            : "bg-gray-400"
+                            ? "bg-emerald-500"
+                            : "bg-slate-400"
                           : status.isConnected
                           ? status.activeChatsCount && status.activeChatsCount > 0
-                            ? "bg-orange-500/50"
-                            : "bg-green-500/50"
+                            ? "bg-[#FF9800]/50"
+                            : "bg-emerald-500/50"
                           : "bg-white/20"
                       }`}
                     >
@@ -1431,19 +1426,19 @@ export default function AgentDashboard() {
       </div>
 
       <div className="max-w-7xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Waiting Users Panel */}
+        {/* Waiting Users Panel - CIRD theme */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-xl shadow-md p-4 h-[calc(100vh-120px)] flex flex-col">
-            <h2 className="text-lg font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
-              <Clock size={20} />
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 h-[calc(100vh-120px)] flex flex-col">
+            <h2 className="text-lg font-bold text-[#1A237E] mb-4 flex items-center gap-2">
+              <Clock size={20} className="text-[#FF9800]" />
               Waiting Users ({waitingUsers.length})
             </h2>
 
             <div className="flex-1 overflow-y-auto space-y-2">
               {waitingUsers.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  <MessageCircle size={48} className="mx-auto mb-2 opacity-50" />
-                  <p>No users waiting</p>
+                <div className="text-center text-[#37474F] py-8">
+                  <MessageCircle size={48} className="mx-auto mb-2 text-slate-300" />
+                  <p className="text-sm font-medium">No users waiting</p>
                 </div>
               ) : (
                 waitingUsers.map((user) => (
@@ -1451,16 +1446,16 @@ export default function AgentDashboard() {
                     key={user.userId}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-gray-50 border border-gray-200 rounded-lg p-3 hover:bg-gray-100 transition-colors"
+                    className="bg-slate-50 border border-slate-200 rounded-xl p-3 hover:border-[#1A237E]/20 hover:bg-slate-50/80 transition-all"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <UserIcon size={16} className="text-gray-600" />
-                        <span className="text-sm font-medium text-gray-700">
+                        <UserIcon size={16} className="text-[#1A237E]" />
+                        <span className="text-sm font-medium text-[#37474F]">
                           {user.userId.slice(0, 12)}...
                         </span>
                       </div>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-slate-500">
                         {formatWaitingTime(user.waitingSince)}
                       </span>
                     </div>
@@ -1469,7 +1464,7 @@ export default function AgentDashboard() {
                       whileTap={{ scale: 0.98 }}
                       onClick={() => joinUserChat(user.userId)}
                       disabled={false}
-                      className="w-full bg-[#2d545e] text-white text-sm py-2 rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-[#FF9800] text-white text-sm font-semibold py-2.5 rounded-xl hover:bg-[#F57C00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                     >
                       Join Chat
                     </motion.button>
@@ -1480,13 +1475,13 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        {/* Active Chat Panel */}
+        {/* Active Chat Panel - premium chat box */}
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-xl shadow-md h-[calc(100vh-120px)] flex flex-col">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm h-[calc(100vh-120px)] flex flex-col overflow-hidden">
             {activeChats.length > 0 ? (
               <>
-                {/* Chat Tabs */}
-                <div className="border-b border-gray-200 flex overflow-x-auto">
+                {/* Chat Tabs - CIRD */}
+                <div className="border-b border-slate-200 flex overflow-x-auto bg-slate-50/50">
                   {activeChats.map((chat) => (
                     <button
                       key={chat.roomId}
@@ -1494,10 +1489,10 @@ export default function AgentDashboard() {
                         setSelectedChatId(chat.roomId);
                         setSearchQuery(""); // Clear search when switching chats
                       }}
-                      className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap relative ${
+                      className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap relative ${
                         selectedChatId === chat.roomId
-                          ? "border-[#2d545e] text-[#2d545e] bg-[#e1b382]/10"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                          ? "border-[#1A237E] text-[#1A237E] bg-white"
+                          : "border-transparent text-[#37474F] hover:text-[#1A237E] hover:bg-slate-100/80"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -1519,7 +1514,7 @@ export default function AgentDashboard() {
                           </span>
                         )}
                         {chatTags[chat.roomId] && (
-                          <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[10px] rounded border border-purple-300">
+                          <span className="px-1.5 py-0.5 bg-[#FF9800]/10 text-[#1A237E] text-[10px] font-medium rounded border border-[#FF9800]/30">
                             {chatTags[chat.roomId]}
                           </span>
                         )}
@@ -1531,27 +1526,27 @@ export default function AgentDashboard() {
                 {/* Selected Chat Content */}
                 {selectedChat && (
                   <>
-                    {/* Chat Header */}
-                    <div className="border-b border-gray-200 p-4 flex items-center justify-between">
+                    {/* Chat Header - premium */}
+                    <div className="border-b border-slate-200 bg-white px-5 py-4 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-[#1A237E] rounded-full flex items-center justify-center shadow-sm">
                           <UserIcon size={20} className="text-white" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-gray-800">
+                            <h3 className="font-bold text-[#1A237E]">
                               Chat with {selectedChat.userId.slice(0, 12)}...
                             </h3>
                             {chatTags[selectedChat.roomId] && (
-                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full border border-purple-300">
+                              <span className="px-2 py-0.5 bg-[#FF9800]/10 text-[#1A237E] text-xs font-medium rounded-full border border-[#FF9800]/30">
                                 {chatTags[selectedChat.roomId]}
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <div className="flex items-center gap-2 text-xs text-[#37474F]">
                             <span>Started {formatTime(selectedChat.startedAt, timeFormat24)}</span>
                             <span>•</span>
-                            <span className="font-medium text-[#2d545e]">
+                            <span className="font-semibold text-[#1A237E]">
                               Duration: {formatDuration(selectedChat.startedAt)}
                             </span>
                           </div>
@@ -1562,7 +1557,7 @@ export default function AgentDashboard() {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={exportChat}
-                          className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center gap-1"
+                          className="px-3 py-2 bg-slate-100 text-[#1A237E] rounded-xl hover:bg-slate-200 transition-colors text-sm font-medium flex items-center gap-1 border border-slate-200"
                           title="Export Chat"
                         >
                           <Download size={14} />
@@ -1574,7 +1569,7 @@ export default function AgentDashboard() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={startCall}
-                            className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors text-sm flex items-center gap-1"
+                            className="px-3 py-2 bg-emerald-500 text-white rounded-xl hover:bg-emerald-600 transition-colors text-sm font-medium flex items-center gap-1 shadow-sm"
                             title="Start Call"
                           >
                             <Phone size={14} />
@@ -1586,7 +1581,7 @@ export default function AgentDashboard() {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={endCall}
-                            className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm flex items-center gap-1"
+                            className="px-3 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors text-sm font-medium flex items-center gap-1"
                             title="End Call"
                           >
                             <PhoneOff size={14} />
@@ -1597,7 +1592,7 @@ export default function AgentDashboard() {
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => endChat(selectedChat.roomId)}
-                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                          className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors text-sm font-medium"
                         >
                           End Chat
                         </motion.button>
@@ -1611,7 +1606,7 @@ export default function AgentDashboard() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: 20 }}
-                          className="border-b border-gray-200 bg-gradient-to-r from-green-500 to-green-600 p-4"
+                          className="border-b border-slate-200 bg-gradient-to-r from-emerald-500 to-emerald-600 p-4"
                         >
                           <div className="text-center text-white">
                             <div className="flex items-center justify-center gap-3 mb-4">
@@ -1639,7 +1634,7 @@ export default function AgentDashboard() {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={answerCall}
-                                className="px-6 py-3 bg-white text-green-600 rounded-full hover:bg-gray-100 transition-colors flex items-center gap-2 font-semibold"
+                                className="px-6 py-3 bg-white text-emerald-600 rounded-full hover:bg-slate-100 transition-colors flex items-center gap-2 font-semibold"
                               >
                                 <Phone size={20} />
                                 Answer
@@ -1657,7 +1652,7 @@ export default function AgentDashboard() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          className="border-b border-gray-200 bg-gradient-to-r from-green-500 to-green-600 overflow-hidden"
+                          className="border-b border-slate-200 bg-gradient-to-r from-emerald-500 to-emerald-600 overflow-hidden"
                         >
                           {/* Hidden audio element for remote audio */}
                           <audio ref={remoteAudioRef} autoPlay playsInline />
@@ -1721,11 +1716,11 @@ export default function AgentDashboard() {
                       )}
                     </AnimatePresence>
 
-                    {/* Messages */}
+                    {/* Messages - premium chat bubble area */}
                     <div 
                       ref={messagesContainerRef}
                       onScroll={handleScroll}
-                      className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50"
+                      className="flex-1 overflow-y-auto p-5 space-y-4 bg-slate-50/80"
                     >
                       {(searchQuery ? filteredMessages : selectedChat.messages).map((msg, index) => {
                         const allMessages = selectedChat.messages;
@@ -1738,7 +1733,7 @@ export default function AgentDashboard() {
                           <React.Fragment key={msg.id}>
                             {showDateSeparator && (
                               <div className="flex items-center justify-center my-4">
-                                <div className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                <div className="bg-slate-200/80 text-[#37474F] text-xs font-medium px-3 py-1.5 rounded-full">
                                   {formatDate(msg.timestamp)}
                                 </div>
                               </div>
@@ -1749,18 +1744,18 @@ export default function AgentDashboard() {
                               className={`flex ${msg.sender === "agent" ? "justify-end" : "justify-start"} group`}
                             >
                               <div
-                                className={`max-w-[70%] px-4 py-2 rounded-lg relative ${
+                                className={`max-w-[75%] px-4 py-3 rounded-2xl relative shadow-sm ${
                                   msg.sender === "agent"
-                                    ? "bg-[#2d545e] text-white rounded-br-sm"
-                                    : "bg-white border border-gray-200 text-gray-800 rounded-bl-sm"
+                                    ? "bg-[#1A237E] text-white rounded-br-md"
+                                    : "bg-white border border-slate-200 text-[#37474F] rounded-bl-md"
                                 }`}
                               >
                         <p 
-                          className="text-sm whitespace-pre-wrap"
+                          className="text-sm whitespace-pre-wrap leading-relaxed"
                           dangerouslySetInnerHTML={{ __html: formatMessageText(msg.text) }}
                         />
                         <div className="flex items-center justify-between mt-1 gap-2">
-                          <p className={`text-xs opacity-70 ${msg.sender === "agent" ? "text-white/70" : "text-gray-500"}`}>
+                          <p className={`text-xs opacity-70 ${msg.sender === "agent" ? "text-white/70" : "text-slate-500"}`}>
                             {formatTime(msg.timestamp, timeFormat24)}
                           </p>
                                   <div className="flex items-center gap-1">
@@ -1772,7 +1767,7 @@ export default function AgentDashboard() {
                                           height="16"
                                           viewBox="0 0 16 15"
                                           fill="none"
-                                          className={msg.readBy?.user ? "text-blue-300" : "text-white/40"}
+                                          className={msg.readBy?.user ? "text-emerald-300" : "text-white/40"}
                                         >
                                           <path
                                             d="M15.01 3.316l-.478-.372a.365.365 0 0 0-.51.063L8.666 9.879a.32.32 0 0 1-.484.033l-.358-.325a.319.319 0 0 0-.484.032l-.378.483a.418.418 0 0 0 .036.541l1.32 1.266c.143.14.361.125.484-.033l6.272-8.175a.366.366 0 0 0-.063-.512zm-4.1 0l-.478-.372a.365.365 0 0 0-.51.063L4.566 9.879a.32.32 0 0 1-.484.033L1.891 7.769a.366.366 0 0 0-.515.006l-.423.433a.364.364 0 0 0 .006.514l3.258 3.185c.143.14.361.125.484-.033l6.272-8.175a.365.365 0 0 0-.063-.51z"
@@ -1786,7 +1781,7 @@ export default function AgentDashboard() {
                                       initial={{ opacity: 0 }}
                                       whileHover={{ opacity: 1 }}
                                       className={`opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded ${
-                                        msg.sender === "agent" ? "hover:bg-white/20" : "hover:bg-gray-100"
+                                        msg.sender === "agent" ? "hover:bg-white/20" : "hover:bg-slate-100"
                                       }`}
                                       onClick={() => copyMessage(msg.text, msg.id)}
                                       title="Copy message"
@@ -1794,7 +1789,7 @@ export default function AgentDashboard() {
                                       {copiedMessageId === msg.id ? (
                                         <Check size={12} className={msg.sender === "agent" ? "text-green-300" : "text-green-600"} />
                                       ) : (
-                                        <Copy size={12} className={msg.sender === "agent" ? "text-white/70" : "text-gray-500"} />
+                                        <Copy size={12} className={msg.sender === "agent" ? "text-white/70" : "text-slate-500"} />
                                       )}
                                     </motion.button>
                                   </div>
@@ -1806,28 +1801,28 @@ export default function AgentDashboard() {
                       })}
 
                   {/* User Typing Indicator */}
-                  {userTyping && (
+                                  {userTyping && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="flex justify-start"
                     >
-                      <div className="bg-white border border-gray-200 px-4 py-2 rounded-lg rounded-bl-sm">
-                        <div className="flex items-center gap-1">
+                      <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-md shadow-sm">
+                        <div className="flex items-center gap-1.5">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-[#1A237E]/50 rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-[#1A237E]/50 rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-gray-400 rounded-full"
+                            className="w-2 h-2 bg-[#1A237E]/50 rounded-full"
                           />
                         </div>
                       </div>
@@ -1837,8 +1832,8 @@ export default function AgentDashboard() {
                   <div ref={messagesEndRef} />
                 </div>
 
-                {/* Input */}
-                <div className="border-t border-gray-200 p-4">
+                {/* Input - premium */}
+                <div className="border-t border-slate-200 bg-white p-4">
                   {/* Quick Replies */}
                   <AnimatePresence>
                     {showQuickReplies && (
@@ -1848,15 +1843,15 @@ export default function AgentDashboard() {
                         exit={{ height: 0, opacity: 0 }}
                         className="mb-3 overflow-hidden"
                       >
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-semibold text-[#2d545e] flex items-center gap-1">
-                              <Zap size={12} />
+                            <span className="text-xs font-bold text-[#1A237E] uppercase tracking-wide flex items-center gap-1">
+                              <Zap size={12} className="text-[#FF9800]" />
                               Quick Replies
                             </span>
                             <button
                               onClick={() => setShowQuickReplies(false)}
-                              className="text-gray-400 hover:text-gray-600"
+                              className="text-slate-400 hover:text-[#1A237E] p-1 rounded-lg hover:bg-slate-200/50"
                             >
                               <X size={14} />
                             </button>
@@ -1868,7 +1863,7 @@ export default function AgentDashboard() {
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => insertQuickReply(reply)}
-                                className="px-3 py-1.5 bg-white border border-blue-300 text-sm text-[#2d545e] rounded-lg hover:bg-blue-100 hover:border-blue-400 transition-colors"
+                                className="px-3 py-2 bg-white border border-slate-200 text-sm text-[#37474F] rounded-xl hover:border-[#1A237E]/30 hover:bg-[#1A237E]/5 hover:text-[#1A237E] transition-colors font-medium"
                               >
                                 {reply}
                               </motion.button>
@@ -1886,11 +1881,9 @@ export default function AgentDashboard() {
                         value={messageInput}
                         onChange={(e) => {
                           setMessageInput(e.target.value);
-                          // Send typing indicator when agent types
                           if (e.target.value.trim()) {
                             handleAgentTyping();
                           } else {
-                            // Clear typing if input is empty
                             if (agentTypingTimeoutRef.current) {
                               clearTimeout(agentTypingTimeoutRef.current);
                               agentTypingTimeoutRef.current = null;
@@ -1909,11 +1902,10 @@ export default function AgentDashboard() {
                         placeholder="Type your message..."
                         disabled={!selectedChat}
                         maxLength={2000}
-                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d545e] focus:border-[#2d545e] outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#1A237E]/20 focus:border-[#1A237E] outline-none transition-all text-[#37474F] disabled:opacity-50 disabled:cursor-not-allowed"
                       />
-                      {/* Character Counter */}
                       {messageInput.length > 0 && (
-                        <div className="absolute bottom-1 right-2 text-xs text-gray-400">
+                        <div className="absolute bottom-2 right-3 text-xs text-slate-400">
                           {messageInput.length}/2000
                         </div>
                       )}
@@ -1922,10 +1914,10 @@ export default function AgentDashboard() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => setShowQuickReplies(!showQuickReplies)}
-                      className={`px-3 py-2 rounded-lg transition-colors ${
+                      className={`p-3 rounded-xl transition-colors ${
                         showQuickReplies
-                          ? "bg-[#2d545e] text-white"
-                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                          ? "bg-[#1A237E] text-white"
+                          : "bg-slate-100 text-[#37474F] hover:bg-slate-200 border border-slate-200"
                       }`}
                       title="Quick Replies"
                     >
@@ -1936,7 +1928,7 @@ export default function AgentDashboard() {
                       whileTap={{ scale: 0.95 }}
                       onClick={sendMessage}
                       disabled={!selectedChat || !messageInput.trim()}
-                      className="px-6 py-2 bg-[#2d545e] text-white rounded-lg hover:bg-[#12343b] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-5 py-3 bg-[#FF9800] text-white rounded-xl hover:bg-[#F57C00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-semibold shadow-sm"
                     >
                       <Send size={18} />
                     </motion.button>
@@ -1946,11 +1938,13 @@ export default function AgentDashboard() {
                 )}
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-center text-gray-500">
+              <div className="flex-1 flex items-center justify-center text-center px-6">
                 <div>
-                  <MessageCircle size={64} className="mx-auto mb-4 opacity-50" />
-                  <p className="text-lg">No active chat</p>
-                  <p className="text-sm mt-2">
+                  <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle size={40} className="text-[#1A237E]/40" />
+                  </div>
+                  <p className="text-lg font-semibold text-[#1A237E]">No active chat</p>
+                  <p className="text-sm text-[#37474F] mt-2 max-w-xs mx-auto">
                     Select a user from the waiting list to start chatting
                   </p>
                 </div>

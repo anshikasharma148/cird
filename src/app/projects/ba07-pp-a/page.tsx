@@ -10,35 +10,28 @@ import Link from "next/link";
 
 export default function BA07PPAPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section */}
-      <section className="pt-28 pb-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
-        <div className="container mx-auto px-8 md:px-16 relative z-10">
+    <div className="min-h-screen bg-white">
+      {/* Hero - teal (Research theme) */}
+      <section className="pt-36 sm:pt-40 pb-20 bg-[#00695C] relative overflow-hidden">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
           <Link href="/research">
-            <Button variant="ghost" className="mb-6 text-white hover:text-white/90">
+            <Button variant="ghost" className="mb-6 text-white hover:bg-white/10">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Research
             </Button>
           </Link>
-          
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-4 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg shadow-blue-900/30">
-                BA07/PP/A
-              </Badge>
-            </motion.div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <Badge className="mb-4 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              BA07/PP/A
+            </Badge>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
               Early Warning System (EWS)
             </h1>
-            <p className="text-xl text-white/90 max-w-4xl leading-relaxed">
+            <p className="text-lg sm:text-xl text-white/90 max-w-4xl leading-relaxed">
               Establish a hydrological early warning system for flood and weather monitoring across multiple hydro stations, enabling proactive disaster management.
             </p>
           </motion.div>

@@ -116,19 +116,19 @@ function ImageSlider({
 
   if (images.length === 0) {
     return (
-      <div className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl">
+      <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm">
         <div className="text-center py-12">
-          <ImageIcon className="w-16 h-16 text-[#2d545e] mx-auto mb-4" />
-          <p className="text-gray-600">No images available</p>
+          <ImageIcon className="w-16 h-16 text-[#1A237E] mx-auto mb-4" />
+          <p className="text-[#37474F]">No images available</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl">
-      <h3 className="text-2xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
-        <ImageIcon className="w-6 h-6 text-[#2d545e]" />
+    <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm">
+      <h3 className="text-xl sm:text-2xl font-bold text-[#1A237E] mb-6 flex items-center gap-3">
+        <ImageIcon className="w-6 h-6 text-[#FF9800]" />
         {title}
       </h3>
       
@@ -138,10 +138,10 @@ function ImageSlider({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative aspect-video bg-gradient-to-br from-[#e1b382]/20 via-[#c89666]/10 to-[#e1b382]/20 rounded-2xl overflow-hidden border-2 border-[#c89666]/50 shadow-2xl backdrop-blur-sm group">
+        <div className="relative aspect-video bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 shadow-md group">
           {/* Animated background gradient */}
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-[#2d545e]/5 via-[#e1b382]/5 to-[#c89666]/5"
+            className="absolute inset-0 bg-gradient-to-r from-[#1A237E]/5 via-[#FF9800]/5 to-[#1A237E]/5"
             animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
             }}
@@ -247,7 +247,7 @@ function ImageSlider({
                       {/* Image glow effect */}
                       {isActive && (
                         <motion.div
-                          className="absolute inset-0 bg-gradient-radial from-[#2d545e]/10 via-transparent to-transparent pointer-events-none"
+                          className="absolute inset-0 bg-gradient-radial from-[#1A237E]/10 via-transparent to-transparent pointer-events-none"
                           animate={{
                             opacity: [0.2, 0.4, 0.2],
                           }}
@@ -260,10 +260,10 @@ function ImageSlider({
                       )}
                     </motion.div>
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[#e1b382]/20">
+                    <div className="w-full h-full flex items-center justify-center bg-slate-100">
                       <div className="text-center">
-                        <ImageIcon className="w-20 h-20 text-[#2d545e] mx-auto mb-4" />
-                        <p className="text-[#2d545e] text-lg">{item.name}</p>
+                        <ImageIcon className="w-20 h-20 text-[#1A237E] mx-auto mb-4" />
+                        <p className="text-[#1A237E] text-lg">{item.name}</p>
                         <p className="text-gray-600 text-sm mt-2">Image coming soon</p>
                       </div>
                     </div>
@@ -276,7 +276,7 @@ function ImageSlider({
           {/* Progress Bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-white/20 z-30">
             <motion.div
-              className="h-full bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666]"
+              className="h-full bg-gradient-to-r from-[#1A237E] via-[#FF9800] to-[#1A237E]"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.1, ease: "linear" }}
@@ -327,14 +327,14 @@ function ImageSlider({
           {/* Enhanced Navigation Arrows */}
           <motion.button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-2xl border border-[#c89666]/50 group/arrow"
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#1A237E]/90 backdrop-blur-xl text-white hover:bg-[#1A237E] transition-all flex items-center justify-center z-40 shadow-lg border border-white/30 group/arrow"
             aria-label="Previous slide"
             whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.95 }}
           >
             <ChevronLeft className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#2d545e]/30 to-[#e1b382]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#1A237E]/30 to-[#FF9800]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
               animate={{
                 scale: [1, 1.2, 1],
               }}
@@ -348,14 +348,14 @@ function ImageSlider({
           
           <motion.button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-2xl border border-[#c89666]/50 group/arrow"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-[#1A237E]/90 backdrop-blur-xl text-white hover:bg-[#1A237E] transition-all flex items-center justify-center z-40 shadow-lg border border-white/30 group/arrow"
             aria-label="Next slide"
             whileHover={{ scale: 1.1, x: 5 }}
             whileTap={{ scale: 0.95 }}
           >
             <ChevronRight className="w-7 h-7 group-hover/arrow:scale-110 transition-transform" />
             <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#e1b382]/30 to-[#c89666]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FF9800]/30 to-[#1A237E]/30 opacity-0 group-hover/arrow:opacity-100 transition-opacity"
               animate={{
                 scale: [1, 1.2, 1],
               }}
@@ -370,7 +370,7 @@ function ImageSlider({
           {/* Play/Pause Button */}
           <motion.button
             onClick={() => setIsPaused(!isPaused)}
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#2d545e]/90 backdrop-blur-xl text-white hover:bg-[#12343b] transition-all flex items-center justify-center z-40 shadow-lg border border-[#c89666]/50"
+            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-[#1A237E]/90 backdrop-blur-xl text-white hover:bg-[#1A237E] transition-all flex items-center justify-center z-40 shadow-lg border border-white/30"
             aria-label={isPaused ? "Play slideshow" : "Pause slideshow"}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
@@ -396,8 +396,8 @@ function ImageSlider({
                 onClick={() => goToSlide(index)}
                 className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                   index === currentSlide
-                    ? "border-[#2d545e] shadow-lg shadow-[#2d545e]/50 scale-110"
-                    : "border-[#c89666] hover:border-[#2d545e] opacity-60 hover:opacity-100"
+                    ? "border-[#1A237E] shadow-lg shadow-[#1A237E]/30 scale-110"
+                    : "border-slate-300 hover:border-[#1A237E] opacity-60 hover:opacity-100"
                 }`}
                 whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -426,21 +426,21 @@ function ImageSlider({
                     />
                     {index === currentSlide && (
                       <motion.div
-                        className="absolute inset-0 bg-[#2d545e]/30"
+                        className="absolute inset-0 bg-[#1A237E]/30"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                       />
                     )}
                   </>
                 ) : (
-                  <div className="w-full h-full bg-[#e1b382]/20 flex items-center justify-center">
-                    <ImageIcon className="w-6 h-6 text-[#2d545e]" />
+                  <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                    <ImageIcon className="w-6 h-6 text-[#FF9800]" />
                   </div>
                 )}
                 {/* Active indicator */}
                 {index === currentSlide && (
                   <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-1 bg-[#2d545e]"
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-[#FF9800]"
                     layoutId="activeThumbnail"
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
@@ -458,8 +458,8 @@ function ImageSlider({
               onClick={() => goToSlide(index)}
               className={`relative rounded-full transition-all ${
                 index === currentSlide
-                  ? "bg-gradient-to-r from-[#2d545e] to-[#e1b382] w-10 h-3"
-                  : "bg-[#c89666] hover:bg-[#2d545e] w-3 h-3"
+                  ? "bg-gradient-to-r from-[#1A237E] to-[#FF9800] w-10 h-3"
+                  : "bg-slate-300 hover:bg-[#1A237E] w-3 h-3"
               }`}
               aria-label={`Go to slide ${index + 1}`}
               whileHover={{ scale: 1.2 }}
@@ -557,50 +557,31 @@ export default function TrainingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section - Image Only */}
-      <section className="relative w-full h-[70vh] overflow-hidden pt-20">
-        <Image
-          src="/assets/training/sit2025.jpeg"
-          alt="Summer Industrial Training 2025"
-          fill
-          className="object-cover"
-          sizes="100vw"
-          priority
-          loading="eager"
-        />
-      </section>
-
-      {/* Hero Content Section - Below Image */}
-      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e]">
-        <div className="container mx-auto px-8 md:px-16">
+    <div className="min-h-screen bg-white">
+      {/* Hero - solid purple (Training theme: distinct from blue/green) */}
+      <section className="relative w-full overflow-hidden pt-36 sm:pt-40 pb-20 sm:pb-24 bg-[#6A1B9A]">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjAuNSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNhKSIvPjwvc3ZnPg==')] opacity-60" />
+        <div className="container relative mx-auto px-4 sm:px-6 md:px-8 lg:px-16 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center max-w-4xl mx-auto"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 text-sm font-medium shadow-lg">
-                Summer Industrial Training 2025
-              </Badge>
-            </motion.div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              Empowering the <span className="text-[#e1b382]">Innovators</span> of Tomorrow
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              Summer Industrial Training 2025
+            </Badge>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Empowering the <span className="text-[#FF9800]">Innovators</span> of Tomorrow
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 leading-relaxed max-w-4xl mx-auto">
               A structured, interdisciplinary training initiative focused on emerging and high-impact technological domains.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-white/90">
-              <div className="flex items-center gap-2 bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-[#c89666]/30 text-white">
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/30">
                 <Calendar className="w-5 h-5" />
                 <span>2nd June - 15th July 2025</span>
               </div>
-              <div className="flex items-center gap-2 bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-[#c89666]/30 text-white">
+              <div className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/30">
                 <Users className="w-5 h-5" />
                 <span>45 Days Intensive Program</span>
               </div>
@@ -609,42 +590,60 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* Overview Section */}
-      <section id="overview" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* SIT 2025 hero image - full image, no cropping */}
+      <section className="relative w-full -mt-1 bg-slate-100 flex justify-center">
+        <div className="relative w-full max-w-6xl aspect-[4/3]">
+          <Image
+            src="/assets/training/sit2025.jpeg"
+            alt="Summer Industrial Training 2025 - Program snapshot"
+            fill
+            className="object-contain"
+            sizes="(max-width: 1280px) 100vw, 1280px"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* Overview Section - CIRD theme */}
+      <section id="overview" className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-12"
+            viewport={{ once: true }}
+            className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm mb-12"
           >
-            <p className="text-lg text-gray-700 leading-relaxed text-center max-w-4xl mx-auto">
+            <p className="text-base sm:text-lg text-[#37474F] leading-relaxed text-center max-w-4xl mx-auto">
               The Control Development Centre (CDC), operating under the Centre for Industrial Research and Development (CIRD) at Jaypee University of Engineering and Technology, Guna (M.P.), is proud to lead the Summer Industrial Training 2025 — a structured, interdisciplinary training initiative focused on emerging and high-impact technological domains.
             </p>
-            <p className="text-lg text-gray-700 leading-relaxed text-center max-w-4xl mx-auto mt-6">
+            <p className="text-base sm:text-lg text-[#37474F] leading-relaxed text-center max-w-4xl mx-auto mt-6">
               This initiative underscores a strong commitment to bridging academic potential with industrial proficiency, fostering the development of domain expertise through experiential learning, system-level understanding, and practical implementation.
             </p>
           </motion.div>
 
-          {/* Industry Partners */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Industry Collaborations</h3>
-            <div className="flex flex-wrap justify-center gap-4">
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Partners</span>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#1A237E] mt-2 mb-6">Industry Collaborations</h3>
+            <div className="mx-auto w-16 h-1 rounded-full bg-[#FF9800] mb-6" />
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
               {industryPartners.map((partner, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="bg-white border-2 border-[#c89666] px-6 py-3 rounded-lg hover:border-[#2d545e] transition-all shadow-md"
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.03 }}
+                  className="bg-white border border-slate-200 px-5 py-2.5 rounded-lg hover:border-[#1A237E]/30 transition-all shadow-sm"
                 >
-                  <span className="text-[#2d545e] font-medium">{partner}</span>
+                  <span className="text-[#1A237E] font-medium text-sm sm:text-base">{partner}</span>
                 </motion.div>
               ))}
             </div>
@@ -652,43 +651,47 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* Core Training Tracks */}
-      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Core Training Tracks - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Core <span className="text-[#12343b]">Training Tracks</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Domains</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mt-2 mb-3">
+              Core Training Tracks
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-2xl mx-auto mt-4">
               Comprehensive training across four key technological domains
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {trainingTracks.map((track, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
+                transition={{ duration: 0.5, delay: index * 0.08 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -4 }}
               >
-                <Card className="bg-white border-2 border-[#c89666] hover:border-[#2d545e] transition-all duration-300 h-full shadow-lg hover:shadow-xl">
+                <Card className="bg-white border border-slate-200 hover:border-[#1A237E]/20 transition-all h-full shadow-sm hover:shadow-md">
                   <CardHeader>
-                    <div className="p-4 rounded-xl bg-[#2d545e] mb-4 w-fit">
+                    <div className="p-4 rounded-xl bg-[#1A237E] mb-4 w-fit">
                       <track.icon className="w-8 h-8 text-white" />
                     </div>
-                    <CardTitle className="text-xl text-[#2d545e] mb-2">
+                    <CardTitle className="text-xl text-[#1A237E] mb-2">
                       {track.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <CardDescription className="text-gray-700">
+                    <CardDescription className="text-[#37474F]">
                       {track.description}
                     </CardDescription>
                   </CardContent>
@@ -699,87 +702,85 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* AI Srijan FDP Section */}
-      <section id="ai-srijan" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* AI Srijan FDP Section - CIRD theme */}
+      <section id="ai-srijan" className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
-                AI Srijan - Faculty Development Programme
-              </Badge>
-            </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Advancing AI Excellence through <span className="text-[#12343b]">Industry-Academia Collaboration</span>
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              AI Srijan - Faculty Development Programme
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mb-4">
+              Advancing AI Excellence through Industry-Academia Collaboration
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4">
               A one-week Faculty Development Programme on Artificial Intelligence, Machine Learning, and Deep Learning under the prestigious Intel® Unnati Program
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-12 mb-12">
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
-          >
-            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Program Details</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-[#2d545e] font-semibold">Date</p>
-                  <p className="text-gray-700">7th – 11th July 2025</p>
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm"
+            >
+              <h3 className="text-xl font-bold text-[#1A237E] mb-6">Program Details</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#1A237E] font-semibold">Date</p>
+                    <p className="text-[#37474F]">7th – 11th July 2025</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#1A237E] font-semibold">Venue</p>
+                    <p className="text-[#37474F]">Control Development Center (CDC), CIRD, JUET Guna</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Sparkles className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="text-[#1A237E] font-semibold">In Association With</p>
+                    <p className="text-[#37474F]">Intel Corporation® | EDGATE TECHNOLOGIES PRIVATE LIMITED</p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Building2 className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-[#2d545e] font-semibold">Venue</p>
-                  <p className="text-gray-700">Control Development Center (CDC), CIRD, JUET Guna</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Sparkles className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <div>
-                  <p className="text-[#2d545e] font-semibold">In Association With</p>
-                  <p className="text-gray-700">Intel Corporation® | EDGATE TECHNOLOGIES PRIVATE LIMITED</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
-          >
-            <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Program Highlights</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <p className="text-gray-700">Hands-on sessions in Machine Learning and Deep Learning</p>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm"
+            >
+              <h3 className="text-xl font-bold text-[#1A237E] mb-6">Program Highlights</h3>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <p className="text-[#37474F]">Hands-on sessions in Machine Learning and Deep Learning</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <p className="text-[#37474F]">Exposure to Intel's Unnati AI Lab tools and curriculum</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[#FF9800] mt-1 flex-shrink-0" />
+                  <p className="text-[#37474F]">Real-world problem-solving and model deployment strategies</p>
+                </div>
               </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <p className="text-gray-700">Exposure to Intel's Unnati AI Lab tools and curriculum</p>
-              </div>
-              <div className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-[#2d545e] mt-1 flex-shrink-0" />
-                <p className="text-gray-700">Real-world problem-solving and model deployment strategies</p>
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
           </div>
 
           {/* Image Slider for AI Srijan */}
@@ -793,46 +794,43 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* Power Plant Visit Section */}
-      <section id="power-plant" className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Power Plant Visit Section - CIRD theme */}
+      <section id="power-plant" className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-6 bg-[#2d545e] text-white border border-[#12343b] px-6 py-2 shadow-lg">
-                Industrial Visit
-              </Badge>
-            </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Visit to <span className="text-[#12343b]">Jaypee Nigrie Super Thermal Power Plant</span>
+            <Badge className="mb-6 bg-[#1A237E] text-white border-0 px-6 py-2 shadow-lg">
+              Industrial Visit
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mb-4">
+              Visit to Jaypee Nigrie Super Thermal Power Plant
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4">
               A comprehensive one-week industrial visit to understand the operations and technologies of a super thermal power plant
             </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm mb-8"
           >
             <div className="flex items-start gap-3 mb-6">
-              <Building2 className="w-6 h-6 text-[#2d545e] mt-1 flex-shrink-0" />
+              <Building2 className="w-6 h-6 text-[#FF9800] mt-1 flex-shrink-0" />
               <div>
-                <h3 className="text-xl font-bold text-[#2d545e] mb-2">Jaypee Nigrie Super Thermal Power Plant</h3>
-                <p className="text-gray-600">Nigrie, Madhya Pradesh</p>
+                <h3 className="text-xl font-bold text-[#1A237E] mb-2">Jaypee Nigrie Super Thermal Power Plant</h3>
+                <p className="text-[#37474F]">Nigrie, Madhya Pradesh</p>
               </div>
             </div>
-            <p className="text-gray-700 leading-relaxed">
+            <p className="text-[#37474F] leading-relaxed">
               All trainees participated in a one-week industrial visit to the Jaypee Nigrie Super Thermal Power Plant, gaining extensive knowledge about how a super thermal power plant operates, including its various systems, processes, and technologies. This hands-on experience provided invaluable insights into real-world industrial operations and power generation.
             </p>
           </motion.div>
@@ -848,73 +846,71 @@ export default function TrainingPage() {
         </div>
       </section>
 
-      {/* Closing Ceremony Section */}
-      <section id="closing" className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Closing Ceremony Section - CIRD theme */}
+      <section id="closing" className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
-                Closing Ceremony
-              </Badge>
-            </motion.div>
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Closing Ceremony of <span className="text-[#12343b]">SIT-2025</span>
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              Closing Ceremony
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mb-4">
+              Closing Ceremony of SIT-2025
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-2xl mx-auto mt-4">
               A Celebration of Learning and Collaboration
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
+              initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <Award className="w-8 h-8 text-[#2d545e]" />
-              <h3 className="text-2xl font-bold text-[#2d545e]">Recognition & Appreciation</h3>
-            </div>
-            <p className="text-gray-700 leading-relaxed mb-4">
-              We were honored to present Mementoes to our distinguished guests, programme organisers, co-organisers, and esteemed resource persons as a token of our appreciation for their invaluable contributions.
-            </p>
-            <p className="text-gray-700 leading-relaxed">
-              Certificates of Participation were presented to all the interns for their dedication, hard work, and active engagement throughout the program.
-            </p>
-          </motion.div>
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <Award className="w-8 h-8 text-[#FF9800]" />
+                <h3 className="text-xl font-bold text-[#1A237E]">Recognition & Appreciation</h3>
+              </div>
+              <p className="text-[#37474F] leading-relaxed mb-4">
+                We were honored to present Mementoes to our distinguished guests, programme organisers, co-organisers, and esteemed resource persons as a token of our appreciation for their invaluable contributions.
+              </p>
+              <p className="text-[#37474F] leading-relaxed">
+                Certificates of Participation were presented to all the interns for their dedication, hard work, and active engagement throughout the program.
+              </p>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <GraduationCap className="w-8 h-8 text-[#2d545e]" />
-              <h3 className="text-2xl font-bold text-[#2d545e]">Program Leadership</h3>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <p className="text-[#2d545e] font-semibold mb-1">Program Organiser</p>
-                <p className="text-gray-700">Dr. Dhananjay R. Mishra</p>
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <GraduationCap className="w-8 h-8 text-[#FF9800]" />
+                <h3 className="text-xl font-bold text-[#1A237E]">Program Leadership</h3>
               </div>
-              <div>
-                <p className="text-[#2d545e] font-semibold mb-1">Co-Organiser</p>
-                <p className="text-gray-700">Dr. Amit Kumar Srivastava</p>
-              </div>
-              <div className="pt-3 border-t border-[#c89666]">
-                <p className="text-[#2d545e] font-semibold mb-1">Hon'ble Vice Chancellor</p>
-                <p className="text-gray-700">Prof. D K Rai, JUET Guna</p>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-[#1A237E] font-semibold mb-1">Program Organiser</p>
+                  <p className="text-[#37474F]">Dr. Dhananjay R. Mishra</p>
+                </div>
+                <div>
+                  <p className="text-[#1A237E] font-semibold mb-1">Co-Organiser</p>
+                  <p className="text-[#37474F]">Dr. Amit Kumar Srivastava</p>
+                </div>
+                <div className="pt-3 border-t border-slate-200">
+                  <p className="text-[#1A237E] font-semibold mb-1">Hon'ble Vice Chancellor</p>
+                  <p className="text-[#37474F]">Prof. D K Rai, JUET Guna</p>
               </div>
             </div>
           </motion.div>
@@ -924,12 +920,13 @@ export default function TrainingPage() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl text-center"
+          viewport={{ once: true }}
+          className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm text-center"
         >
-          <p className="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto mb-4">
+          <p className="text-base sm:text-lg text-[#37474F] leading-relaxed max-w-3xl mx-auto mb-4">
             A heartfelt thank you to our mentors, whose continuous guidance shaped the learning journey of every participant, and to the program organisers for their tireless efforts in making SIT-2025 a memorable and impactful experience.
           </p>
-          <p className="text-lg text-[#2d545e] font-semibold leading-relaxed max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg text-[#1A237E] font-semibold leading-relaxed max-w-3xl mx-auto">
             SIT-2025 was not just about skill development—it was about curiosity, teamwork, and the drive to innovate. As we close this chapter, we look forward to seeing our participants carry this learning spirit into their future endeavors.
           </p>
         </motion.div>

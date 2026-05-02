@@ -177,10 +177,9 @@ export default function CDCPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section with Fade-in Slider */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Fade-in Background Image Slider */}
+    <div className="min-h-screen bg-white">
+      {/* Hero - image slider + navy overlay (Entities theme) */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-36 sm:pt-40">
         <div className="absolute inset-0 z-0">
           {cdcRooms.map((room, index) => {
             const isActive = index === currentSlide;
@@ -189,16 +188,9 @@ export default function CDCPage() {
                 key={`header-${index}-${room.name}`}
                 className="absolute inset-0 w-full h-full"
                 initial={false}
-                animate={{
-                  opacity: isActive ? 1 : 0,
-                }}
-                transition={{
-                  duration: 1.5,
-                  ease: "easeInOut"
-                }}
-                style={{
-                  zIndex: isActive ? 1 : 0,
-                }}
+                animate={{ opacity: isActive ? 1 : 0 }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
+                style={{ zIndex: isActive ? 1 : 0 }}
               >
                 <Image
                   src={room.image}
@@ -213,81 +205,74 @@ export default function CDCPage() {
               </motion.div>
             );
           })}
-          {/* Light Overlay - Just enough for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-black/30 to-black/40 z-10"></div>
+          <div className="absolute inset-0 bg-[#1e3a5f]/70 z-10" />
         </div>
-        
-        {/* Content */}
-        <div className="container mx-auto px-8 md:px-16 relative z-20 py-20">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-20 py-20">
           <Link href="/entities">
-            <Button variant="ghost" className="mb-6 text-white hover:text-[#e1b382] bg-white/10 backdrop-blur-sm">
+            <Button variant="ghost" className="mb-6 text-white hover:bg-white/10 backdrop-blur-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Entities
             </Button>
           </Link>
-          
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center md:text-left max-w-4xl"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-white/20 px-6 py-2 text-sm font-medium shadow-lg shadow-white/10">
-                Control Development Centre
-              </Badge>
-            </motion.div>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              Control Development Centre
+            </Badge>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               CDC - Control Development Centre
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 leading-relaxed drop-shadow-md">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/90 mb-8 leading-relaxed drop-shadow-md">
               Advanced Control Systems Research
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Description Section */}
-      <section className="py-16 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Description Section - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-white rounded-xl p-8 border border-[#c89666] shadow-xl mb-8"
+            viewport={{ once: true }}
+            className="bg-slate-50 rounded-xl p-6 sm:p-8 border border-slate-200 shadow-sm"
           >
-            <h2 className="text-3xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
-              <Building2 className="w-8 h-8 text-[#2d545e]" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A237E] mb-5 flex items-center gap-3">
+              <Building2 className="w-8 h-8 text-[#1A237E]" />
               About CDC
             </h2>
-            <p className="text-gray-700 leading-relaxed text-lg mb-6">
+            <p className="text-[#37474F] leading-relaxed text-base sm:text-lg mb-5">
               The Control Development Centre (CDC) is our premier research facility dedicated to developing sophisticated control systems and automation solutions for industrial applications. Our research spans from basic control theory to advanced AI-driven control mechanisms.
             </p>
-            <p className="text-gray-700 leading-relaxed text-lg">
+            <p className="text-[#37474F] leading-relaxed text-base sm:text-lg">
               The CDC operates under the Centre for Industrial Research and Development (CIRD) and serves as a hub for innovation in software development, robotics, artificial intelligence, and industrial automation. We work closely with industry partners to develop cutting-edge solutions for real-world industrial challenges.
             </p>
           </motion.div>
-
         </div>
       </section>
 
-      {/* Image Slider Section */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Image Slider Section - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            viewport={{ once: true }}
+            className="text-center mb-10"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              CDC <span className="text-[#2d545e]">Facilities</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Infrastructure</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mt-2 mb-3">
+              CDC Facilities
             </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            <div className="mx-auto w-16 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-[#37474F] max-w-2xl mx-auto mt-4">
               Explore our state-of-the-art facilities and infrastructure
             </p>
           </motion.div>
@@ -298,10 +283,9 @@ export default function CDCPage() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
-            <div className="relative h-[600px] md:h-[700px] lg:h-[800px] bg-gradient-to-br from-[#2d545e]/80 via-[#12343b]/80 to-[#2d545e]/80 rounded-2xl overflow-hidden border-2 border-[#e1b382]/30 shadow-2xl backdrop-blur-sm group">
-              {/* Animated background gradient */}
+            <div className="relative h-[600px] md:h-[700px] lg:h-[800px] bg-slate-200 rounded-2xl overflow-hidden border border-slate-300 shadow-xl group">
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-[#2d545e]/10 via-[#e1b382]/10 to-[#c89666]/10"
+                className="absolute inset-0 bg-gradient-to-r from-[#1A237E]/5 via-[#FF9800]/5 to-[#1A237E]/5"
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                 }}
@@ -348,7 +332,7 @@ export default function CDCPage() {
                     >
                       {!imageErrors[index] ? (
                         <motion.div 
-                          className="relative w-full h-full flex items-center justify-center bg-[#2d545e]/20 p-4 md:p-8"
+                          className="relative w-full h-full flex items-center justify-center bg-[#1A237E]/10 p-4 md:p-8"
                           whileHover={isActive ? { scale: 1.02 } : {}}
                           transition={{ duration: 0.3 }}
                         >
@@ -501,7 +485,7 @@ export default function CDCPage() {
                     onClick={() => goToSlide(index)}
                     className={`relative flex-shrink-0 w-24 h-16 md:w-32 md:h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       index === currentSlide
-                        ? "border-[#e1b382] shadow-lg shadow-[#e1b382]/50 scale-110"
+                        ? "border-[#FF9800] shadow-lg shadow-[#FF9800]/30 scale-110"
                         : "border-white/20 hover:border-white/40 opacity-60 hover:opacity-100"
                     }`}
                     whileHover={{ scale: index === currentSlide ? 1.1 : 1.05 }}
@@ -520,7 +504,7 @@ export default function CDCPage() {
                         />
                         {index === currentSlide && (
                           <motion.div
-                            className="absolute inset-0 bg-[#e1b382]/30"
+                            className="absolute inset-0 bg-[#FF9800]/20"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                           />
@@ -534,7 +518,7 @@ export default function CDCPage() {
                     {/* Active indicator */}
                     {index === currentSlide && (
                       <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-[#e1b382]"
+                        className="absolute bottom-0 left-0 right-0 h-1 bg-[#FF9800]"
                         layoutId="activeThumbnail"
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
@@ -552,7 +536,7 @@ export default function CDCPage() {
                   onClick={() => goToSlide(index)}
                   className={`relative rounded-full transition-all ${
                     index === currentSlide
-                      ? "bg-gradient-to-r from-[#2d545e] to-[#e1b382] w-10 h-3"
+                      ? "bg-[#FF9800] w-10 h-3"
                       : "bg-white/30 hover:bg-white/50 w-3 h-3"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -581,17 +565,20 @@ export default function CDCPage() {
       </section>
 
       {/* Focus Areas Section */}
-      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-8 md:px-16">
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-12"
+            viewport={{ once: true }}
+            className="text-center mb-10"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Focus <span className="text-[#2d545e]">Areas</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Expertise</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1A237E] mt-2 mb-3">
+              Focus Areas
             </h2>
+            <div className="mx-auto w-16 h-1 rounded-full bg-[#FF9800]" />
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -626,21 +613,21 @@ export default function CDCPage() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="bg-white rounded-xl p-6 border border-[#c89666] hover:border-[#2d545e] transition-all shadow-lg hover:shadow-xl"
+                className="bg-slate-50 rounded-xl p-6 border border-slate-200 hover:border-[#1A237E]/20 transition-all shadow-sm"
               >
-                <div className="flex items-center space-x-3 mb-4">
-                  <div className="p-3 rounded-lg bg-[#2d545e]">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-3 rounded-lg bg-[#1A237E]">
                     <area.icon className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-[#2d545e]">{area.title}</h3>
+                  <h3 className="text-xl font-semibold text-[#1A237E]">{area.title}</h3>
                 </div>
-                <p className="text-gray-700 mb-4">{area.description}</p>
+                <p className="text-[#37474F] mb-4 leading-relaxed">{area.description}</p>
                 <div className="space-y-2">
-                  <h4 className="text-sm font-semibold text-[#2d545e] mb-2">Key Projects:</h4>
+                  <h4 className="text-sm font-semibold text-[#1A237E] mb-2">Key Projects:</h4>
                   {area.projects.map((project, projectIndex) => (
-                    <div key={projectIndex} className="flex items-center space-x-2">
-                      <div className="w-1.5 h-1.5 bg-[#2d545e] rounded-full"></div>
-                      <span className="text-sm text-gray-700">{project}</span>
+                    <div key={projectIndex} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-[#FF9800] rounded-full shrink-0"></div>
+                      <span className="text-sm text-[#37474F]">{project}</span>
                     </div>
                   ))}
                 </div>
@@ -651,7 +638,7 @@ export default function CDCPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
+      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
         <div className="container mx-auto px-8 md:px-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
@@ -667,7 +654,7 @@ export default function CDCPage() {
                 transition={{ duration: 0.8, delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="text-5xl font-bold text-[#2d545e] mb-2">{stat.number}</div>
+                <div className="text-5xl font-bold text-[#7B1FA2] mb-2">{stat.number}</div>
                 <div className="text-gray-600">{stat.label}</div>
               </motion.div>
             ))}
@@ -676,11 +663,11 @@ export default function CDCPage() {
       </section>
 
       {/* Enhanced CDC Team Section */}
-      <section className="py-20 bg-gradient-to-b from-[#2d545e] to-[#12343b] relative overflow-hidden">
+      <section className="py-16 sm:py-20 bg-[#1A237E] relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 opacity-10">
           <motion.div
-            className="absolute top-20 left-10 w-72 h-72 bg-[#e1b382] rounded-full blur-3xl"
+            className="absolute top-20 left-10 w-72 h-72 bg-[#FF9800]/20 rounded-full blur-3xl"
             animate={{
               scale: [1, 1.2, 1],
               opacity: [0.3, 0.5, 0.3],
@@ -692,7 +679,7 @@ export default function CDCPage() {
             }}
           />
           <motion.div
-            className="absolute bottom-20 right-10 w-96 h-96 bg-[#c89666] rounded-full blur-3xl"
+            className="absolute bottom-20 right-10 w-96 h-96 bg-[#FF9800]/10 rounded-full blur-3xl"
             animate={{
               scale: [1, 1.3, 1],
               opacity: [0.3, 0.5, 0.3],
@@ -719,16 +706,16 @@ export default function CDCPage() {
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
-                <Sparkles className="w-10 h-10 text-[#e1b382]" />
+                <Sparkles className="w-10 h-10 text-[#FF9800]" />
               </motion.div>
               <h2 className="text-4xl md:text-6xl font-bold text-white">
-                CDC <span className="text-[#e1b382]">Team</span>
+                CDC <span className="text-[#FF9800]">Team</span>
               </h2>
               <motion.div
                 animate={{ rotate: [360, 0] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
-                <Sparkles className="w-10 h-10 text-[#e1b382]" />
+                <Sparkles className="w-10 h-10 text-[#FF9800]" />
               </motion.div>
             </div>
             <p className="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
@@ -771,14 +758,14 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
 
   // Unified theme styling for all roles
   const style = {
-    border: "border-[#c89666]",
-    glow: "shadow-[#e1b382]/50",
+    border: "border-slate-200",
+    glow: "shadow-[#1A237E]/10",
     badge: member.role === "coordinator" 
       ? "bg-gradient-to-r from-[#2d545e] to-[#12343b]" 
       : member.role === "co-coordinator"
-      ? "bg-gradient-to-r from-[#2d545e] to-[#12343b]"
-      : "bg-gradient-to-r from-[#2d545e] to-[#12343b]",
-    accent: "text-[#2d545e]"
+      ? "bg-[#1A237E]" 
+      : "bg-[#1A237E]",
+    accent: "text-[#1A237E]"
   };
 
   return (
@@ -793,16 +780,16 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
     >
       {/* Glow effect on hover */}
       <motion.div
-        className={`absolute -inset-1 bg-gradient-to-r from-[#2d545e] via-[#e1b382] to-[#c89666] rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-30' : ''}`}
+        className={`absolute -inset-1 bg-gradient-to-r from-[#1A237E] via-[#FF9800] to-[#1A237E] rounded-2xl blur-xl opacity-0 transition-opacity duration-500 ${isHovered ? 'opacity-20' : ''}`}
         animate={isHovered ? { scale: [1, 1.05, 1] } : {}}
         transition={{ duration: 2, repeat: Infinity }}
       />
 
-      <Card className={`relative bg-white border-2 ${style.border} hover:border-[#2d545e] transition-all duration-300 h-full shadow-2xl hover:shadow-3xl ${style.glow} overflow-hidden group`}>
+      <Card className={`relative bg-white border-2 ${style.border} hover:border-[#1A237E]/30 transition-all duration-300 h-full shadow-lg hover:shadow-xl ${style.glow} overflow-hidden group`}>
         {/* Subtle animated background pattern */}
         <div className="absolute inset-0 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity">
           <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%232d545e' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231A237E' fill-opacity='0.15'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             backgroundRepeat: 'repeat'
           }}></div>
         </div>
@@ -832,7 +819,7 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
             />
             
             {/* Middle ring */}
-            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20`}></div>
+            <div className={`absolute inset-0 rounded-full ${style.border} border-[3px] bg-[#1A237E]/10`}></div>
             
             {/* Image container */}
             <div className="relative w-full h-full rounded-full overflow-hidden border-[3px] border-white shadow-xl">
@@ -859,8 +846,8 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
                   }}
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20">
-                  <span className="text-[#2d545e] text-3xl font-bold">{initials}</span>
+                <div className="w-full h-full flex items-center justify-center bg-[#1A237E]/10">
+                  <span className="text-[#1A237E] text-3xl font-bold">{initials}</span>
                 </div>
               )}
             </div>
@@ -868,7 +855,7 @@ function EnhancedCDCTeamCard({ member, index }: { member: CDCTeamMember; index: 
 
           {/* Name and Details - Compact - No animation delay */}
           <div className="px-2">
-            <CardTitle className="text-xl text-[#2d545e] mb-1.5 font-bold group-hover:text-[#12343b] transition-colors leading-tight">
+            <CardTitle className="text-xl text-[#1A237E] mb-1.5 font-bold group-hover:text-[#FF9800] transition-colors leading-tight">
               {member.name}
             </CardTitle>
             {member.designation && (

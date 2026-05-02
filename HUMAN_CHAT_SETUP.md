@@ -60,15 +60,8 @@ Create/update `.env.local` in the root directory:
 NEXT_PUBLIC_AGENT_PIN=your-secure-pin-here
 ```
 
-### Backend URL
-The chatbot automatically detects the backend URL:
-- **Development**: `http://localhost:5000`
-- **Production**: `https://cird.onrender.com` (if hostname includes "cird.co.in")
-
-To override, set in `.env.local`:
-```env
-NEXT_PUBLIC_API_BASE_URL=http://your-backend-url:5000
-```
+### API & Socket (same-origin)
+All API and Socket.io connections use the same domain as the frontend (e.g. `https://cird.co.in/api/*`). No backend URL or environment variable is required. Ensure your deployment serves the backend at the same host under `/api/*` and that WebSocket is available for Socket.io.
 
 ---
 

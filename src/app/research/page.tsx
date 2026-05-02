@@ -2,27 +2,26 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   Code, 
   Bot, 
   Cpu, 
-  Brain, 
   CircuitBoard, 
   Database,
   Microscope,
   Zap,
   Target,
   ArrowRight,
-  ExternalLink,
   CheckCircle,
   Clock,
   Award
 } from "lucide-react";
 import Link from "next/link";
 import { patents as patentsData } from "@/data/patents";
+import { InternalLinksSection } from "@/components/seo/internal-links";
 
 export default function ResearchPage() {
   const broaderAreas = [
@@ -328,101 +327,94 @@ export default function ResearchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section */}
-      <section className="pt-28 pb-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e1b382' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - teal (distinct from About blue), same treatment as About */}
+      <section className="pt-36 sm:pt-40 pb-20 bg-[#00695C] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
-        }}></div>
-        
-        <div className="container mx-auto px-8 md:px-16 relative z-10">
+        }} />
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
-                Research & Development
-              </Badge>
-            </motion.div>
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              Our <span className="text-white">Research</span>
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              Research & Development
+            </Badge>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+              Our <span className="text-[#FF9800]">Research</span>
             </h1>
-            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              Cutting-edge research and development across multiple technological domains, 
+            <p className="text-lg sm:text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+              Cutting-edge research and development across multiple technological domains,
               driving innovation and creating practical solutions for industry challenges.
             </p>
-            
             {/* Project Statistics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-8">
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">14</div>
-                <div className="text-sm text-[#e1b382]">Total Projects</div>
+                <div className="text-sm text-[#FF9800]">Total Projects</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">4</div>
-                <div className="text-sm text-[#e1b382]">Completed Projects</div>
+                <div className="text-sm text-[#FF9800]">Completed Projects</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-white mb-2">11</div>
-                <div className="text-sm text-[#e1b382]">Ongoing Projects</div>
+                <div className="text-sm text-[#FF9800]">Ongoing Projects</div>
               </div>
               <Link href="/patents" className="text-center hover:scale-105 transition-transform duration-200 cursor-pointer group">
-                <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#e1b382] transition-colors">18</div>
-                <div className="text-sm text-[#e1b382] group-hover:text-white transition-colors">Patents Filed</div>
+                <div className="text-3xl font-bold text-white mb-2 group-hover:text-[#FF9800] transition-colors">18</div>
+                <div className="text-sm text-[#FF9800] group-hover:text-white transition-colors">Patents Filed</div>
               </Link>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Broader Areas */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Broader Areas - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12 lg:mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Broader <span className="text-[#2d545e]">Areas</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Domains</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A237E] mt-2 mb-4">
+              Broader Areas
             </h2>
-            <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            <div className="mx-auto w-20 h-1 rounded-full bg-gradient-to-r from-[#FF9800] to-[#1A237E]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4 leading-relaxed">
               Our research spans across multiple domains, addressing critical challenges in industry and technology.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {broaderAreas.map((area, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+                viewport={{ once: true }}
               >
-                <motion.div
-                  whileHover={{ y: -5 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 group h-full shadow-lg hover:shadow-xl">
+                <motion.div whileHover={{ y: -4 }} transition={{ duration: 0.2 }}>
+                  <Card className="bg-white border-slate-200 hover:border-[#1A237E]/30 transition-all duration-300 group h-full shadow-sm hover:shadow-md">
                     <CardHeader>
                       <div className="flex items-center space-x-3 mb-4">
-                        <div className={`p-3 rounded-xl bg-[#2d545e] group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                        <div className="p-3 rounded-xl bg-[#1A237E] group-hover:scale-105 transition-transform duration-300">
                           <area.icon className="w-8 h-8 text-white" />
                         </div>
                         <div>
-                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666] mb-2">
+                          <Badge className="bg-[#FF9800]/15 text-[#1A237E] border-[#FF9800]/40 mb-2">
                             {area.code}
                           </Badge>
-                          <CardTitle className="text-xl text-[#2d545e] group-hover:text-[#12343b] transition-colors">
+                          <CardTitle className="text-xl text-[#1A237E] group-hover:text-[#FF9800] transition-colors">
                             {area.title}
                           </CardTitle>
                         </div>
@@ -430,7 +422,7 @@ export default function ResearchPage() {
                     </CardHeader>
                     <CardContent>
                       <div className="flex items-center justify-between">
-                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
+                        <Badge className="bg-[#FF9800]/15 text-[#1A237E] border-[#FF9800]/40">
                           {area.status}
                         </Badge>
                       </div>
@@ -443,189 +435,220 @@ export default function ResearchPage() {
         </div>
       </section>
 
-      {/* Completed Projects */}
-      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Completed Projects - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12 lg:mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Completed <span className="text-[#2d545e]">Projects</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Delivered</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A237E] mt-2 mb-4">
+              Completed Projects
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4 leading-relaxed">
               Successfully completed research projects under the MoU between JUET and JPVL.
             </p>
           </motion.div>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             {completedProjects.map((project, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+                viewport={{ once: true }}
               >
-                <motion.div
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-lg hover:shadow-xl">
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-4">
-                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
-                          {project.id}
-                        </Badge>
-                        <Badge className="bg-green-100 text-green-800 border-green-300 flex items-center">
-                          <CheckCircle className="w-4 h-4 mr-2 text-[#2d545e]" />
-                          {project.status}
-                        </Badge>
-                      </div>
-                    <CardTitle className="text-xl text-[#2d545e] mb-4">
+                <Card className="bg-white border-slate-200 hover:border-[#1A237E]/20 transition-all duration-300 shadow-sm hover:shadow-md">
+                  <CardHeader>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                      <Badge className="bg-[#1A237E]/10 text-[#1A237E] border-[#1A237E]/30">
+                        {project.id}
+                      </Badge>
+                      <Badge className="bg-green-100 text-green-800 border-green-300 flex items-center">
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        {project.status}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-xl text-[#1A237E] mb-4">
                       {project.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <h4 className="text-[#2d545e] font-semibold mb-3">Project Team:</h4>
+                      <h4 className="text-[#1A237E] font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
-                        <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-[#2d545e] rounded-full mr-3"></div>
-                          <span className="text-gray-700 text-sm">{member}</span>
+                        <div key={memberIndex} className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-[#FF9800] rounded-full shrink-0" />
+                          <span className="text-[#37474F] text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
                   </CardContent>
-                  </Card>
-                </motion.div>
+                </Card>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Ongoing Projects */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382] to-[#c89666]">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Ongoing Projects - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12 lg:mb-16"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Ongoing <span className="text-[#2d545e]">Projects</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Active</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A237E] mt-2 mb-4">
+              Ongoing Projects
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+            <div className="mx-auto w-20 h-1 rounded-full bg-gradient-to-r from-[#FF9800] to-[#1A237E]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4 leading-relaxed">
               Currently active research projects under the MoU between JUET and JPVL.
             </p>
           </motion.div>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             {ongoingProjects.map((project, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.1 }}
+                transition={{ duration: 0.6, delay: index * 0.05 }}
+                viewport={{ once: true }}
               >
-                <motion.div
-                  whileHover={{ y: -5, scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-lg hover:shadow-xl">
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-4">
-                        <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
-                          {project.id}
-                        </Badge>
-                        <Badge className="bg-amber-100 text-amber-800 border-amber-300 flex items-center">
-                          <Clock className="w-4 h-4 mr-2 text-[#2d545e]" />
-                          {project.status}
-                        </Badge>
-                      </div>
-                    <CardTitle className="text-xl text-[#2d545e] mb-4">
+                <Card className="bg-white border-slate-200 hover:border-[#1A237E]/20 transition-all duration-300 shadow-sm hover:shadow-md">
+                  <CardHeader>
+                    <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                      <Badge className="bg-[#1A237E]/10 text-[#1A237E] border-[#1A237E]/30">
+                        {project.id}
+                      </Badge>
+                      <Badge className="bg-amber-100 text-amber-800 border-amber-300 flex items-center">
+                        <Clock className="w-4 h-4 mr-2" />
+                        {project.status}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-xl text-[#1A237E] mb-4">
                       {project.title}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <h4 className="text-[#2d545e] font-semibold mb-3">Project Team:</h4>
+                      <h4 className="text-[#1A237E] font-semibold mb-3">Project Team:</h4>
                       {project.team.map((member, memberIndex) => (
-                        <div key={memberIndex} className="flex items-center">
-                          <div className="w-2 h-2 bg-[#2d545e] rounded-full mr-3"></div>
-                          <span className="text-gray-700 text-sm">{member}</span>
+                        <div key={memberIndex} className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-[#FF9800] rounded-full shrink-0" />
+                          <span className="text-[#37474F] text-sm">{member}</span>
                         </div>
                       ))}
                     </div>
                     {project.link && (
                       <div className="mt-6">
-                        <motion.div
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          <Link href={project.link}>
-                            <Button className="w-full bg-[#2d545e] text-white hover:bg-[#12343b] border border-[#12343b] shadow-lg">
-                              Know More
-                              <ArrowRight className="w-4 h-4 ml-2" />
-                            </Button>
-                          </Link>
-                        </motion.div>
+                        <Link href={project.link}>
+                          <Button className="w-full bg-[#1A237E] text-white hover:bg-[#0D47A1] border-0 shadow-md">
+                            Know More
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </Link>
                       </div>
                     )}
                   </CardContent>
-                  </Card>
-                </motion.div>
+                </Card>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Patents Section */}
-      <section className="py-20 bg-gradient-to-b from-[#2d545e] to-[#12343b]">
-        <div className="container mx-auto px-8 md:px-16">
+      <InternalLinksSection
+        eyebrow="Related Sections"
+        title="Continue Exploring CIRD"
+        description="Use these pages to drill down from project overviews into patents, labs, and deployment-focused systems."
+        links={[
+          {
+            href: "/patents",
+            title: "Patents and Designs",
+            description: "Map research outcomes to registered IP and downloadable documents.",
+          },
+          {
+            href: "/projects/ba03-pp-b",
+            title: "CHP Monitoring Project",
+            description: "Read the detailed implementation of the coal handling plant system.",
+          },
+          {
+            href: "/projects/ba07-pp-a",
+            title: "Early Warning System Project",
+            description: "View the project page for EWS architecture and outcomes.",
+          },
+          {
+            href: "/projects/ba07-pp-b",
+            title: "Automatic Weather Station",
+            description: "Explore weather monitoring and data collection initiatives.",
+          },
+          {
+            href: "/entities/cdc",
+            title: "Control Development Centre",
+            description: "See the primary lab behind automation and monitoring development.",
+          },
+          {
+            href: "/entities/mtl",
+            title: "Mechanical Testing Lab",
+            description: "Review testing and validation capabilities used across projects.",
+          },
+        ]}
+      />
+
+      {/* Patents Section - CIRD dark blue band */}
+      <section className="py-16 sm:py-20 bg-[#1A237E]">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
-              Patents <span className="text-white">Granted</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+              Patents <span className="text-[#FF9800]">Granted</span>
             </h2>
-            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg text-white/90 max-w-3xl mx-auto leading-relaxed">
               Intellectual property rights granted by IP India for our innovative research and development work.
             </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white/10 backdrop-blur-md rounded-xl p-8 border border-[#e1b382]/30 shadow-xl"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-white/10 backdrop-blur-sm rounded-xl p-6 sm:p-8 border border-white/20"
           >
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {patents.map((patent, index) => {
                 const patentLink = getPatentLink(patent);
                 const isLinkable = patentLink !== null;
-                
+
                 const content = (
                   <motion.div
                     key={index}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    whileHover={isLinkable ? { scale: 1.05, y: -2 } : {}}
-                    className={`flex items-center p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-[#e1b382]/20 transition-all shadow-md ${
-                      isLinkable 
-                        ? 'hover:border-[#e1b382]/60 hover:bg-white/15 cursor-pointer hover:shadow-lg' 
-                        : ''
+                    transition={{ duration: 0.2, delay: index * 0.02 }}
+                    whileHover={isLinkable ? { scale: 1.02, y: -2 } : {}}
+                    className={`flex items-center p-3 rounded-lg border border-white/20 bg-white/5 transition-all ${
+                      isLinkable ? "hover:border-[#FF9800]/60 hover:bg-white/10 cursor-pointer" : ""
                     }`}
                   >
-                    <Award className="w-5 h-5 text-[#e1b382] mr-3 flex-shrink-0" />
+                    <Award className="w-5 h-5 text-[#FF9800] mr-3 flex-shrink-0" />
                     <span className="text-white text-sm">{patent}</span>
                   </motion.div>
                 );
@@ -637,7 +660,6 @@ export default function ResearchPage() {
                     </Link>
                   );
                 }
-                
                 return content;
               })}
             </div>

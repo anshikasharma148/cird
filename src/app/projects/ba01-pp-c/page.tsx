@@ -90,10 +90,9 @@ export default function BA01PPCPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section with Header Image */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-20">
-        {/* Background Image */}
+    <div className="min-h-screen bg-white">
+      {/* Hero with image + teal overlay (Research theme) */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden pt-36 sm:pt-40">
         <div className="absolute inset-0 z-0">
           <Image
             src={projectImages[0]}
@@ -104,37 +103,27 @@ export default function BA01PPCPage() {
             priority
             loading="eager"
           />
-          {/* Dark Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/60"></div>
+          <div className="absolute inset-0 bg-[#00695C]/75" />
         </div>
-        
-        {/* Content */}
-        <div className="container mx-auto px-8 md:px-16 relative z-10 py-20">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10 py-20">
           <Link href="/research">
-            <Button variant="ghost" className="mb-6 text-white hover:text-[#e1b382] bg-white/10 backdrop-blur-sm">
+            <Button variant="ghost" className="mb-6 text-white hover:bg-white/10 backdrop-blur-sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Research
             </Button>
           </Link>
-          
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-4 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
-                BA01/PP/C
-              </Badge>
-            </motion.div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
+            <Badge className="mb-4 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              BA01/PP/C
+            </Badge>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 drop-shadow-lg">
               Bottom Ash Replacement in Pavers and Bricks
             </h1>
-            <p className="text-xl text-white/90 max-w-4xl leading-relaxed drop-shadow-md">
+            <p className="text-lg sm:text-xl text-white/90 max-w-4xl leading-relaxed drop-shadow-md">
               Develop a methodology to replace 80% of sand with bottom ash in paver and brick manufacturing, ensuring sustainable and compliant production.
             </p>
           </motion.div>

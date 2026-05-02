@@ -239,23 +239,10 @@ function ProfileImage({ member }: { member: any }) {
       className="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ scale: 1.03 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
-      {/* Outer glow ring */}
-      <motion.div
-        className="absolute -inset-2 rounded-full border-[#c89666] opacity-50"
-        animate={isHovered ? {
-          scale: [1, 1.1, 1],
-          opacity: [0.5, 0.8, 0.5]
-        } : {}}
-        transition={{ duration: 2, repeat: Infinity }}
-      />
-      
-      {/* Middle ring */}
-      <div className="absolute inset-0 rounded-full border-[#c89666] border-4 bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20"></div>
-      
-      {/* Image container */}
+      <div className="absolute inset-0 rounded-full border-4 border-white/30 shadow-xl" />
       <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-2xl">
         {!imageError ? (
           <Image
@@ -263,29 +250,17 @@ function ProfileImage({ member }: { member: any }) {
             src={currentImagePath}
             alt={member.name}
             fill
-            className="object-cover transition-transform duration-500 hover:scale-110"
+            className="object-cover transition-transform duration-500 hover:scale-105"
             sizes="224px"
             priority
             onError={handleImageError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#e1b382]/20 to-[#c89666]/20">
-            <span className="text-[#2d545e] text-4xl font-bold">{initials}</span>
+          <div className="w-full h-full flex items-center justify-center bg-slate-200">
+            <span className="text-[#1A237E] text-4xl font-bold">{initials}</span>
           </div>
         )}
       </div>
-
-      {/* Decorative elements */}
-      <motion.div
-        className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-full"
-        animate={isHovered ? { rotate: 360 } : {}}
-        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-      />
-      <motion.div
-        className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r from-[#2d545e] to-[#12343b] rounded-full"
-        animate={isHovered ? { rotate: -360 } : {}}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-      />
     </motion.div>
   );
 }
@@ -297,11 +272,11 @@ export default function TeamMemberPage() {
 
   if (!member) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#2d545e] to-[#12343b] flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-4">Team Member Not Found</h1>
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center pt-36">
+        <div className="text-center px-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A237E] mb-4">Team Member Not Found</h1>
           <Link href="/team">
-            <Button className="bg-[#e1b382] text-[#2d545e] hover:bg-[#c89666]">
+            <Button className="bg-[#FF9800] text-white hover:bg-[#F57C00]">
               Back to Team
             </Button>
           </Link>
@@ -314,33 +289,32 @@ export default function TeamMemberPage() {
   const ongoingProjects = member.projects.filter((p: any) => p.status === "ongoing");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
-        <div className="container mx-auto px-8 md:px-16 relative z-10">
+    <div className="min-h-screen bg-white">
+      {/* Hero - CIRD theme, Team header #5D4037 (warm brown) */}
+      <section className="pt-36 sm:pt-40 pb-16 sm:pb-20 bg-[#5D4037] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImEiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjAuNSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjA4KSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNhKSIvPjwvc3ZnPg==')] opacity-60" />
+        <div className="container relative mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <Link href="/team">
-            <Button variant="ghost" className="mb-6 text-white hover:text-[#e1b382]">
+            <Button variant="ghost" className="mb-6 text-white hover:bg-white/10 hover:text-white">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Team
             </Button>
           </Link>
-          
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7 }}
             className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-center"
           >
             <ProfileImage member={member} />
-            
             <div className="flex-1 text-center md:text-left">
-              <Badge className="mb-3 bg-[#e1b382] text-[#2d545e] border-0 px-4 py-1.5 text-sm font-semibold shadow-lg">
+              <Badge className="mb-3 bg-[#FF9800] text-white border-0 px-4 py-1.5 text-sm font-semibold shadow-lg">
                 {member.designation}
               </Badge>
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 leading-tight">
                 {member.name}
               </h1>
-              <p className="text-lg md:text-xl text-white/90">
+              <p className="text-base sm:text-lg text-white/90">
                 {member.department}
               </p>
             </div>
@@ -348,48 +322,46 @@ export default function TeamMemberPage() {
         </div>
       </section>
 
-      {/* Bio Section */}
-      <section className="py-16 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-8 md:px-16">
+      {/* Bio Section - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm mb-8"
           >
-            <h2 className="text-3xl font-bold text-[#2d545e] mb-6 flex items-center gap-3">
-              <Briefcase className="w-8 h-8 text-[#2d545e]" />
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1A237E] mb-6 flex items-center gap-3">
+              <Briefcase className="w-7 h-7 text-[#FF9800]" />
               Biography
             </h2>
-            <p className="text-gray-700 leading-relaxed text-lg mb-6">
+            <p className="text-[#37474F] leading-relaxed text-base sm:text-lg mb-6">
               {member.bio}
             </p>
-            
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <h3 className="text-xl font-semibold text-[#2d545e] mb-3 flex items-center gap-2">
-                  <GraduationCap className="w-5 h-5 text-[#2d545e]" />
+                <h3 className="text-lg font-semibold text-[#1A237E] mb-3 flex items-center gap-2">
+                  <GraduationCap className="w-5 h-5 text-[#FF9800]" />
                   Education
                 </h3>
-                <p className="text-gray-700">{member.education}</p>
+                <p className="text-[#37474F]">{member.education}</p>
               </div>
-              
               <div>
-                <h3 className="text-xl font-semibold text-[#2d545e] mb-3 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-[#2d545e]" />
+                <h3 className="text-lg font-semibold text-[#1A237E] mb-3 flex items-center gap-2">
+                  <Award className="w-5 h-5 text-[#FF9800]" />
                   Experience
                 </h3>
-                <p className="text-gray-700">{member.experience}</p>
+                <p className="text-[#37474F]">{member.experience}</p>
               </div>
             </div>
-
             {member.achievements && member.achievements.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-[#2d545e] mb-4">Key Achievements</h3>
+                <h3 className="text-lg font-semibold text-[#1A237E] mb-4">Key Achievements</h3>
                 <ul className="space-y-2">
                   {member.achievements.map((achievement: string, index: number) => (
-                    <li key={index} className="flex items-start gap-3 text-gray-700">
-                      <CheckCircle className="w-5 h-5 text-[#2d545e] mt-0.5 flex-shrink-0" />
+                    <li key={index} className="flex items-start gap-3 text-[#37474F]">
+                      <CheckCircle className="w-5 h-5 text-[#FF9800] mt-0.5 flex-shrink-0" />
                       <span>{achievement}</span>
                     </li>
                   ))}
@@ -398,73 +370,69 @@ export default function TeamMemberPage() {
             )}
           </motion.div>
 
-          {/* CIRD Role Section */}
+          {/* Role at CIRD */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl mb-8"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm mb-8"
           >
-            <h2 className="text-3xl font-bold text-[#2d545e] mb-4">Role at CIRD</h2>
-            <p className="text-gray-700 leading-relaxed text-lg">
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1A237E] mb-4">Role at CIRD</h2>
+            <p className="text-[#37474F] leading-relaxed text-base sm:text-lg">
               {member.cirdRole}
             </p>
           </motion.div>
 
-          {/* Projects Section */}
+          {/* CIRD Projects */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="bg-white border-2 border-[#c89666] rounded-xl p-8 shadow-xl"
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-slate-50 border border-slate-200 rounded-xl p-6 sm:p-8 shadow-sm"
           >
-            <h2 className="text-3xl font-bold text-[#2d545e] mb-6">CIRD Projects</h2>
-            
+            <h2 className="text-xl sm:text-2xl font-bold text-[#1A237E] mb-6">CIRD Projects</h2>
             {completedProjects.length > 0 && (
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
-                  <CheckCircle className="w-6 h-6 text-[#2d545e]" />
+                <h3 className="text-lg font-semibold text-[#1A237E] mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-6 h-6 text-[#FF9800]" />
                   Completed Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {completedProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white border-2 border-[#c89666]">
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
+                    <Card key={project.id} className="bg-white border border-slate-200 shadow-sm">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <Badge className="bg-[#1A237E]/10 text-[#1A237E] border-0">
                             {project.id}
                           </Badge>
-                          <Badge className="bg-green-100 text-green-900 border-green-300">
-                            Completed
-                          </Badge>
+                          <Badge className="bg-emerald-100 text-emerald-800 border-0">Completed</Badge>
                         </div>
-                        <CardTitle className="text-[#2d545e] mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-[#1A237E] mt-2 text-base">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}
                 </div>
               </div>
             )}
-
             {ongoingProjects.length > 0 && (
               <div>
-                <h3 className="text-xl font-semibold text-[#2d545e] mb-4 flex items-center gap-2">
-                  <Clock className="w-6 h-6 text-[#2d545e]" />
+                <h3 className="text-lg font-semibold text-[#1A237E] mb-4 flex items-center gap-2">
+                  <Clock className="w-6 h-6 text-[#FF9800]" />
                   Ongoing Projects
                 </h3>
                 <div className="grid md:grid-cols-2 gap-4">
                   {ongoingProjects.map((project: any) => (
-                    <Card key={project.id} className="bg-white border-2 border-[#c89666]">
-                      <CardHeader>
-                        <div className="flex items-center justify-between">
-                          <Badge className="bg-[#e1b382]/20 text-[#2d545e] border-[#c89666]">
+                    <Card key={project.id} className="bg-white border border-slate-200 shadow-sm">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between flex-wrap gap-2">
+                          <Badge className="bg-[#1A237E]/10 text-[#1A237E] border-0">
                             {project.id}
                           </Badge>
-                          <Badge className="bg-[#2d545e] text-white border-[#12343b]">
-                            Ongoing
-                          </Badge>
+                          <Badge className="bg-[#FF9800]/20 text-[#E65100] border-0">Ongoing</Badge>
                         </div>
-                        <CardTitle className="text-[#2d545e] mt-2">{project.title}</CardTitle>
+                        <CardTitle className="text-[#1A237E] mt-2 text-base">{project.title}</CardTitle>
                       </CardHeader>
                     </Card>
                   ))}

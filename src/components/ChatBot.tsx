@@ -100,16 +100,8 @@ async function streamChatResponse(
   onUpdate: (text: string) => void,
   abortSignal?: AbortSignal
 ): Promise<void> {
-  const baseURL =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
-      ? "https://cird.onrender.com"
-      : "http://localhost:5000");
-
-  console.log("🌐 Chat API base URL:", baseURL);
-
   try {
-    const response = await fetch(`${baseURL}/api/chat`, {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
@@ -669,14 +661,8 @@ export default function ChatBot() {
 
     socketInitializedRef.current = true;
 
-    const baseURL =
-      process.env.NEXT_PUBLIC_API_BASE_URL ||
-      (typeof window !== "undefined" && window.location.hostname.includes("cird.co.in")
-        ? "https://cird.onrender.com"
-        : "http://localhost:5000");
-
-    console.log("🔌 Initializing Socket.io connection to:", baseURL);
-    const socketInstance = io(baseURL, {
+    // Same-origin: Socket.io connects to current host (e.g. https://cird.co.in)
+    const socketInstance = io({
       transports: ["websocket", "polling"],
       query: { userId },
       reconnection: true,
@@ -1533,14 +1519,13 @@ export default function ChatBot() {
               className="relative mb-2"
             >
               {/* Speech Bubble Cloud */}
-              <div className="relative bg-[#2d545e]/95 backdrop-blur-md border border-[#12343b] shadow-2xl text-white text-sm px-4 py-3 rounded-2xl">
+              <div className="relative bg-[#1A237E] backdrop-blur-md border border-[#0D1542]/50 shadow-xl text-white text-sm px-4 py-3 rounded-2xl">
                 <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-[#e1b382]" />
+                  <Sparkles size={16} className="text-[#FF9800]" />
                   <span>Ask me anything about CIRD</span>
                 </div>
-                {/* Speech bubble tail pointing down to bot */}
                 <div className="absolute bottom-0 right-8 transform translate-y-full">
-                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[14px] border-l-transparent border-r-transparent border-t-[#2d545e]/95 drop-shadow-lg"></div>
+                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[14px] border-l-transparent border-r-transparent border-t-[#1A237E] drop-shadow-lg"></div>
                 </div>
               </div>
             </motion.div>
@@ -1614,8 +1599,8 @@ export default function ChatBot() {
                   />
                 </div>
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-[#2d545e]/20 backdrop-blur-sm rounded-full">
-                  <MessageCircle size={28} className="text-[#2d545e]" />
+                <div className="w-full h-full flex items-center justify-center bg-[#1A237E]/10 rounded-full border-2 border-[#1A237E]/20">
+                  <MessageCircle size={28} className="text-[#1A237E]" />
                 </div>
               )}
               
@@ -1641,7 +1626,7 @@ export default function ChatBot() {
         {open && (
           <>
             <motion.div
-              className="fixed inset-0 bg-[#2d545e]/20 backdrop-blur-sm z-[999]"
+              className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[999]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -1658,21 +1643,21 @@ export default function ChatBot() {
                 stiffness: 300,
                 mass: 0.8
               }}
-              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-white backdrop-blur-xl text-[#2d545e] rounded-3xl shadow-2xl flex flex-col overflow-hidden border-2 border-[#c89666]"
+              className="fixed bottom-20 right-6 z-[1000] w-[92%] sm:w-[420px] max-w-[440px] bg-white backdrop-blur-xl text-[#1A237E] rounded-3xl shadow-xl flex flex-col overflow-hidden border border-slate-200"
               style={{
                 height: "min(80vh, 650px)",
                 maxHeight: "650px",
               }}
             >
               {/* Enhanced Header */}
-              <div className="flex items-center justify-between bg-gradient-to-r from-[#2d545e] to-[#12343b] text-white px-5 py-4 border-b border-[#c89666]">
+              <div className="flex items-center justify-between bg-gradient-to-r from-[#1A237E] to-[#0D1542] text-white px-5 py-4 border-b border-[#1A237E]/30">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 rounded-full bg-[#e1b382] flex items-center justify-center">
-                      <Bot size={20} className="text-[#2d545e]" />
+                    <div className="w-10 h-10 rounded-full bg-[#FF9800] flex items-center justify-center">
+                      <Bot size={20} className="text-white" />
                     </div>
                     <motion.div 
-                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#e1b382] rounded-full border-2 border-[#2d545e]"
+                      className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#FF9800] rounded-full border-2 border-[#1A237E]"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     />
@@ -1700,7 +1685,7 @@ export default function ChatBot() {
                       }}
                       title="Search messages"
                       className={`p-2 rounded-xl transition-colors ${
-                        showSearch ? "bg-[#e1b382] text-[#2d545e]" : "hover:bg-[#e1b382]/20 text-white"
+                        showSearch ? "bg-[#FF9800] text-white" : "hover:bg-white/20 text-white"
                       }`}
                     >
                       <Search size={16} />
@@ -1723,7 +1708,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setShowFilters(!showFilters)}
                     title="Toggle filters"
-                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
+                    className="p-2 hover:bg-white/20 rounded-xl transition-colors text-white"
                   >
                     <Filter size={16} />
                   </motion.button>
@@ -1732,7 +1717,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={exportChat} 
                     title="Export conversation" 
-                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
+                    className="p-2 hover:bg-white/20 rounded-xl transition-colors text-white"
                   >
                     <Download size={16} />
                   </motion.button>
@@ -1741,7 +1726,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={clearChat} 
                     title="Clear conversation" 
-                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
+                    className="p-2 hover:bg-white/20 rounded-xl transition-colors text-white"
                   >
                     <Trash2 size={16} />
                   </motion.button>
@@ -1750,7 +1735,7 @@ export default function ChatBot() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setOpen(false)} 
                     title="Close chat" 
-                    className="p-2 hover:bg-[#e1b382]/20 rounded-xl transition-colors text-white"
+                    className="p-2 hover:bg-white/20 rounded-xl transition-colors text-white"
                   >
                     <X size={18} />
                   </motion.button>
@@ -1764,12 +1749,12 @@ export default function ChatBot() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-b border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm overflow-hidden"
+                    className="border-b border-slate-200 bg-slate-50 overflow-hidden"
                   >
                     <div className="px-4 py-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <Tag size={14} className="text-[#2d545e]" />
-                        <span className="text-xs font-medium text-[#2d545e]">FILTER BY TOPIC</span>
+                        <Tag size={14} className="text-[#FF9800]" />
+                        <span className="text-xs font-medium text-[#1A237E] uppercase tracking-wide">Filter by topic</span>
                       </div>
                       
                       <div className="flex flex-wrap gap-1 max-h-20 overflow-y-auto">
@@ -1784,8 +1769,8 @@ export default function ChatBot() {
                             }}
                             className={`flex items-center gap-1 px-2 py-1 text-xs rounded-full border backdrop-blur-sm transition-all ${
                               activeTag === t
-                                ? "bg-[#2d545e] text-white border-[#12343b] shadow-md"
-                                : "bg-white text-[#2d545e] border-[#c89666] hover:bg-[#e1b382]/20 hover:border-[#2d545e]"
+                                ? "bg-[#1A237E] text-white border-[#0D1542] shadow-md"
+                                : "bg-white text-[#1A237E] border-slate-300 hover:bg-[#FF9800]/10 hover:border-[#1A237E]"
                             }`}
                           >
                             <Tag size={10} />
@@ -1805,29 +1790,29 @@ export default function ChatBot() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-b border-[#c89666] bg-[#e1b382]/20 overflow-hidden"
+                    className="border-b border-slate-200 bg-slate-50 overflow-hidden"
                   >
                     <div className="px-4 py-2">
                       <div className="relative">
-                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2d545e]" />
+                        <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#37474F]" />
                         <input
                           type="text"
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           placeholder="Search messages..."
-                          className="w-full pl-10 pr-10 py-2 border border-[#c89666] rounded-lg text-sm bg-white text-[#2d545e] focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none"
+                          className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg text-sm bg-white text-[#1A237E] focus:ring-2 focus:ring-[#1A237E]/20 focus:border-[#1A237E] outline-none"
                           autoFocus
                         />
                         {searchQuery && (
                           <button
                             onClick={() => setSearchQuery("")}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2d545e] hover:text-[#12343b]"
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#37474F] hover:text-[#1A237E]"
                           >
                             <X size={16} />
                           </button>
                         )}
                         {searchQuery && (
-                          <div className="absolute right-10 top-1/2 transform -translate-y-1/2 text-xs text-[#2d545e]">
+                          <div className="absolute right-10 top-1/2 transform -translate-y-1/2 text-xs text-[#37474F]">
                             {messages.filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase())).length} found
                           </div>
                         )}
@@ -1840,7 +1825,7 @@ export default function ChatBot() {
               {/* Enhanced Messages Area - More space now */}
               <div 
                 ref={containerRef} 
-                className="flex-1 overflow-y-auto p-4 bg-[#e1b382]/10 space-y-4"
+                className="flex-1 overflow-y-auto p-4 bg-slate-50 space-y-4"
               >
                 {(searchQuery ? messages.filter(m => m.text.toLowerCase().includes(searchQuery.toLowerCase())) : messages).map((m, index) => {
                   const allMessages = messages;
@@ -1853,7 +1838,7 @@ export default function ChatBot() {
                     <React.Fragment key={m.id}>
                       {showDateSeparator && (
                         <div className="flex items-center justify-center my-4">
-                          <div className="bg-[#2d545e]/10 text-[#2d545e] text-xs px-3 py-1 rounded-full border border-[#c89666]/30">
+                          <div className="bg-slate-100 text-[#37474F] text-xs px-3 py-1 rounded-full border border-slate-200">
                             {formatDate(m.time)}
                           </div>
                         </div>
@@ -1867,7 +1852,7 @@ export default function ChatBot() {
                     <div className="flex items-start gap-2 max-w-[85%]">
                       {(m.sender === "bot" || m.sender === "agent") && (
                         <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
-                          m.sender === "agent" ? "bg-green-500" : "bg-[#2d545e]"
+                          m.sender === "agent" ? "bg-green-500" : "bg-[#1A237E]"
                         }`}>
                           {m.sender === "agent" ? (
                             <Users size={12} className="text-white" />
@@ -1879,12 +1864,12 @@ export default function ChatBot() {
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm shadow-sm backdrop-blur-sm ${
                           m.sender === "user"
-                            ? "bg-[#2d545e] text-white rounded-br-md"
+                            ? "bg-[#1A237E] text-white rounded-br-md"
                             : m.sender === "agent"
-                            ? "bg-green-50 border border-green-200 text-[#2d545e] rounded-bl-md"
+                            ? "bg-green-50 border border-green-200 text-[#1A237E] rounded-bl-md"
                             : m.sender === "system"
                             ? "bg-blue-50 border border-blue-200 text-blue-700 rounded-lg"
-                            : "bg-white border border-[#c89666] text-[#2d545e] rounded-bl-md"
+                            : "bg-white border border-slate-200 text-[#37474F] rounded-bl-md"
                         }`}
                       >
                         <div className="whitespace-pre-wrap leading-relaxed">
@@ -1896,7 +1881,7 @@ export default function ChatBot() {
                                     <button
                                       key={idx}
                                       onClick={() => router.push(part)}
-                                      className="text-[#2d545e] hover:text-[#12343b] underline font-medium cursor-pointer"
+                                      className="text-[#FF9800] hover:text-[#F57C00] underline font-medium cursor-pointer"
                                     >
                                       Know More
                                     </button>
@@ -1971,7 +1956,7 @@ export default function ChatBot() {
                               <div className="flex items-center gap-1">
                                 <button
                                   onClick={() => regenerateAnswer(m.id)}
-                                  className="p-1 hover:bg-[#e1b382]/20 rounded transition-colors"
+                                  className="p-1 hover:bg-slate-100 rounded transition-colors"
                                   title="Regenerate response"
                                 >
                                   <CornerUpLeft size={12} className="text-gray-600" />
@@ -1981,7 +1966,7 @@ export default function ChatBot() {
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "liked" 
                                       ? "text-green-600 bg-green-50" 
-                                      : "hover:bg-[#e1b382]/20"
+                                      : "hover:bg-slate-100"
                                   }`}
                                   title="Helpful response"
                                 >
@@ -1992,7 +1977,7 @@ export default function ChatBot() {
                                   className={`p-1 rounded transition-colors ${
                                     messageReactions[m.id] === "disliked" 
                                       ? "text-red-600 bg-red-50" 
-                                      : "hover:bg-[#e1b382]/20"
+                                      : "hover:bg-slate-100"
                                   }`}
                                   title="Not helpful"
                                 >
@@ -2004,7 +1989,7 @@ export default function ChatBot() {
                         </div>
                       </div>
                       {m.sender === "user" && (
-                        <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
+                        <div className="w-6 h-6 rounded-full bg-[#1A237E] flex items-center justify-center flex-shrink-0 mt-1">
                           <User size={12} className="text-white" />
                         </div>
                       )}
@@ -2022,27 +2007,27 @@ export default function ChatBot() {
                     className="flex justify-start"
                   >
                     <div className="flex items-start gap-2 max-w-[85%]">
-                      <div className="w-6 h-6 rounded-full bg-[#2d545e] flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-6 h-6 rounded-full bg-[#1A237E] flex items-center justify-center flex-shrink-0 mt-1">
                         <Bot size={12} className="text-white" />
                       </div>
-                      <div className="bg-white border border-[#c89666] px-4 py-3 rounded-2xl rounded-bl-md">
+                      <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-md">
                         <div className="flex items-center gap-2">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0 }}
-                            className="w-2 h-2 bg-[#2d545e] rounded-full"
+                            className="w-2 h-2 bg-[#1A237E] rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.2 }}
-                            className="w-2 h-2 bg-[#2d545e] rounded-full"
+                            className="w-2 h-2 bg-[#1A237E] rounded-full"
                           />
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ duration: 1, repeat: Infinity, delay: 0.4 }}
-                            className="w-2 h-2 bg-[#2d545e] rounded-full"
+                            className="w-2 h-2 bg-[#1A237E] rounded-full"
                           />
-                          <span className="text-xs text-gray-600 ml-2">Thinking...</span>
+                          <span className="text-xs text-[#37474F] ml-2">Thinking...</span>
                         </div>
                       </div>
                     </div>
@@ -2060,7 +2045,7 @@ export default function ChatBot() {
                       <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 mt-1">
                         <Users size={12} className="text-white" />
                       </div>
-                      <div className="bg-white border border-[#c89666] px-4 py-3 rounded-2xl rounded-bl-md">
+                      <div className="bg-white border border-slate-200 px-4 py-3 rounded-2xl rounded-bl-md">
                         <div className="flex items-center gap-2">
                           <motion.div
                             animate={{ scale: [1, 1.2, 1] }}
@@ -2108,7 +2093,7 @@ export default function ChatBot() {
 
               {/* Connect to Human Agent Button - Only in bot mode */}
               {chatMode === "bot" && (
-                <div className="border-t border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm px-4 py-3">
+                <div className="border-t border-slate-200 bg-slate-50 px-4 py-3">
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -2124,10 +2109,10 @@ export default function ChatBot() {
 
               {/* Enhanced Suggestions - Now more compact - Hidden in human mode */}
               {suggestions.length > 0 && chatMode === "bot" && (
-                <div className="border-t border-[#c89666] bg-[#e1b382]/20 backdrop-blur-sm px-4 py-2">
+                <div className="border-t border-slate-200 bg-slate-50 px-4 py-2">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles size={12} className="text-[#2d545e]" />
-                    <span className="text-xs font-medium text-[#2d545e]">QUICK SUGGESTIONS</span>
+                    <Sparkles size={12} className="text-[#FF9800]" />
+                    <span className="text-xs font-medium text-[#1A237E] uppercase tracking-wide">Quick suggestions</span>
                   </div>
                   <div className="flex flex-wrap gap-1">
                     {suggestions.map((s) => (
@@ -2139,7 +2124,7 @@ export default function ChatBot() {
                           shuffleSuggestions(s); // Shuffle suggestions when user selects one
                           sendMessage(s); // Send the selected suggestion as message
                         }}
-                        className="px-2 py-1 text-xs bg-[#2d545e] border border-[#12343b] rounded-lg hover:bg-[#12343b] hover:border-[#2d545e] transition-all backdrop-blur-sm text-white"
+                        className="px-2 py-1 text-xs bg-[#1A237E] border border-[#0D1542] rounded-lg hover:bg-[#0D1542] hover:border-[#1A237E] transition-all backdrop-blur-sm text-white"
                       >
                         {s}
                       </motion.button>
@@ -2155,7 +2140,7 @@ export default function ChatBot() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    className="border-t border-[#c89666] bg-gradient-to-r from-green-500 to-green-600 p-4"
+                    className="border-t border-slate-200 bg-gradient-to-r from-green-500 to-green-600 p-4"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="text-center text-white">
@@ -2210,7 +2195,7 @@ export default function ChatBot() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-t border-[#c89666] bg-gradient-to-r from-green-500 to-green-600 overflow-hidden"
+                    className="border-t border-slate-200 bg-gradient-to-r from-green-500 to-green-600 overflow-hidden"
                   >
                     {/* Hidden audio element for remote audio */}
                     <audio ref={remoteAudioRef} autoPlay playsInline />
@@ -2256,7 +2241,7 @@ export default function ChatBot() {
               </AnimatePresence>
 
               {/* Enhanced Input Area */}
-              <div className="border-t border-[#c89666] p-4 bg-[#e1b382]/20 backdrop-blur-sm">
+              <div className="border-t border-slate-200 p-4 bg-slate-50">
                 <div className="flex gap-3">
                   <div className="flex-1 relative">
                     <input
@@ -2280,7 +2265,7 @@ export default function ChatBot() {
                       }
                       disabled={isStreaming || chatMode === "human_waiting"}
                       maxLength={2000}
-                      className="w-full px-4 py-3 rounded-xl border-2 border-[#c89666] bg-white text-[#2d545e] text-sm focus:ring-2 focus:ring-[#2d545e]/30 focus:border-[#2d545e] outline-none transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-[#1A237E] text-sm focus:ring-2 focus:ring-[#1A237E]/20 focus:border-[#1A237E] outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     {/* Character Counter */}
                     {input.length > 0 && (
@@ -2305,7 +2290,7 @@ export default function ChatBot() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => sendMessage(input)}
                       disabled={!input.trim() || chatMode === "human_waiting" || (chatMode === "bot" && isStreaming)}
-                      className="p-3 bg-[#2d545e] text-white rounded-xl hover:bg-[#12343b] transition-all disabled:opacity-50 disabled:cursor-not-allowed backdrop-blur-sm"
+                      className="p-3 bg-[#FF9800] text-white rounded-xl hover:bg-[#F57C00] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Send size={18} />
                     </motion.button>

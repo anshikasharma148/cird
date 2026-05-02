@@ -17,12 +17,12 @@ import {
   Zap,
   Target,
   ArrowRight,
-  ExternalLink,
   Users,
   Award,
   TrendingUp
 } from "lucide-react";
 import Link from "next/link";
+import { InternalLinksSection } from "@/components/seo/internal-links";
 
 export default function EntitiesPage() {
   const entities = [
@@ -119,112 +119,105 @@ export default function EntitiesPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-      {/* Hero Section */}
-      <section className="pt-28 pb-20 bg-gradient-to-br from-[#2d545e] via-[#12343b] to-[#2d545e] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e1b382' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+    <div className="min-h-screen bg-white">
+      {/* Hero - navy (distinct from About blue, Research teal) */}
+      <section className="pt-36 sm:pt-40 pb-20 bg-[#1e3a5f] relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           backgroundRepeat: 'repeat'
-        }}></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
+        }} />
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Badge className="mb-6 bg-[#e1b382] text-[#2d545e] border border-[#c89666] px-6 py-2 shadow-lg">
-                🏢 Research Entities
-              </Badge>
-            </motion.div>
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
-              CIRD <span className="text-white">Entities</span>
+            <Badge className="mb-6 bg-[#FF9800] text-white border-0 px-6 py-2 shadow-lg">
+              Research Entities
+            </Badge>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+              CIRD <span className="text-[#FF9800]">Entities</span>
             </h1>
-            <p className="text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              Discover our specialized research divisions and laboratories working on 
+            <p className="text-lg sm:text-xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+              Discover our specialized research divisions and laboratories working on
               cutting-edge technologies across multiple domains.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Entities Section */}
-      <section className="py-20 bg-gradient-to-b from-[#e1b382]/50 to-[#e1b382]/40">
-        <div className="container mx-auto px-4">
+      {/* Entities Section - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           {entities.map((entity, entityIndex) => (
             <motion.div
               key={entityIndex}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: entityIndex * 0.3 }}
-              className="mb-20"
+              transition={{ duration: 0.6, delay: entityIndex * 0.2 }}
+              viewport={{ once: true }}
+              className="mb-16 lg:mb-20"
             >
-              <Card className="bg-white border-[#c89666] overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300">
-                <CardHeader className="bg-gradient-to-r from-[#e1b382]/20 to-[#c89666]/20 border-b border-[#c89666] p-8">
-                  <div className="flex items-center space-x-4 mb-6">
-                    <div className={`p-4 rounded-2xl bg-[#2d545e] shadow-lg`}>
+              <Card className="bg-white border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-[#1A237E]/20 transition-all duration-300">
+                <CardHeader className="bg-slate-50 border-b border-slate-200 p-6 sm:p-8">
+                  <div className="flex items-center gap-4 mb-5">
+                    <div className="p-4 rounded-2xl bg-[#1A237E] shadow-md">
                       {React.createElement(entity.icon, { className: "w-12 h-12 text-white" })}
                     </div>
                     <div>
-                      <CardTitle className="text-4xl text-[#2d545e] mb-2">{entity.title}</CardTitle>
-                      <CardDescription className="text-xl text-gray-600">{entity.subtitle}</CardDescription>
+                      <CardTitle className="text-2xl sm:text-3xl lg:text-4xl text-[#1A237E] mb-1">{entity.title}</CardTitle>
+                      <CardDescription className="text-lg text-[#37474F]">{entity.subtitle}</CardDescription>
                     </div>
                   </div>
-                  <p className="text-lg text-gray-700 leading-relaxed">{entity.description}</p>
+                  <p className="text-base sm:text-lg text-[#37474F] leading-relaxed">{entity.description}</p>
                 </CardHeader>
 
-                <CardContent className="p-8">
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                <CardContent className="p-6 sm:p-8">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#2d545e] mb-2">{entity.stats.projects}</div>
-                      <div className="text-sm text-gray-600">Active Projects</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#7B1FA2] mb-1">{entity.stats.projects}</div>
+                      <div className="text-sm text-[#37474F]">Active Projects</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#2d545e] mb-2">{entity.stats.patents}</div>
-                      <div className="text-sm text-gray-600">Patents Filed</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#7B1FA2] mb-1">{entity.stats.patents}</div>
+                      <div className="text-sm text-[#37474F]">Patents Filed</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#2d545e] mb-2">{entity.stats.publications}</div>
-                      <div className="text-sm text-gray-600">Publications</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#7B1FA2] mb-1">{entity.stats.publications}</div>
+                      <div className="text-sm text-[#37474F]">Publications</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-[#2d545e] mb-2">{entity.stats.researchers}</div>
-                      <div className="text-sm text-gray-600">Researchers</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-[#7B1FA2] mb-1">{entity.stats.researchers}</div>
+                      <div className="text-sm text-[#37474F]">Researchers</div>
                     </div>
                   </div>
 
-                  {/* Focus Areas */}
                   <div>
-                    <h3 className="text-2xl font-bold text-[#2d545e] mb-6">Focus Areas</h3>
-                    <div className="grid md:grid-cols-2 gap-6">
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#1A237E] mb-5">Focus Areas</h3>
+                    <div className="grid md:grid-cols-2 gap-5">
                       {entity.focusAreas.map((area, areaIndex) => (
                         <motion.div
                           key={areaIndex}
-                          initial={{ opacity: 0, x: -20 }}
+                          initial={{ opacity: 0, x: -15 }}
                           whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.5, delay: areaIndex * 0.1 }}
-                          className="bg-white border-[#c89666] rounded-xl p-6 hover:border-[#2d545e] transition-all duration-300 shadow-md hover:shadow-lg"
+                          transition={{ duration: 0.4, delay: areaIndex * 0.08 }}
+                          viewport={{ once: true }}
+                          className="bg-slate-50 border border-slate-200 rounded-xl p-5 hover:border-[#1A237E]/20 transition-all"
                         >
-                          <div className="flex items-center space-x-3 mb-4">
-                            <div className={`p-2 rounded-lg bg-[#2d545e]`}>
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="p-2 rounded-lg bg-[#1A237E]">
                               {React.createElement(area.icon, { className: "w-6 h-6 text-white" })}
                             </div>
-                            <h4 className="text-xl font-semibold text-[#2d545e]">{area.title}</h4>
+                            <h4 className="text-lg font-semibold text-[#1A237E]">{area.title}</h4>
                           </div>
-                          <p className="text-gray-700 mb-4 leading-relaxed">{area.description}</p>
-                          <div className="space-y-2">
-                            <h5 className="text-sm font-semibold text-[#2d545e] mb-2">Key Projects:</h5>
+                          <p className="text-[#37474F] mb-3 leading-relaxed text-sm sm:text-base">{area.description}</p>
+                          <div className="space-y-1.5">
+                            <h5 className="text-sm font-semibold text-[#1A237E] mb-2">Key Projects:</h5>
                             {area.projects.map((project, projectIndex) => (
-                              <div key={projectIndex} className="flex items-center space-x-2">
-                                <div className="w-1.5 h-1.5 bg-[#2d545e] rounded-full"></div>
-                                <span className="text-sm text-gray-700">{project}</span>
+                              <div key={projectIndex} className="flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 bg-[#FF9800] rounded-full shrink-0" />
+                                <span className="text-sm text-[#37474F]">{project}</span>
                               </div>
                             ))}
                           </div>
@@ -233,44 +226,32 @@ export default function EntitiesPage() {
                     </div>
                   </div>
 
-                  {/* Team Members */}
                   {entity.teamMembers && (
-                    <div className="mt-8 pt-8 border-t border-[#c89666]">
-                      <h4 className="text-xl font-semibold text-[#2d545e] mb-4 flex items-center">
-                        <Users className="w-6 h-6 mr-2 text-[#2d545e]" />
+                    <div className="mt-8 pt-8 border-t border-slate-200">
+                      <h4 className="text-lg font-semibold text-[#1A237E] mb-4 flex items-center gap-2">
+                        <Users className="w-5 h-5" />
                         Team Members
                       </h4>
-                      <div className="grid md:grid-cols-2 gap-3">
+                      <div className="grid md:grid-cols-2 gap-2">
                         {entity.teamMembers.map((member, memberIndex) => (
-                          <motion.div
+                          <div
                             key={memberIndex}
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.3, delay: memberIndex * 0.1 }}
-                            whileHover={{ scale: 1.02, x: 5 }}
-                            className="flex items-center space-x-3 p-3 bg-white border-[#c89666] rounded-lg hover:border-[#2d545e] transition-all"
+                            className="flex items-center gap-2 p-2.5 bg-slate-50 rounded-lg border border-slate-100"
                           >
-                            <div className="w-2 h-2 bg-[#2d545e] rounded-full"></div>
-                            <span className="text-gray-700 text-sm">{member}</span>
-                          </motion.div>
+                            <div className="w-2 h-2 bg-[#FF9800] rounded-full shrink-0" />
+                            <span className="text-[#37474F] text-sm">{member}</span>
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
 
                   <div className="mt-8 flex justify-center">
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Link href={entity.title === "CDC - Control Development Centre" ? "/entities/cdc" : "/entities/mtl"}>
-                        <Button 
-                          className="bg-[#2d545e] text-white hover:bg-[#12343b] border border-[#12343b] px-8 py-3 text-lg font-semibold rounded-full shadow-xl"
-                        >
-                          Learn More About {entity.title} <ArrowRight className="ml-2" size={20} />
-                        </Button>
-                      </Link>
-                    </motion.div>
+                    <Link href={entity.title === "CDC - Control Development Centre" ? "/entities/cdc" : "/entities/mtl"}>
+                      <Button className="bg-[#1A237E] text-white hover:bg-[#0D47A1] border-0 px-8 py-3 text-base font-semibold rounded-lg shadow-md">
+                        Learn More About {entity.title.split(" - ")[0]} <ArrowRight className="ml-2 h-5 w-5" />
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
@@ -279,58 +260,46 @@ export default function EntitiesPage() {
         </div>
       </section>
 
-      {/* Research Collaboration */}
-      <section className="py-20 bg-gradient-to-b from-[#c89666] to-[#e1b382]">
-        <div className="container mx-auto px-4">
+      {/* Research Collaboration - CIRD theme */}
+      <section className="py-16 sm:py-20 bg-slate-50 border-t border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-[#2d545e] mb-6">
-              Research <span className="text-[#2d545e]">Collaboration</span>
+            <span className="text-sm font-semibold text-[#FF9800] uppercase tracking-widest">Together</span>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A237E] mt-2 mb-4">
+              Research Collaboration
             </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
-              Our entities work together to create synergies and drive innovation across 
-              multiple research domains.
+            <div className="mx-auto w-20 h-1 rounded-full bg-[#FF9800]" />
+            <p className="text-lg text-[#37474F] max-w-3xl mx-auto mt-4">
+              Our entities work together to create synergies and drive innovation across multiple research domains.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
             {[
-              {
-                title: "Interdisciplinary Research",
-                description: "Collaborative projects spanning multiple research areas",
-                icon: Users,
-                color: "bg-[#2d545e]"
-              },
-              {
-                title: "Industry Partnerships",
-                description: "Strong collaborations with leading industrial organizations",
-                icon: Award,
-                color: "bg-[#2d545e]"
-              },
-              {
-                title: "Innovation Metrics",
-                description: "Measurable impact through patents, publications, and projects",
-                icon: TrendingUp,
-                color: "bg-[#2d545e]"
-              }
+              { title: "Interdisciplinary Research", description: "Collaborative projects spanning multiple research areas", icon: Users },
+              { title: "Industry Partnerships", description: "Strong collaborations with leading industrial organizations", icon: Award },
+              { title: "Innovation Metrics", description: "Measurable impact through patents, publications, and projects", icon: TrendingUp }
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
               >
-                <Card className="bg-white border-[#c89666] hover:border-[#2d545e] transition-all duration-300 shadow-lg hover:shadow-xl text-center">
+                <Card className="bg-white border-slate-200 hover:border-[#1A237E]/20 transition-all shadow-sm hover:shadow-md text-center h-full">
                   <CardHeader>
-                    <div className={`p-4 rounded-2xl ${item.color} mx-auto mb-4 w-fit`}>
+                    <div className="p-4 rounded-2xl bg-[#1A237E] mx-auto mb-4 w-fit">
                       {React.createElement(item.icon, { className: "w-8 h-8 text-white" })}
                     </div>
-                    <CardTitle className="text-2xl text-[#2d545e]">{item.title}</CardTitle>
-                    <CardDescription className="text-gray-700 text-base">
+                    <CardTitle className="text-xl sm:text-2xl text-[#1A237E]">{item.title}</CardTitle>
+                    <CardDescription className="text-[#37474F] text-base">
                       {item.description}
                     </CardDescription>
                   </CardHeader>
@@ -341,49 +310,70 @@ export default function EntitiesPage() {
         </div>
       </section>
 
+      <InternalLinksSection
+        eyebrow="Connected Pages"
+        title="Explore Linked Entity Resources"
+        description="Move from entity overviews to project detail pages, patents, and collaboration entry points."
+        links={[
+          {
+            href: "/entities/cdc",
+            title: "CDC Detailed Page",
+            description: "Dive deeper into control systems, automation, and software development work.",
+          },
+          {
+            href: "/entities/mtl",
+            title: "MTL Detailed Page",
+            description: "Review material testing, validation setups, and laboratory capabilities.",
+          },
+          {
+            href: "/research",
+            title: "Research Portfolio",
+            description: "See how entity workstreams map to active and completed projects.",
+          },
+          {
+            href: "/patents",
+            title: "Patents and Designs",
+            description: "Track IP outcomes emerging from entity-led project execution.",
+          },
+          {
+            href: "/team",
+            title: "Team and Contributors",
+            description: "Meet the researchers and engineers associated with each entity.",
+          },
+          {
+            href: "/contact",
+            title: "Collaborate With CIRD",
+            description: "Discuss partnerships, testing support, and applied R&D opportunities.",
+          },
+        ]}
+      />
+
       {/* Call to Action */}
-      <section className="py-20 bg-gradient-to-b from-[#2d545e] to-[#12343b]">
-        <div className="container mx-auto px-4 text-center">
+      <section className="py-16 sm:py-20 bg-[#1e3a5f] border-t border-white/10">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
               Join Our Research Community
             </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto">
-              Become part of our innovative research community and contribute to 
-              groundbreaking discoveries that shape the future.
+            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+              Become part of our innovative research community and contribute to groundbreaking discoveries.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link href="/research">
-                  <Button 
-                    size="lg" 
-                    className="bg-[#e1b382] text-[#2d545e] hover:bg-[#c89666] border border-[#c89666] px-8 py-4 text-lg font-semibold rounded-full shadow-xl"
-                  >
-                    Explore Research <ArrowRight className="ml-2" size={20} />
-                  </Button>
-                </Link>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link href="/team">
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="border-2 border-[#e1b382] bg-transparent text-white hover:bg-[#e1b382]/10 hover:border-[#e1b382] px-8 py-4 text-lg font-semibold rounded-full shadow-lg"
-                  >
-                    Meet Our Team
-                  </Button>
-                </Link>
-              </motion.div>
+              <Link href="/research">
+                <Button size="lg" className="bg-[#FF9800] text-white hover:bg-[#F57C00] border-0 px-8 py-4 text-base font-semibold rounded-lg shadow-lg">
+                  Explore Research <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/team">
+                <Button variant="outline" size="lg" className="border-2 border-white text-white bg-transparent hover:bg-white hover:text-[#1e3a5f] px-8 py-4 text-base font-semibold rounded-lg">
+                  Meet Our Team
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>

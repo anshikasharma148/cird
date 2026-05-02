@@ -1309,23 +1309,3 @@ httpServer.listen(PORT, () => {
   console.log(`✅ Socket.io server ready for WebSocket connections`);
 });
 
-/* ------------------------------------------------------------------
-   🟢 KEEP-ALIVE SELF-PING (prevents Render from sleeping)
-------------------------------------------------------------------- */
-if (process.env.RENDER === "true" || process.env.RENDER_EXTERNAL_URL) {
-  const axios = await import("axios");
-  const url =
-    process.env.RENDER_EXTERNAL_URL || "https://cird.onrender.com";
-
-  console.log("🔁 Keep-alive ping enabled for:", url);
-
-  // Ping every 5 minutes to keep backend awake
-  setInterval(async () => {
-    try {
-      await axios.default.get(`${url}/health`);
-      console.log("💓 Keep-alive ping sent to", `${url}/health`);
-    } catch (err) {
-      console.log("⚠️ Keep-alive ping failed:", err.message);
-    }
-  }, 5 * 60 * 1000);
-}
